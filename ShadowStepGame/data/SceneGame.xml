@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Objects>
+
+    <Object 
+    	ID="1"
+        ObjectName="Floor"
+        ObjectType="SimplePlane"
+        Tag = "Floor"
+        FileName=""
+        Texture=""
+
+        PosX="0.0"  PosY="0.0"  PosZ="10.0"
+        RotX="0.0"  RotY="0.0" RotZ="0.0"
+        SclX="30.0"  SclY="1.0"  SclZ="20.0"
+
+        ColR="0.3" ColG="0.7" ColB="0.3" ColA="1.0"
+    />
+    <Object 
+    	ID="2"
+        ObjectName="Player"
+        ObjectType="SimpleCube"
+        Tag = "Player"
+        FileName=""
+        Texture=""
+
+        PosX="0.0"  PosY="1.0"  PosZ="10.0"
+        RotX="0.0"  RotY="0.0" RotZ="0.0"
+        SclX="1.0"  SclY="1.0"  SclZ="1.0"
+
+        ColR="1.0" ColG="1.0" ColB="1.0" ColA="1.0"
+    />
+
+</Objects>

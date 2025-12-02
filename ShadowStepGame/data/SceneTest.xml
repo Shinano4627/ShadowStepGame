@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Objects>
+
+    <Object 
+    	ID="1"
+        ObjectName="GolfBall"
+        ObjectType="GolfBall"
+        Tag = ""
+        FileName="assets/model/golfball2/golfball2.obj"
+        Texture="assets/model/golfball2"
+
+        PosX="0.0"  PosY="1.0"  PosZ="10.0"
+        RotX="0.0"  RotY="90.0" RotZ="0.0"
+        SclX="1.5"  SclY="1.5"  SclZ="1.5"
+
+        ColR="1.0" ColG="1.0" ColB="1.0" ColA="1.0"
+    />
+
+    <Object 
+    	ID="2"
+        ObjectName="Ground"
+        ObjectType="Ground"
+        Tag = ""
+        FileName=""
+        Texture="assets/texture/terain.png"
+
+        PosX="0.0" PosY="0.0"  PosZ="0.0"
+        RotX="0.0"  RotY="45.0" RotZ="0.0"
+        SclX="30.0"  SclY="0.0"  SclZ="30.0"
+
+        ColR="1.0" ColG="1.0" ColB="1.0" ColA="1.0"
+    />
+
+</Objects>
