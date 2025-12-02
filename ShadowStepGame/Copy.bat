@@ -8,5 +8,6 @@ robocopy /MOVE /E Framework\shader\ shader\
 rd /s /q Framework\shader\
 robocopy /MOVE /E Framework\shader\ shader\
 rd /s /q Framework\shader\
-rd /s /q Framework\shader\Scene.h
+del /s /q Framework\Scene.h
+del /s /q Framework\assimp-vc143-mtd.dll
 pause
