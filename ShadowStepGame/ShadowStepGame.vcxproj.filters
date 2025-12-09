@@ -22,6 +22,9 @@
     <Filter Include="Framework\imgui">
       <UniqueIdentifier>{1db91c86-dbd3-4a88-8504-c75156e14625}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Scene">
+      <UniqueIdentifier>{74df3266-3c60-4f98-8981-e8edc5cbac58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\AABBCollider.h">
@@ -115,9 +118,6 @@
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\RotatorComponent.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\Scene.h">
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\SceneBase.h">
@@ -215,6 +215,12 @@
     </ClInclude>
     <ClInclude Include="Framework\imgui\imstb_truetype.h">
       <Filter>Framework\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneProto.h">
+      <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -337,6 +343,9 @@
     </ClCompile>
     <ClCompile Include="Framework\imgui\imgui_widgets.cpp">
       <Filter>Framework\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneProto.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
