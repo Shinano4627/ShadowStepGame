@@ -1,25 +1,28 @@
 // ===================================================================
 // SceneProto.h
-// ƒ^ƒCƒgƒ‹ƒV[ƒ“ - GameObject‚ÆƒRƒ“ƒ|[ƒlƒ“ƒgƒVƒXƒeƒ€‚ğg—p
+// Plese Write scene explanation
 // ===================================================================
 #pragma once
 #include "SceneBase.h"
 
-class SceneProto : public SceneBase
+class SceneProto :public SceneBase
 {
-private:
-    // ƒIƒuƒWƒFƒNƒgŠÇ——pID
-    enum OBJECT_ID
-    {
-        ID_TITLE_CUBE,
-
-        ID_COUNT,
-    };
-
+#pragma region ï¿½Ïï¿½
 public:
-    void Init() override;
-    void UnInit() override;
-    void Update() override;
-    void Draw() override;
-    void Draw(Camera*) override;
+
+private:
+
+#pragma endregion
+
+#pragma region ï¿½Öï¿½
+public:
+	void Init() override;
+	void UnInit() override;
+	void Update() override;
+	void Draw() override;
+	void Draw(Camera*) override;
+
+private:
+#pragma endregion
 };
+
