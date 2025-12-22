@@ -28,7 +28,7 @@ void SceneProto::Init()
     // 追加コンポーネント
     {
         // マップシステム
-        auto* mapSystem = FindGameObjectWithTag("MapSystem")->AddComponent<MapSystemComponent>("testmap.csv");
+        auto* mapSystem = FindGameObjectWithTag("MapSystem")->AddComponent<MapSystemComponent>("TestMap.csv");
         mapSystem->MakeMap(m_GameObjects);    // マップの読み込み
     }  
 

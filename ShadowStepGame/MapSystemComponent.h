@@ -12,6 +12,9 @@ class MapSystemComponent : public Component
 {
 private:
     std::string m_DataFile;      // CSVファイル名
+    int m_MapWidth;     // CSVから読み取り
+    int m_MapHeight;    // CSVから読み取り
+    int** m_MapData;  // 
 
 public:
     // ===================================================================
@@ -20,6 +23,19 @@ public:
     MapSystemComponent(const std::string fileName)
     {
         m_DataFile = "data/" + fileName;
+    }
+
+    // ===================================================================
+    // デストラクタ
+    // ===================================================================
+    ~MapSystemComponent()
+    {
+        // マップ
+        for (int i = 0; i < m_MapHeight; i++)
+        {
+            delete[] m_MapData[i];
+        }
+        delete[] m_MapData;
     }
 
     // ===================================================================

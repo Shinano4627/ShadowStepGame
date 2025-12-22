@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <stdio.h>
 
 #include "SimplePlaneRendererComponent.h"
 
@@ -19,22 +20,36 @@ void MapSystemComponent::MakeMap(std::vector<std::unique_ptr<GameObject>>& objec
         exit(1);
     }
     else {
+        cout << "Start Read : " << m_DataFile << endl;
+
         string line;
 
         vector<string> words; //文字列ベクトルを宣言する
         string word;
         // ------------データ読み取り-----------------
-        // 行ごとにデータを読み込む
-        //getline(csv_data, line);
-
-
         istringstream sin;
+        // マップの広さを取得
+        getline(csv_data, line);
+        sin.clear();
+        sin.str(line);
+        //文字列ストリームsinの文字をコンマ区切り
+        getline(sin, word, ',');
+         m_MapWidth = stoi(word);
+        getline(sin, word, ',');
+        m_MapHeight = stoi(word);
+
+        // マップ
+        m_MapData = new int*[m_MapHeight]();
+        for (int i = 0; i < m_MapHeight; i++)
+        {
+            m_MapData[i] = new int [m_MapWidth]();
+        }
+
         // 行ごとにデータを読み込む
         while (getline(csv_data, line)) {
-            // vectorおよび文字ストリームをクリアし、前の行のデータのみを保存します
+            // vectorおよび文字ストリームをクリアし、前の行 のデータのみを保存します
             words.clear();
             sin.clear();
-
             sin.str(line);
             //文字列ストリームsinの文字をコンマ区切り文字列配列wordsに配置する
             while (getline(sin, word, ',')) {
@@ -52,9 +67,12 @@ void MapSystemComponent::MakeMap(std::vector<std::unique_ptr<GameObject>>& objec
                 newObject->SetName("Map");
                 newObject->SetTag("Map");
 
+                int data = stoi(str);
+                m_MapData[mapZ][mapX] = data;
+
                 // CSVからのよみとり
                 Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
-                switch (stoi(str))
+                switch (data)
                 {
                 case 0:
                     //何もない
@@ -89,7 +107,17 @@ void MapSystemComponent::MakeMap(std::vector<std::unique_ptr<GameObject>>& objec
             //return words;
         }
 
-
         csv_data.close();
     }
+
+    // デバッグ出力
+    for (int i = 0; i < m_MapHeight; i++)
+    {
+        for (int j = 0; j < m_MapWidth; j++)
+        {
+            std::cout << m_MapData[i][j];
+        }
+        std::cout << std::endl;
+    }
+    
 }
