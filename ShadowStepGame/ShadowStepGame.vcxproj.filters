@@ -25,8 +25,8 @@
     <Filter Include="ソース ファイル\Scene">
       <UniqueIdentifier>{74df3266-3c60-4f98-8981-e8edc5cbac58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Component">
-      <UniqueIdentifier>{2587ca3c-3e6a-470a-ae71-6a92669cc6b1}</UniqueIdentifier>
+    <Filter Include="ソース ファイル\Component">
+      <UniqueIdentifier>{cd102b61-4b71-4128-aa3b-3189934a62ff}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -138,9 +138,6 @@
     <ClInclude Include="Framework\SceneResult.h">
       <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\SceneTitle.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
     <ClInclude Include="Framework\Shader.h">
       <Filter>Framework</Filter>
     </ClInclude>
@@ -225,8 +222,16 @@
     <ClInclude Include="SceneProto.h">
       <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="SunManageComponent.h">
       <Filter>Component</Filter>
+=======
+    <ClInclude Include="Framework\SceneTitle.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="MapSystemComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+>>>>>>> develop
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -290,9 +295,6 @@
     <ClCompile Include="Framework\SceneResult.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\SceneTitle.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\Shader.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
@@ -352,6 +354,12 @@
     </ClCompile>
     <ClCompile Include="SceneProto.cpp">
       <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SceneTitle.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="MapSystemComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
