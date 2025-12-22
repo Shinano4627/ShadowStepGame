@@ -7,14 +7,14 @@
 
 class SceneProto :public SceneBase
 {
-#pragma region �ϐ�
+#pragma region 変数
 public:
 
 private:
 
 #pragma endregion
 
-#pragma region �֐�
+#pragma region 関数
 public:
 	void Init() override;
 	void UnInit() override;
@@ -23,6 +23,7 @@ public:
 	void Draw(Camera*) override;
 
 private:
+
 #pragma endregion
 };
 

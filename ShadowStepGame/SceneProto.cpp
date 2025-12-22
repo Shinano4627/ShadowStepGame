@@ -8,8 +8,11 @@
 #include <iostream>
 
 // Components
+#include "SimplePlaneRendererComponent.h"
+#include "MapSystemComponent.h"
 
 using namespace DirectX::SimpleMath;
+
 
 void SceneProto::Init()
 {
@@ -20,6 +23,14 @@ void SceneProto::Init()
     DeleteObjectList();
 
     // Make ObjectList
+    MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_PROTO).c_str());
+
+    // 追加コンポーネント
+    {
+        // マップシステム
+        auto* mapSystem = FindGameObjectWithTag("MapSystem")->AddComponent<MapSystemComponent>("testmap.csv");
+        mapSystem->MakeMap(m_GameObjects);    // マップの読み込み
+    }  
 
     // Init Camera
     m_Camera.Init();
@@ -69,3 +80,4 @@ void SceneProto::Draw(Camera* camera)
 {
     DrawLayer(camera, RenderLayer::WORLD);
 }
+
