@@ -212,6 +212,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="Framework\XmlRW.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneProto.h" />
+    <ClInclude Include="SunManageComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\AABBCollider.cpp" />

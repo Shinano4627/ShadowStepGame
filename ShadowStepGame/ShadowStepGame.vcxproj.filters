@@ -25,6 +25,9 @@
     <Filter Include="ソース ファイル\Scene">
       <UniqueIdentifier>{74df3266-3c60-4f98-8981-e8edc5cbac58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Component">
+      <UniqueIdentifier>{2587ca3c-3e6a-470a-ae71-6a92669cc6b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\AABBCollider.h">
@@ -221,6 +224,9 @@
     </ClInclude>
     <ClInclude Include="SceneProto.h">
       <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SunManageComponent.h">
+      <Filter>Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
