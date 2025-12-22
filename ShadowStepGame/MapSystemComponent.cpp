@@ -45,6 +45,10 @@ void MapSystemComponent::MakeMap(std::vector<std::unique_ptr<GameObject>>& objec
             m_MapData[i] = new int [m_MapWidth]();
         }
 
+        // 原点を中心に表示されるようにスタート位置を計算
+        m_DrawStartPosX = - m_MapWidth * m_SizePiece / 2.f + m_SizePiece / 2.f;
+        m_DrawStartPosZ = - m_MapHeight * m_SizePiece / 2.f + m_SizePiece / 2.f;
+
         // 行ごとにデータを読み込む
         while (getline(csv_data, line)) {
             // vectorおよび文字ストリームをクリアし、前の行 のデータのみを保存します
@@ -61,7 +65,8 @@ void MapSystemComponent::MakeMap(std::vector<std::unique_ptr<GameObject>>& objec
             for (string str : words)
             {
                 // トランスフォームデータを渡す
-                auto obj = std::make_unique<GameObject>(Vector3(mapX * 5.f, 0.2f, mapZ * 5), Vector3::Zero, Vector3(3.f, 1.f, 3.f));
+                auto obj = std::make_unique<GameObject>
+                    (Vector3(m_DrawStartPosX + mapX * m_SizePiece, 0.2f, m_DrawStartPosZ + mapZ * m_SizePiece), Vector3::Zero, Vector3(m_SizePiece/2, 1.f, m_SizePiece / 2));
                 GameObject* newObject = obj.get();
                 newObject->SetID(n);
                 newObject->SetName("Map");
