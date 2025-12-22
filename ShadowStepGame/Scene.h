@@ -1,4 +1,4 @@
-// ***Manual changes prohibited***
+Ôªø// ***Manual changes prohibited***
 #pragma once
 #include "SceneBase.h"
 
@@ -7,7 +7,7 @@
 #include "SceneTitle.h"
 #include "SceneGame.h"
 #include "SceneResult.h"
-// Add Header
+// Add Header	*Don't erase this line!
 
 enum SCENE
 {
@@ -15,6 +15,7 @@ enum SCENE
 	SCENE_TITLE,
 	SCENE_GAME,
 	SCENE_RESULT,
+// Add Label	*Don't erase this line!
 	SCENE_NUM,
 
 	SCENE_NONE = 999,
@@ -25,7 +26,7 @@ class Scene
 private:
 	std::unordered_map<SCENE, std::unique_ptr<SceneBase>> m_sceneTable;
 	std::vector<std::string> m_sceneNameList;
-	SCENE m_startScene = SCENE_DEBUG;	// ç≈èâÇ…é¿çsÇ≥ÇÍÇÈÉVÅ[Éì
+	SCENE m_startScene = SCENE_DEBUG;	// First scene to be executed
 
 public:
 	Scene()
@@ -34,13 +35,13 @@ public:
 		m_sceneTable[SCENE_TITLE] = std::make_unique<SceneTitle>();
 		m_sceneTable[SCENE_GAME] = std::make_unique<SceneGame>();
 		m_sceneTable[SCENE_RESULT] = std::make_unique<SceneResult>();
-		// Add Table
+// Add Table	*Don't erase this line!
 
 		m_sceneNameList.resize(SCENE_NUM);
 		m_sceneNameList[SCENE_TITLE] = "SceneTitle";
 		m_sceneNameList[SCENE_GAME] = "SceneGame";
 		m_sceneNameList[SCENE_RESULT] = "SceneResult";
-		// Add List
+// Add List	*Don't erase this line!
 	}
 	~Scene()
 	{
@@ -48,7 +49,7 @@ public:
 		m_sceneNameList.clear();
 	}
 
-	// ÉfÅ[É^éÊìæ
+	// Scene data acquisition
 	SCENE GetStartScene() { return m_startScene; }
 	std::string GetSceneName(SCENE _scene) { return m_sceneNameList[_scene]; }
 	std::vector<std::string>& GetSceneNameAll() { return m_sceneNameList; }
