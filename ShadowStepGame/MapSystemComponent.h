@@ -55,6 +55,6 @@ public:
     // ===================================================================
     // ê›íË
     // ===================================================================
-    //void SetMoveSpeed(float speed) { m_MoveSpeed = speed; }
-    //float GetMoveSpeed() const { return m_MoveSpeed; }
+    float GetMapHeight() const { return (float)m_MapHeight * m_SizePiece; }
+    float GetMapWidth() const { return (float)m_MapWidth * m_SizePiece; }
 };

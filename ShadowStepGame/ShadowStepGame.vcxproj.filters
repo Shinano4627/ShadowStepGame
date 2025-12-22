@@ -222,16 +222,11 @@
     <ClInclude Include="SceneProto.h">
       <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="SunManageComponent.h">
-      <Filter>Component</Filter>
-=======
     <ClInclude Include="Framework\SceneTitle.h">
       <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
     <ClInclude Include="MapSystemComponent.h">
       <Filter>ソース ファイル\Component</Filter>
->>>>>>> develop
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

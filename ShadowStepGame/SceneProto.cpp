@@ -10,6 +10,7 @@
 // Components
 #include "SimplePlaneRendererComponent.h"
 #include "MapSystemComponent.h"
+#include "SunManageComponent.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -30,10 +31,19 @@ void SceneProto::Init()
         // マップシステム
         auto* mapSystem = FindGameObjectWithTag("MapSystem")->AddComponent<MapSystemComponent>("TestMap.csv");
         mapSystem->MakeMap(m_GameObjects);    // マップの読み込み
+        float heightMap = mapSystem->GetMapHeight();
+        float widthMap = mapSystem->GetMapWidth();
+
+        // 太陽
+        auto* sun = FindGameObjectWithTag("Sun")->AddComponent<SunManageComponent>(widthMap, heightMap);
+        sun->Init();
     }  
 
     // Init Camera
     m_Camera.Init();
+    Vector3 newPos = m_Camera.GetPosition();
+    newPos.z = -100;
+    m_Camera.SetPosition(newPos);
 
     // Init Data
     m_nextScene = SCENE_NONE;
