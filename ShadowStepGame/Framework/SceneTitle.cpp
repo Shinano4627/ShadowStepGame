@@ -84,7 +84,7 @@ void SceneTitle::Draw()
     Draw(&m_Camera);
 
     // UI層のみ描画（カメラ不使用）
-    DrawLayer(nullptr, RenderLayer::UI);
+    DrawLayer(&m_Camera, RenderLayer::UI);
 }
 
 void SceneTitle::Draw(Camera* camera)

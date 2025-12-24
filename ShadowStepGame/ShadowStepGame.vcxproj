@@ -205,6 +205,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="Framework\SystemCommon.h" />
     <ClInclude Include="Framework\TestCube.h" />
     <ClInclude Include="Framework\Texture.h" />
+    <ClInclude Include="Framework\Texture2D.h" />
     <ClInclude Include="Framework\Timer.h" />
     <ClInclude Include="Framework\Transform.h" />
     <ClInclude Include="Framework\utility.h" />
@@ -246,6 +247,8 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClCompile Include="Framework\SceneResult.cpp" />
     <ClCompile Include="Framework\SceneTitle.cpp" />
     <ClCompile Include="Framework\Shader.cpp" />
+    <ClCompile Include="Framework\SimpleCubeRendererComponent.cpp" />
+    <ClCompile Include="Framework\SimplePlaneRendererComponent.cpp" />
     <ClCompile Include="Framework\singleton.cpp" />
     <ClCompile Include="Framework\sound.cpp" />
     <ClCompile Include="Framework\SoundManager.cpp" />
@@ -253,6 +256,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClCompile Include="Framework\StaticMesh.cpp" />
     <ClCompile Include="Framework\TestCube.cpp" />
     <ClCompile Include="Framework\Texture.cpp" />
+    <ClCompile Include="Framework\Texture2D.cpp" />
     <ClCompile Include="Framework\Timer.cpp" />
     <ClCompile Include="Framework\utility.cpp" />
     <ClCompile Include="Framework\XmlRW.cpp" />

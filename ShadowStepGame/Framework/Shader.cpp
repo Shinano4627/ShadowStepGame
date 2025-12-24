@@ -1,5 +1,5 @@
 #include	"Shader.h"
-#include	"renderer.h"
+#include	"Renderer.h"
 
 //=======================================
 //Shader作成
@@ -17,16 +17,14 @@ void Shader::Create(std::string vs, std::string ps)
 
 	unsigned int numElements = ARRAYSIZE(layout);
 
-	ID3D11Device* device = Renderer::GetDevice();
-
 	// 頂点シェーダーオブジェクトを生成、同時に頂点レイアウトも生成
 	HRESULT hr = Renderer::CreateVertexShader(
-		&m_pVertexShader,
-		&m_pVertexLayout,
+		m_pVertexShader.GetAddressOf(),
+		m_pVertexLayout.GetAddressOf(),
 		layout,
 		numElements,
 		vs.c_str()
-		);
+	);
 	if (FAILED(hr)) {
 		MessageBox(nullptr, "CreateVertexShader error", "error", MB_OK);
 		return;
@@ -35,9 +33,9 @@ void Shader::Create(std::string vs, std::string ps)
 	// ピクセルシェーダーを生成
 
 	hr = Renderer::CreatePixelShader(			// ピクセルシェーダーオブジェクトを生成
-		&m_pPixelShader,
+		m_pPixelShader.GetAddressOf(),
 		ps.c_str()
-		);
+	);
 	if (FAILED(hr)) {
 		MessageBox(nullptr, "CreatePixelShader error", "error", MB_OK);
 		return;

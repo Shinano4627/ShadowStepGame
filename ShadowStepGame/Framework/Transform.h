@@ -38,7 +38,7 @@ public:
     Transform()
         : m_Position(0.0f, 0.0f, 0.0f)
         , m_Rotation(0.0f, 0.0f, 0.0f)
-        , m_Scale(1.0f, 1.0f, 1.0f){}
+        , m_Scale(1.0f, 1.0f, 1.0f) {}
     Transform(Vector3 pos, Vector3 rotate, Vector3 scale)
         : m_PositionInit(pos)
         , m_RotationInit(rotate)

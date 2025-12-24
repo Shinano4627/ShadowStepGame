@@ -9,7 +9,7 @@ protected:
 	IndexBuffer				m_IndexBuffer;		// インデックスバッファ
 	int						m_IndexNum = 0;		// インデックス数
 public:
-	virtual void Init(Mesh& mesh) 
+	virtual void Init(Mesh& mesh)
 	{
 		m_VertexBuffer.Create(mesh.GetVertices());
 		m_IndexBuffer.Create(mesh.GetIndices());
@@ -29,7 +29,7 @@ public:
 	}
 
 	// サブセット描画
-	virtual void DrawSubset(unsigned int indexnum,unsigned int baseindex,unsigned int basevertexindex ) 
+	virtual void DrawSubset(unsigned int indexnum, unsigned int baseindex, unsigned int basevertexindex)
 	{
 		Renderer::GetDeviceContext()->DrawIndexed(
 			indexnum,								// 描画するインデックス数（面数×３）
@@ -38,7 +38,7 @@ public:
 	}
 
 	// 描画
-	virtual void Draw() 
+	virtual void Draw()
 	{
 		BeforeDraw();								// 描画前処理
 

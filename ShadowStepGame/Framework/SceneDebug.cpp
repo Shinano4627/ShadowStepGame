@@ -87,11 +87,11 @@ void SceneDebug::Update()
 
 void SceneDebug::Draw()
 {
+    // UI層のみ描画（カメラ不使用）
+    DrawLayer(&m_Camera, RenderLayer::UI);
+
     // 3D描画
     Draw(&m_Camera);
-
-    // UI層のみ描画（カメラ不使用）
-    DrawLayer(nullptr, RenderLayer::UI);
 }
 
 void SceneDebug::Draw(Camera* camera)

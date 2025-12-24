@@ -22,8 +22,10 @@ ID3D11DepthStencilView* Renderer::m_pDepthStencilView{};
 ID3D11Buffer* Renderer::m_pWorldBuffer{}; // ワールド行列
 ID3D11Buffer* Renderer::m_pViewBuffer{}; // ビュー行列
 ID3D11Buffer* Renderer::m_pProjectionBuffer{}; // プロジェクション行列
-ID3D11Buffer* Renderer::m_pLightBuffer{}; // ライト設定（平行光源）
 
+ID3D11Buffer* Renderer::m_pLightBuffer{}; // ライト設定（平行光源）
+ID3D11Buffer* Renderer::m_pMaterialBuffer{};	// マテリアル設定
+ID3D11Buffer* Renderer::m_pTextureBuffer{};	// UV設定
 
 // デプスステンシルステート
 ID3D11DepthStencilState* Renderer::m_pDepthStateEnable{};
@@ -69,7 +71,6 @@ HRESULT Renderer::Init()
 		&m_FeatureLevel,    // 作成されたデバイスの機能レベルを受け取る変数へのポインタ
 		&m_pDeviceContext); // 作成されたデバイスコンテキストを受け取るポインタ
 	if (FAILED(hr)) return hr;
-
 
 	// レンダーターゲットビュー・デプスステンシルバッファ・デプスステンシルビュー作成
 	hr = CreateRenderAndDepthResources();
@@ -196,14 +197,36 @@ HRESULT Renderer::Init()
 	m_pDeviceContext->VSSetConstantBuffers(3, 1, &m_pLightBuffer);
 	if (FAILED(hr)) return hr;
 
+	// 4番目：マテリアル情報
+	bufferDesc.ByteWidth = sizeof(MATERIAL);
+	hr = m_pDevice->CreateBuffer(&bufferDesc, NULL, &m_pMaterialBuffer);
+	m_pDeviceContext->VSSetConstantBuffers(4, 1, &m_pMaterialBuffer);
+	m_pDeviceContext->PSSetConstantBuffers(4, 1, &m_pMaterialBuffer);
+	if (FAILED(hr)) return hr;
+
+	// 5番目：マトリックス（UV）情報
+	bufferDesc.ByteWidth = sizeof(Matrix);
+	hr = m_pDevice->CreateBuffer(&bufferDesc, NULL, &m_pTextureBuffer);
+	m_pDeviceContext->VSSetConstantBuffers(5, 1, &m_pTextureBuffer);
+	if (FAILED(hr)) return hr;
+
 	// ライト初期化
 	LIGHT light{};
 	light.Enable = true;
 	light.Direction = Vector4(0.5f, -1.0f, 0.8f, 0.0f);	// 方向
 	light.Direction.Normalize();
-	light.Diffuse = Color(1.0f, 0.5f, 1.5f, 1.0f);
-	light.Ambient = Color(0.2f, 0.2f, 0.5f, 1.0f);
+	light.Diffuse = Color(1.0f, 1.0f, 1.0f, 1.0f);
+	light.Ambient = Color(0.5f, 0.5f, 0.5f, 1.0f);
 	SetLight(light);
+
+	// マテリアル初期化
+	MATERIAL material{};
+	material.Diffuse = Color(1.0f, 1.0f, 1.0f, 1.0f);
+	material.Ambient = Color(1.0f, 1.0f, 1.0f, 1.0f);
+	SetMaterial(material);
+
+	// UV初期化
+	SetUV(0, 0, 1, 1);
 
 #ifdef _DEBUG
 	// DebugUIの初期化
@@ -265,6 +288,8 @@ void Renderer::Uninit()
 	m_pDeviceContext->ClearState();
 
 	SAFE_RELEASE(m_pLightBuffer);
+	SAFE_RELEASE(m_pMaterialBuffer);
+	SAFE_RELEASE(m_pTextureBuffer);
 
 	SAFE_RELEASE(m_pWorldBuffer);
 	SAFE_RELEASE(m_pViewBuffer);
@@ -320,11 +345,32 @@ void Renderer::SetLight(LIGHT light)
 }
 
 //--------------------------------------------------------------------------------------
+// マテリアルを設定
+//--------------------------------------------------------------------------------------
+void Renderer::SetMaterial(MATERIAL Material)
+{
+	m_pDeviceContext->UpdateSubresource(m_pMaterialBuffer, 0, NULL, &Material, 0, 0);
+}
+
+//--------------------------------------------------------------------------------------
+// UV情報を設定
+//--------------------------------------------------------------------------------------
+void Renderer::SetUV(float u, float v, float uw, float vh)
+{
+	// UVの行列作成
+	Matrix mat = Matrix::CreateScale(uw, vh, 1.0f);
+	mat *= Matrix::CreateTranslation(u, v, 0.0f).Transpose();
+
+	m_pDeviceContext->UpdateSubresource(
+		m_pTextureBuffer, 0, NULL, &mat, 0, 0);
+}
+
+//--------------------------------------------------------------------------------------
 // 深度ステンシルの有効・無効を設定
 //--------------------------------------------------------------------------------------
 void Renderer::SetDepthEnable(bool Enable)
 {
-	if (Enable) 
+	if (Enable)
 	{
 		// 深度テストを有効にするステンシルステートをセット
 		m_pDeviceContext->OMSetDepthStencilState(m_pDepthStateEnable, NULL);
@@ -349,7 +395,7 @@ void Renderer::SetATCEnable(bool Enable)
 		// アルファテストとカバレッジ (ATC) を有効にするブレンドステートをセット
 		m_pDeviceContext->OMSetBlendState(m_pBlendStateATC, blendFactor, 0xffffffff);
 	}
-	else 
+	else
 	{
 		// 通常のブレンドステートをセット
 		m_pDeviceContext->OMSetBlendState(m_pBlendState[0], blendFactor, 0xffffffff);
@@ -575,20 +621,35 @@ HRESULT Renderer::CompileShader(const char* szFileName, LPCSTR szEntryPoint, LPC
 //--------------------------------------------------------------------------------------
 // 頂点シェーダーオブジェクトを生成する
 //--------------------------------------------------------------------------------------
-HRESULT Renderer::CreateVertexShader(ID3D11VertexShader** ppVertexShader, ID3D11InputLayout** ppVertexLayout, D3D11_INPUT_ELEMENT_DESC* pLayout, unsigned int numElements, const char* szFileName)
+HRESULT Renderer::CreateVertexShader(ID3D11VertexShader** ppVertexShader,
+	ID3D11InputLayout** ppVertexLayout, D3D11_INPUT_ELEMENT_DESC* pLayout,
+	unsigned int numElements, const char* szFileName)
 {
-	void* ShaderObject;
-	int	ShaderObjectSize;
+	void* ShaderObject = nullptr;
+	int	ShaderObjectSize = 0;
 
 	// ファイルの拡張子に合わせてコンパイル
 	HRESULT hr = CompileShader(szFileName, "main", "vs_5_0", &ShaderObject, &ShaderObjectSize);
-	if (FAILED(hr)) return E_FAIL;
+	if (FAILED(hr)) return hr;
 
 	// デバイスを使って頂点シェーダーを作成
 	hr = m_pDevice->CreateVertexShader(ShaderObject, ShaderObjectSize, NULL, ppVertexShader);
+	if (FAILED(hr))
+	{
+		delete[] static_cast<unsigned char*>(ShaderObject);
+		return hr;
+	}
 
 	// デバイスを使って頂点レイアウトを作成
-	m_pDevice->CreateInputLayout(pLayout, numElements, ShaderObject, ShaderObjectSize, ppVertexLayout);
+	hr = m_pDevice->CreateInputLayout(pLayout, numElements, ShaderObject, ShaderObjectSize, ppVertexLayout);
+	if (FAILED(hr))
+	{
+		delete[] static_cast<unsigned char*>(ShaderObject);
+		return hr;
+	}
+
+	// シェーダーオブジェクトを解放
+	delete[] static_cast<unsigned char*>(ShaderObject);
 
 	return S_OK;
 }
@@ -598,8 +659,8 @@ HRESULT Renderer::CreateVertexShader(ID3D11VertexShader** ppVertexShader, ID3D11
 //--------------------------------------------------------------------------------------
 HRESULT Renderer::CreatePixelShader(ID3D11PixelShader** ppPixelShader, const char* szFileName)
 {
-	void* ShaderObject;
-	int	ShaderObjectSize;
+	void* ShaderObject = nullptr;
+	int	ShaderObjectSize = 0;
 
 	// ファイルの拡張子に合わせてコンパイル
 	HRESULT hr = CompileShader(szFileName, "main", "ps_5_0", &ShaderObject, &ShaderObjectSize);
@@ -607,7 +668,14 @@ HRESULT Renderer::CreatePixelShader(ID3D11PixelShader** ppPixelShader, const cha
 
 	// ピクセルシェーダーを生成
 	hr = m_pDevice->CreatePixelShader(ShaderObject, ShaderObjectSize, nullptr, ppPixelShader);
-	if (FAILED(hr)) return hr;
+	if (FAILED(hr))
+	{
+		delete[] static_cast<unsigned char*>(ShaderObject);
+		return hr;
+	}
+
+	// シェーダーオブジェクトを解放
+	delete[] static_cast<unsigned char*>(ShaderObject);
 
 	return S_OK;
 }

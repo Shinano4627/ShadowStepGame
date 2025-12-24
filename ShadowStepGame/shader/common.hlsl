@@ -39,3 +39,25 @@ cbuffer LightBuffer : register(b3)
 {
     LIGHT Light;
 }
+
+struct MATERIAL
+{
+    float4 Ambient; // 環境反射
+    float4 Diffuse; // 拡散反射
+    float4 Specular; // 鏡面反射
+    float4 Emission; // 発光
+    float Shiness; // 光沢のなめらかさ
+    bool TextureEnable; // テクスチャを使うか否か
+    bool2 Dummy;
+};
+
+cbuffer MaterialBuffer : register(b4)
+{
+    MATERIAL Material;
+}
+
+// UV座標移動行列
+cbuffer TextureBuffer : register(b5)
+{
+    matrix matrixTex;
+}

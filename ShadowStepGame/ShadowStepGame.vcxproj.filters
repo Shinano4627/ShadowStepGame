@@ -28,6 +28,9 @@
     <Filter Include="ソース ファイル\Component">
       <UniqueIdentifier>{cd102b61-4b71-4128-aa3b-3189934a62ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\Manager">
+      <UniqueIdentifier>{a4ca3d21-6355-4592-886e-60b2de19aabd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\AABBCollider.h">
@@ -57,9 +60,6 @@
     <ClInclude Include="Framework\Component.h">
       <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\DataManager.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
     <ClInclude Include="Framework\DebugUI.h">
       <Filter>Framework</Filter>
     </ClInclude>
@@ -76,9 +76,6 @@
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\input.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\IOManager.h">
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\main.h">
@@ -105,16 +102,10 @@
     <ClInclude Include="Framework\PhysicsCommon.h">
       <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\PhysicsManager.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
     <ClInclude Include="Framework\PlayerMoverComponent.h">
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\Renderer.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\ResourceManager.h">
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\RigidBody.h">
@@ -130,9 +121,6 @@
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\SceneGame.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\SceneManager.h">
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\SceneResult.h">
@@ -151,9 +139,6 @@
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\sound.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\SoundManager.h">
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\SphereCollider.h">
@@ -228,6 +213,30 @@
     <ClInclude Include="MapSystemComponent.h">
       <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
+    <ClInclude Include="SunManageComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Texture2D.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\DataManager.h">
+      <Filter>Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\IOManager.h">
+      <Filter>Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\PhysicsManager.h">
+      <Filter>Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\ResourceManager.h">
+      <Filter>Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SceneManager.h">
+      <Filter>Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SoundManager.h">
+      <Filter>Framework\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\AABBCollider.cpp">
@@ -245,9 +254,6 @@
     <ClCompile Include="Framework\Collider.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\DataManager.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\DebugUI.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
@@ -257,19 +263,10 @@
     <ClCompile Include="Framework\input.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\IOManager.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\main.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\PhysicsManager.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\Renderer.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Framework\ResourceManager.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
     <ClCompile Include="Framework\RigidBody.cpp">
@@ -284,9 +281,6 @@
     <ClCompile Include="Framework\SceneGame.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\SceneManager.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\SceneResult.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
@@ -297,9 +291,6 @@
       <Filter>Framework</Filter>
     </ClCompile>
     <ClCompile Include="Framework\sound.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Framework\SoundManager.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
     <ClCompile Include="Framework\SphereCollider.cpp">
@@ -355,6 +346,33 @@
     </ClCompile>
     <ClCompile Include="MapSystemComponent.cpp">
       <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Texture2D.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\DataManager.cpp">
+      <Filter>Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\IOManager.cpp">
+      <Filter>Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\PhysicsManager.cpp">
+      <Filter>Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\ResourceManager.cpp">
+      <Filter>Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SceneManager.cpp">
+      <Filter>Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SoundManager.cpp">
+      <Filter>Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SimpleCubeRendererComponent.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SimplePlaneRendererComponent.cpp">
+      <Filter>Framework</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

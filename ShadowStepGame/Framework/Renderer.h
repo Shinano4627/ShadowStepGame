@@ -1,4 +1,7 @@
-// メモ：シェーダーの種類　lit →光の影響を受ける　unlit →光の影響を受けない
+//=======================================
+// Renderer.h
+// シェーダーの種類　lit →光の影響を受ける　unlit →光の影響を受けない
+//=======================================
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
 #include	<d3d11.h>
@@ -18,7 +21,9 @@
 // Direct3D解放の簡略化マクロ
 #define SAFE_RELEASE(p) { if( NULL != p ) { p->Release(); p = NULL; } }
 
+//=======================================
 // ３Ｄ頂点データ
+//=======================================
 struct VERTEX_3D
 {
 	DirectX::SimpleMath::Vector3 position;
@@ -27,7 +32,9 @@ struct VERTEX_3D
 	DirectX::SimpleMath::Vector2 uv;
 };
 
+//=======================================
 // ブレンドステート
+//=======================================
 enum EBlendState {
 	BS_NONE = 0,							// 半透明合成無し
 	BS_ALPHABLEND,							// 半透明合成
@@ -36,7 +43,9 @@ enum EBlendState {
 	MAX_BLENDSTATE
 };
 
+//=======================================
 // 平行光源
+//=======================================
 struct  LIGHT
 {
 	BOOL Enable;
@@ -46,7 +55,9 @@ struct  LIGHT
 	DirectX::SimpleMath::Color Ambient;	// 環境光の強さと色
 };
 
+//=======================================
 // サブセット
+//=======================================
 struct SUBSET {
 	std::string		MtrlName;			// マテリアル名
 	unsigned int	IndexNum = 0;		// インデックス数
@@ -56,43 +67,48 @@ struct SUBSET {
 	unsigned int	MaterialIdx = 0;	// マテリアルの番号
 };
 
+//=======================================
 // マテリアル
+//=======================================
 struct MATERIAL
 {
 	DirectX::SimpleMath::Color Ambient;		// 環境反射
 	DirectX::SimpleMath::Color Diffuse;		// 拡散反射（≒カラー）
 	DirectX::SimpleMath::Color Specular;	// 鏡面反射
 	DirectX::SimpleMath::Color Emission;	// 発光
-	float Shiness;		// 光沢の滑らかさ
+	float Shininess;		// 光沢の滑らかさ
 	BOOL TextureEnable;	// テクスチャを使うかのフラグ
 	BOOL Dummy[2];
 };
 
-//-----------------------------------------------------------------------------
+//=======================================
 //Rendererクラス
-//-----------------------------------------------------------------------------
+//=======================================
 class Renderer
 {
 private:
 
 	static D3D_FEATURE_LEVEL       m_FeatureLevel;
 
-	static ID3D11Device*           m_pDevice;
-	static ID3D11DeviceContext*    m_pDeviceContext;
-	static IDXGISwapChain*         m_pSwapChain;
+	static ID3D11Device* m_pDevice;
+	static ID3D11DeviceContext* m_pDeviceContext;
+	static IDXGISwapChain* m_pSwapChain;
 	static ID3D11RenderTargetView* m_pRenderTargetView;
 	static ID3D11DepthStencilView* m_pDepthStencilView;
 
-	static ID3D11Buffer*			m_pWorldBuffer;
-	static ID3D11Buffer*			m_pViewBuffer;
-	static ID3D11Buffer*			m_pProjectionBuffer;
-	static ID3D11Buffer*			m_pLightBuffer;
+	static ID3D11Buffer* m_pWorldBuffer;
+	static ID3D11Buffer* m_pViewBuffer;
+	static ID3D11Buffer* m_pProjectionBuffer;
+
+	static ID3D11Buffer* m_pLightBuffer;
+	static ID3D11Buffer* m_pMaterialBuffer;
+	static ID3D11Buffer* m_pTextureBuffer;	// UV設定
 
 	static ID3D11DepthStencilState* m_pDepthStateEnable;
 	static ID3D11DepthStencilState* m_pDepthStateDisable;
 
-	static ID3D11BlendState*		m_pBlendState[MAX_BLENDSTATE]; // ブレンド ステート;
-	static ID3D11BlendState*		m_pBlendStateATC;
+	static ID3D11BlendState* m_pBlendState[MAX_BLENDSTATE]; // ブレンド ステート;
+	static ID3D11BlendState* m_pBlendStateATC;
 
 	static HRESULT CreateRenderAndDepthResources();
 
@@ -104,7 +120,7 @@ public:
 	static void DrawEnd();
 
 	static HRESULT ResizeWindow(int width, int height);
-		
+
 	static void SetDepthEnable(bool Enable);
 
 	static void SetATCEnable(bool Enable);
@@ -114,8 +130,8 @@ public:
 	static void SetViewMatrix(DirectX::SimpleMath::Matrix* ViewMatrix);
 	static void SetProjectionMatrix(DirectX::SimpleMath::Matrix* ProjectionMatrix);
 
-	static ID3D11Device* GetDevice( void ){ return m_pDevice; }
-	static ID3D11DeviceContext* GetDeviceContext( void ){ return m_pDeviceContext; }
+	static ID3D11Device* GetDevice(void) { return m_pDevice; }
+	static ID3D11DeviceContext* GetDeviceContext(void) { return m_pDeviceContext; }
 
 	static HRESULT CompileShader(const char* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, void** ppShaderObject, int* pShaderObjectSize);
 	static HRESULT CreateVertexShader(ID3D11VertexShader** ppVertexShader, ID3D11InputLayout** ppVertexLayout, D3D11_INPUT_ELEMENT_DESC* pLayout, unsigned int numElements, const char* szFileName);
@@ -127,7 +143,11 @@ public:
 
 	static bool CreateConstantBuffer(unsigned int bytesize, ID3D11Buffer** pConstantBuffer);
 	static bool CreateConstantBufferWrite(unsigned int bytesize, ID3D11Buffer** pConstantBuffer);
+
 	static void SetLight(LIGHT light);
+	static void SetMaterial(MATERIAL Material);
+	static void SetUV(float u, float v, float uw, float vh);
+
 	//=============================================================================
 	// ブレンド ステート設定
 	//=============================================================================

@@ -7,13 +7,13 @@
         ObjectType="SimplePlane"
         Tag = "Floor"
         FileName=""
-        Texture=""
+        Texture="asset/texture/floor.jpg"
 
         PosX="0.0"  PosY="0.0"  PosZ="0.0"
         RotX="0.0"  RotY="0.0" RotZ="0.0"
         SclX="30.0"  SclY="1.0"  SclZ="30.0"
 
-        ColR="0.4" ColG="0.4" ColB="0.6" ColA="1.0"
+        ColR="1" ColG="1" ColB="1" ColA="1.0"
     />
     <Object 
     	ID="2"

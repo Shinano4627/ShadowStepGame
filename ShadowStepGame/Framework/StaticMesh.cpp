@@ -1,87 +1,163 @@
-#include	"StaticMesh.h"
-#include	"AssimpPerse.h"
+// ===================================================================
+// StaticMesh.cpp
+// Assimpを使った静的メッシュクラスの実装（ResourceManager対応版）
+// ===================================================================
 
-void StaticMesh::Load(std::string filename, std::string texturedirectory)
+#include "StaticMesh.h"
+#include "AssimpPerse.h"
+#include <iostream>
+
+// ===================================================================
+// メッシュ読み込み
+// ===================================================================
+void StaticMesh::Load(const std::string& filename, const std::string& textureDirectory)
 {
-	std::vector<AssimpPerse::SUBSET> subsets{};					// サブセット情報
-	std::vector<std::vector<AssimpPerse::VERTEX>> vertices{};	// 頂点データ（メッシュ単位）
-	std::vector<std::vector<unsigned int>> indices{};			// インデックスデータ（メッシュ単位）
-	std::vector<AssimpPerse::MATERIAL> materials{};				// マテリアル
-	std::vector<std::unique_ptr<Texture>> embededtextures{};	// 内蔵テクスチャ群
+    std::vector<AssimpPerse::SUBSET> subsets{};
+    std::vector<std::vector<AssimpPerse::VERTEX>> vertices{};
+    std::vector<std::vector<unsigned int>> indices{};
+    std::vector<AssimpPerse::MATERIAL> materials{};
 
-	// assimpを使用してモデルデータを取得
-	AssimpPerse::GetModelData(filename, texturedirectory);
+    // assimpを使用してモデルデータを取得
+    AssimpPerse::GetModelData(filename, textureDirectory);
 
-	subsets = AssimpPerse::GetSubsets();		// サブセット情報取得
-	vertices = AssimpPerse::GetVertices();		// 頂点データ（メッシュ単位）
-	indices = AssimpPerse::GetIndices();		// インデックスデータ（メッシュ単位）
-	materials = AssimpPerse::GetMaterials();	// マテリアル情報取得
+    subsets = AssimpPerse::GetSubsets();      // サブセット情報取得
+    vertices = AssimpPerse::GetVertices();    // 頂点データ（メッシュ単位）
+    indices = AssimpPerse::GetIndices();      // インデックスデータ（メッシュ単位）
+    materials = AssimpPerse::GetMaterials();  // マテリアル情報取得
 
-	m_textures = AssimpPerse::GetTextures();	// テクスチャ情報取得	
+    // ===================================================================
+    // テクスチャをResourceManager経由で読み込み
+    // ===================================================================
+    auto assimpTextures = AssimpPerse::GetTextures();
+    m_TextureHandles.clear();
+    m_TextureHandles.reserve(assimpTextures.size());
 
-	// 頂点データ作成
-	for (const auto& mv : vertices)
-	{
-		for (auto& v : mv)
-		{
-			VERTEX_3D vertex{};
-			vertex.position = DirectX::SimpleMath::Vector3(v.pos.x, v.pos.y, v.pos.z);
-			vertex.normal = DirectX::SimpleMath::Vector3(v.normal.x, v.normal.y, v.normal.z);
-			vertex.uv = DirectX::SimpleMath::Vector2(v.texcoord.x, v.texcoord.y);
-			vertex.color = DirectX::SimpleMath::Color(v.color.r, v.color.g, v.color.b, v.color.a);
+    for (size_t i = 0; i < assimpTextures.size(); i++)
+    {
+        if (assimpTextures[i])
+        {
+            // テクスチャが既に読み込まれている場合
+            // （埋め込みテクスチャなど）
+            std::string texturePath = filename + "_EmbeddedTexture_" + std::to_string(i);
 
-			m_vertices.emplace_back(vertex);
-		}
-	}
+            // ResourceHandleでラップ
+            ResourceHandle<Texture> handle(
+                std::move(assimpTextures[i]),
+                texturePath
+            );
 
-	// インデックスデータ作成
-	for (const auto& mi : indices)
-	{
-		for (auto& index : mi)
-		{
-			m_indices.emplace_back(index);
-		}
-	}
+            m_TextureHandles.push_back(handle);
+        }
+        else
+        {
+            // 空のハンドル
+            m_TextureHandles.push_back(ResourceHandle<Texture>());
+        }
+    }
 
-	// サブセットデータ作成
-	for (const auto& sub : subsets)
-	{
-		SUBSET subset{};
-		subset.VertexBase = sub.VertexBase; // 頂点の開始位置
-		subset.VertexNum = sub.VertexNum; // サブセット内の頂点数
-		subset.IndexBase = sub.IndexBase;  // インデックスの開始位置
-		subset.IndexNum = sub.IndexNum; // サブセット内のインデックス数
-		subset.MtrlName = sub.mtrlname; // マテリアル名
-		subset.MaterialIdx = sub.materialindex; // マテリアル配列のインデックス
-		m_subsets.emplace_back(subset);
-	}
+    // ===================================================================
+    // 頂点データ作成
+    // ===================================================================
+    for (const auto& mv : vertices)
+    {
+        for (const auto& v : mv)
+        {
+            VERTEX_3D vertex{};
+            vertex.position = DirectX::SimpleMath::Vector3(v.pos.x, v.pos.y, v.pos.z);
+            vertex.normal = DirectX::SimpleMath::Vector3(v.normal.x, v.normal.y, v.normal.z);
+            vertex.uv = DirectX::SimpleMath::Vector2(v.texcoord.x, v.texcoord.y);
+            vertex.color = DirectX::SimpleMath::Color(v.color.r, v.color.g, v.color.b, v.color.a);
 
-	// マテリアルデータ作成
-	for (const auto& m : materials)
-	{
-		MATERIAL material{};
-		material.Ambient = DirectX::SimpleMath::Color(
-			m.Ambient.r, m.Ambient.g, m.Ambient.b, m.Ambient.a);
-		material.Diffuse = DirectX::SimpleMath::Color(
-			m.Diffuse.r, m.Diffuse.g, m.Diffuse.b, m.Diffuse.a);
+            m_vertices.emplace_back(vertex);
+        }
+    }
 
-		material.Specular = DirectX::SimpleMath::Color(
-			m.Specular.r, m.Specular.g, m.Specular.b, m.Specular.a);
-		material.Emission = DirectX::SimpleMath::Color(
-			m.Emission.r, m.Emission.g, m.Emission.b, m.Emission.a);
-		material.Shiness = m.Shiness;
+    // ===================================================================
+    // インデックスデータ作成
+    // ===================================================================
+    for (const auto& mi : indices)
+    {
+        for (const auto& index : mi)
+        {
+            m_indices.emplace_back(index);
+        }
+    }
 
-		if (m.texturename.empty())
-		{
-			material.TextureEnable = FALSE;
-			m_texturenames.emplace_back("");
-		}
-		else
-		{
-			material.TextureEnable = TRUE;
-			m_texturenames.emplace_back(m.texturename);
-		}
+    // ===================================================================
+    // サブセットデータ作成
+    // ===================================================================
+    for (const auto& sub : subsets)
+    {
+        SUBSET subset{};
+        subset.VertexBase = sub.VertexBase;       // 頂点の開始位置
+        subset.VertexNum = sub.VertexNum;         // サブセット内の頂点数
+        subset.IndexBase = sub.IndexBase;         // インデックスの開始位置
+        subset.IndexNum = sub.IndexNum;           // サブセット内のインデックス数
+        subset.MtrlName = sub.mtrlname;           // マテリアル名
+        subset.MaterialIdx = sub.materialindex;   // マテリアル配列のインデックス
+        m_Subsets.emplace_back(subset);
+    }
 
-		m_materials.emplace_back(material);
-	}
+    // ===================================================================
+    // マテリアルデータ作成
+    // ===================================================================
+    for (const auto& m : materials)
+    {
+        MATERIAL material{};
+        material.Ambient = DirectX::SimpleMath::Color(
+            m.Ambient.r, m.Ambient.g, m.Ambient.b, m.Ambient.a);
+        material.Diffuse = DirectX::SimpleMath::Color(
+            m.Diffuse.r, m.Diffuse.g, m.Diffuse.b, m.Diffuse.a);
+        material.Specular = DirectX::SimpleMath::Color(
+            m.Specular.r, m.Specular.g, m.Specular.b, m.Specular.a);
+        material.Emission = DirectX::SimpleMath::Color(
+            m.Emission.r, m.Emission.g, m.Emission.b, m.Emission.a);
+        material.Shininess = m.Shininess;
+
+        if (m.texturename.empty())
+        {
+            material.TextureEnable = FALSE;
+            m_TextureNames.emplace_back("");
+        }
+        else
+        {
+            material.TextureEnable = TRUE;
+            m_TextureNames.emplace_back(m.texturename);
+        }
+
+        m_Materials.emplace_back(material);
+    }
+
+    std::cout << "[StaticMesh] Loaded: " << filename << std::endl;
+    std::cout << "  Vertices: " << m_vertices.size() << std::endl;
+    std::cout << "  Indices: " << m_indices.size() << std::endl;
+    std::cout << "  Subsets: " << m_Subsets.size() << std::endl;
+    std::cout << "  Materials: " << m_Materials.size() << std::endl;
+    std::cout << "  Textures: " << m_TextureHandles.size() << std::endl;
+}
+
+// ===================================================================
+// 互換性のためのテクスチャ取得（非推奨）
+// ===================================================================
+std::vector<std::unique_ptr<Texture>> StaticMesh::GetTextures()
+{
+    std::vector<std::unique_ptr<Texture>> result;
+    result.reserve(m_TextureHandles.size());
+
+    for (auto& handle : m_TextureHandles)
+    {
+        if (handle)
+        {
+            // 新しいTextureインスタンスを作成してコピー
+            // 注意: これは効率的ではないため、GetTextureHandles()の使用を推奨
+            result.push_back(std::make_unique<Texture>());
+            // TODO: Textureクラスにコピーコンストラクタが必要
+        }
+        else
+        {
+            result.push_back(nullptr);
+        }
+    }
+
+    return result;
 }

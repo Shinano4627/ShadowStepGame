@@ -53,6 +53,13 @@ void SceneBase::MakeObjectList(const char* _stage)
 				loadModel(newObject, object);
 				std::cout << "[" << _stage << "] " << "OBJ Model loaded successfully!" << std::endl;
 			}
+			// UIコンポーネント（UI層）
+			else if (tag == &tag_2D)
+			{
+				auto* renderer = newObject->AddMeshComponent<Texture2D>(
+					object.texture,
+					Vector4(object.color));
+			}
 		}
 
 		m_GameObjects.push_back(std::move(obj));
@@ -77,34 +84,38 @@ void loadModel(GameObject* modelObject, const ObjectData& objectData)
 		auto* meshRenderer = modelObject->GetMeshComponent<MeshRendererComponent>();
 		meshRenderer->SetRenderLayer(RenderLayer::WORLD);
 
-		// メッシュ読み込み
-		auto mesh = M_RESOURCE.LoadMesh(objectData.fileName, objectData.texture);
+		// ResourceManager経由でメッシュ読み込み
+		auto meshHandle = M_RESOURCE.LoadMesh(objectData.fileName, objectData.texture);
 
-		if (mesh)
+		if (meshHandle)
 		{
-			meshRenderer->SetMesh(mesh);
+			// shared_ptrとして取得してセット
+			meshRenderer->SetMesh(meshHandle.GetShared());
 
-			// シェーダー設定
-			auto shader = M_RESOURCE.LoadShader("shader/litTextureVS.hlsl", "shader/litTexturePS.hlsl");
-			if (shader)
+			// ResourceManager経由でシェーダー読み込み
+			auto shaderHandle = M_RESOURCE.LoadShader(
+				"shader/litTextureVS.hlsl",
+				"shader/litTexturePS.hlsl");
+
+			if (shaderHandle)
 			{
-				meshRenderer->SetShader(shader);
+				meshRenderer->SetShader(shaderHandle.GetShared());
 			}
 
 			modelLoaded = true;
 		}
 		else
 		{
-#ifdef _DEBUG	
-			assert(mesh);	// デバッグ時のみメッシュ読み込み失敗にエラーを出す
-#endif	// _DEBUG
-			std::cerr << "[SceneResult] Model file not found or failed to load" << std::endl;
+#ifdef _DEBUG   
+			std::cerr << "[SceneBase] Model file not found or failed to load: "
+				<< objectData.fileName << std::endl;
+#endif  // _DEBUG
 			modelObject->RemoveMeshComponent<MeshRendererComponent>();
 		}
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << "[SceneResult] Exception loading model: " << e.what() << std::endl;
+		std::cerr << "[SceneBase] Exception loading model: " << e.what() << std::endl;
 		// MeshRendererComponentを削除（もし追加されていたら）
 		if (modelObject->GetMeshComponent<MeshRendererComponent>())
 		{
@@ -117,22 +128,23 @@ void loadModel(GameObject* modelObject, const ObjectData& objectData)
 	// ===================================================================
 	if (!modelLoaded)
 	{
-		std::cout << "[SceneResult] Using fallback: SimpleCubeRenderer" << std::endl;
+		std::cout << "[SceneBase] Using fallback: SimpleCubeRenderer" << std::endl;
 
-		auto* cubeRenderer = modelObject->AddMeshComponent<SimpleCubeRendererComponent>(Color(1, 1, 0, 1)); // 黄色
+		auto* cubeRenderer = modelObject->AddMeshComponent<SimpleCubeRendererComponent>(
+			Color(1, 1, 0, 1));  // 黄色（警告色）
 		cubeRenderer->SetRenderLayer(RenderLayer::WORLD);
 	}
 }
 
 // ===================================================================
-// GameObjectリスト削除
+// GameObjectリスト保存
 // ===================================================================
 void SceneBase::SaveObjectData(const char* _stage)
 {
 	XmlRW xml;
 	std::vector<ObjectData> objects;
 
-	//　全データをコンポーネントデータに変換してリストに格納
+	// 全データをObjectDataに変換してリストに格納
 	for (auto& gameObject : m_GameObjects)
 	{
 		ObjectData object;
@@ -149,17 +161,25 @@ void SceneBase::SaveObjectData(const char* _stage)
 		{
 			object.objectType = strSimpleCube;
 			color = component->GetColor();
+			object.texture = component->GetTexturePath();  // テクスチャパス取得
 		}
-		else if(auto component = gameObject->GetMeshComponent<SimplePlaneRendererComponent>())
+		else if (auto component = gameObject->GetMeshComponent<SimplePlaneRendererComponent>())
 		{
 			object.objectType = strSimplePlane;
 			color = component->GetColor();
+			object.texture = component->GetTexturePath();  // テクスチャパス取得
 		}
 		else if (auto component = gameObject->GetMeshComponent<MeshRendererComponent>())
 		{
 			object.objectType = strModel;
-			object.fileName = component->GetModelPath();	// モデルデータ上書き
-			object.texture = component->GetTexturePath();	// テクスチャデータ上書き
+			object.fileName = component->GetModelPath();     // モデルデータ
+			object.texture = component->GetTexturePath();    // テクスチャデータ
+		}
+		else if (auto component = gameObject->GetMeshComponent<Texture2D>())
+		{
+			object.objectType = str2D;
+			object.texture = component->GetTexturePath();    // テクスチャデータ
+			color = component->GetColor();
 		}
 		else
 		{

@@ -1,14 +1,14 @@
 #pragma once
 #include	<vector>
 #include	<wrl/client.h>
-#include	"renderer.h"
+#include	"Renderer.h"
 
 using Microsoft::WRL::ComPtr;
 
-//-----------------------------------------------------------------------------
+//=======================================
 //VertexBufferクラス
-//-----------------------------------------------------------------------------
-template <typename T> class VertexBuffer{
+//=======================================
+template <typename T> class VertexBuffer {
 
 	ComPtr<ID3D11Buffer> m_VertexBuffer;
 
@@ -49,7 +49,7 @@ public:
 		//頂点データ書き換え
 		D3D11_MAPPED_SUBRESOURCE msr;
 		HRESULT hr = Renderer::GetDeviceContext()->Map(
-			m_VertexBuffer.Get(), 
+			m_VertexBuffer.Get(),
 			0,
 			D3D11_MAP_WRITE_DISCARD, 0, &msr);
 

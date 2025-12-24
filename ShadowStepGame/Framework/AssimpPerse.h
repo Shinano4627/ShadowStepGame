@@ -32,7 +32,7 @@ namespace AssimpPerse
 		aiColor4D	Diffuse;		// ディフューズ
 		aiColor4D	Specular;		// スペキュラ
 		aiColor4D	Emission;		// エミッション
-		float		Shiness;		// シャイネス
+		float		Shininess;		// シャイネス
 		std::string texturename;	// テクスチャ名
 	};
 

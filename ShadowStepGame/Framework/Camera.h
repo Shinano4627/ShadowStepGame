@@ -17,7 +17,7 @@ private:
 public:
 	void Init();
 	void Update();
-	void SetCamera();
+	void SetCamera(int mode = 0);
 	void Uninit();
 
 	// ================================================================== =
@@ -25,7 +25,7 @@ public:
 	// ===================================================================
 
 	// 位置の設定・取得
-	void SetPosition(const DirectX::SimpleMath::Vector3 & position) { m_Position = position; }
+	void SetPosition(const DirectX::SimpleMath::Vector3& position) { m_Position = position; }
 	const DirectX::SimpleMath::Vector3& GetPosition() const { return m_Position; }
 
 	// ターゲット（注視点）の設定・取得

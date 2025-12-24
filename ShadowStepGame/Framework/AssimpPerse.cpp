@@ -151,7 +151,7 @@ namespace AssimpPerse
 			mtrl.Diffuse = diffuse;
 			mtrl.Specular = specular;
 			mtrl.Emission = emission;
-			mtrl.Shiness = shiness;
+			mtrl.Shininess = shiness;
 			if (texpaths.size() == 0)
 			{
 				mtrl.texturename = "";
