@@ -214,6 +214,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="MapSystemComponent.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneProto.h" />
+    <ClInclude Include="UnitSystemComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\AABBCollider.cpp" />
