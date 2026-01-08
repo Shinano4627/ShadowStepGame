@@ -25,26 +25,51 @@ void Camera::Update()
 //=======================================
 //描画処理
 //=======================================
-void Camera::SetCamera()
+void Camera::SetCamera(int mode)
 {
-	// ビュー変換後列作成
-	Vector3 up = Vector3(0.0f, 1.0f, 0.0f);
-	m_ViewMatrix = DirectX::XMMatrixLookAtLH(m_Position, m_Target, up); //左手系
+	// 3D
+	if (mode == 0)
+	{
+		// ビュー変換後列作成
+		Vector3 up = Vector3(0.0f, 1.0f, 0.0f);
+		m_ViewMatrix = DirectX::XMMatrixLookAtLH(m_Position, m_Target, up); //左手系
 
-	Renderer::SetViewMatrix(&m_ViewMatrix);
+		Renderer::SetViewMatrix(&m_ViewMatrix);
 
-	//プロジェクション行列の生成
-	constexpr float fieldOfView = DirectX::XMConvertToRadians(45.0f);    // 視野角
-	
-	float aspectRatio = static_cast<float>(Application::GetWidth()) / static_cast<float>(Application::GetHeight());	// アスペクト比	
-	float nearPlane = 1.0f;       // ニアクリップ
-	float farPlane = 1000.0f;      // ファークリップ
+		//プロジェクション行列の生成
+		constexpr float fieldOfView = DirectX::XMConvertToRadians(45.0f);    // 視野角
 
-	//プロジェクション行列の生成
-	Matrix projectionMatrix;
-	projectionMatrix =  DirectX::XMMatrixPerspectiveFovLH( fieldOfView,  aspectRatio,  nearPlane,  farPlane);	//左手系
+		float aspectRatio = static_cast<float>(Application::GetWidth()) / static_cast<float>(Application::GetHeight());	// アスペクト比	
+		float nearPlane = 1.0f;       // ニアクリップ
+		float farPlane = 1000.0f;      // ファークリップ
 
-	Renderer::SetProjectionMatrix(&projectionMatrix);
+		//プロジェクション行列の生成
+		Matrix projectionMatrix;
+		projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fieldOfView, aspectRatio, nearPlane, farPlane);	//左手系
+
+		Renderer::SetProjectionMatrix(&projectionMatrix);
+	}
+	else if (mode == 1)
+	{
+		// ビュー変換後列作成
+		Vector3 pos =	Vector3(0.0f, 0.0f, -10.0f);
+		Vector3 tgt =		Vector3(0.0f, 0.0f, 1.0f);
+		Vector3 up =		Vector3(0.0f, 1.0f, 0.0f);
+		m_ViewMatrix = DirectX::XMMatrixLookAtLH(pos, tgt, up); 
+		Renderer::SetViewMatrix(&m_ViewMatrix);
+
+		//プロジェクション行列の生成
+		float nearPlane = 1.0f;       // ニアクリップ
+		float farPlane = 1000.0f;      // ファークリップ
+		Matrix projectionMatrix = 
+			DirectX::XMMatrixOrthographicLH(
+				static_cast<float>(Application::GetWidth()), 
+				static_cast<float>(Application::GetHeight()), 
+				nearPlane, 
+				farPlane);
+		projectionMatrix = DirectX::XMMatrixTranspose(projectionMatrix);	// 転置行列への変換
+		Renderer::SetProjectionMatrix(&projectionMatrix);
+	}
 }
 
 

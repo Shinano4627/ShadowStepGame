@@ -1,6 +1,6 @@
 // ===================================================================
 // MeshRendererComponent.h
-// GameObject‚É•`‰æ‹@”\‚ğ’Ç‰Á‚·‚éƒRƒ“ƒ|[ƒlƒ“ƒg
+// GameObjectã«æç”»æ©Ÿèƒ½ã‚’è¿½åŠ ã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆï¼ˆResourceManagerå¯¾å¿œç‰ˆï¼‰
 // ===================================================================
 #pragma once
 #include "GameObject.h"
@@ -9,110 +9,169 @@
 #include "Material.h"
 #include "MeshRenderer.h"
 #include "Renderer.h"
+#include "ResourceManager.h"
 #include <memory>
 #include <vector>
 
 // ===================================================================
 // MeshRendererComponent
-// GameObject‚É‚RDƒƒbƒVƒ…‚Ì•`‰æ‹@”\‚ğ’Ç‰Á
+// GameObjectã«ï¼“Dãƒ¡ãƒƒã‚·ãƒ¥ã®æç”»æ©Ÿèƒ½ã‚’è¿½åŠ 
 // ===================================================================
 class MeshRendererComponent : public MeshComponent
 {
 private:
     // ===================================================================
-    // ƒƒ“ƒo•Ï”
+    // ãƒ¡ãƒ³ãƒå¤‰æ•°
     // ===================================================================
     
-    // ƒŠƒ\[ƒX(ResourceManager‚©‚çæ“¾‚µ‚½shared_ptr)
-    // •¡”Object‚Å“¯‚¶ƒŠƒ\[ƒX‚ğ‹¤—L
-    std::shared_ptr<StaticMesh> m_Mesh; // •`‰æ‚·‚éƒƒbƒVƒ…ƒf[ƒ^
-    std::shared_ptr<Shader> m_Shader;   // g—p‚·‚éƒVƒF[ƒ_
+    // ãƒªã‚½ãƒ¼ã‚¹(ResourceManagerã‹ã‚‰å–å¾—ã—ãŸshared_ptr)
+    // è¤‡æ•°Objectã§åŒã˜ãƒªã‚½ãƒ¼ã‚¹ã‚’å…±æœ‰
+    // ãƒªã‚½ãƒ¼ã‚¹ãƒãƒ³ãƒ‰ãƒ«ï¼ˆResourceManagerçµŒç”±ã§ç®¡ç†ï¼‰
+    ResourceHandle<StaticMesh> m_MeshHandle;
+    ResourceHandle<Shader> m_ShaderHandle;
 
-    // ƒ}ƒeƒŠƒAƒ‹(ƒTƒuƒZƒbƒg‚²‚Æ‚É)
+    // ãƒãƒ†ãƒªã‚¢ãƒ«ï¼ˆã‚µãƒ–ã‚»ãƒƒãƒˆã”ã¨ã«ï¼‰
     std::vector<std::unique_ptr<Material>> m_Materials;
 
-    // •`‰æƒwƒ‹ƒp[(’¸“_EƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ÌŠÇ—)
+    // æç”»ãƒ˜ãƒ«ãƒ‘ãƒ¼ï¼ˆé ‚ç‚¹ãƒ»ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ç®¡ç†ï¼‰
     MeshRenderer m_Renderer;
 
-    // ƒ‚ƒfƒ‹ƒf[ƒ^ƒpƒX
-    std::string m_modelPath;
+    // ãƒ¢ãƒ‡ãƒ«ãƒ‡ãƒ¼ã‚¿ãƒ‘ã‚¹
+    std::string m_ModelPath;
 
-    // ƒeƒNƒXƒ`ƒƒƒf[ƒ^ƒpƒX
-    std::string m_texturePath;
+    // ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãƒ‘ã‚¹
+    std::string m_TexturePath;
 
-    // ‰Šú‰»Ï‚İƒtƒ‰ƒO
+    // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
+    std::string m_curAnimation;
+    int m_Frame = 0;
+    
+    // åˆæœŸåŒ–æ¸ˆã¿ãƒ•ãƒ©ã‚°
     bool m_Initialized = false;
 
 public:
     // ===================================================================
-    // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+    // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     // ===================================================================
-    MeshRendererComponent(std::string _modelPath, std::string _texturePath)
-        : m_Initialized(false),
-        m_modelPath(_modelPath),
-        m_texturePath(_texturePath)
-        {}
+    MeshRendererComponent(
+        const std::string& modelPath,
+        const std::string& texturePath = "")
+        : m_Initialized(false)
+        , m_ModelPath(modelPath)
+        , m_TexturePath(texturePath)
+    {
+        SetRenderLayer(RenderLayer::WORLD);
+    }
 
     // ===================================================================
-    // ‰Šú‰»
+    // åˆæœŸåŒ–
     // ===================================================================
     void Init() override
     {
-        // ƒƒbƒVƒ…‚ªƒZƒbƒg‚³‚ê‚Ä‚ê‚ÎƒŒƒ“ƒ_ƒ‰[‚ğ‰Šú‰»
-        if (m_Mesh)
+        // ãƒ¡ãƒƒã‚·ãƒ¥ãŒã‚»ãƒƒãƒˆã•ã‚Œã¦ã„ã‚Œã°ãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼ã‚’åˆæœŸåŒ–
+        if (m_MeshHandle)
         {
-            // MeshRenderer‚ğ‰Šú‰»i’¸“_EƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ğì¬j
-            m_Renderer.Init(*m_Mesh);
+            auto* mesh = m_MeshHandle.Get();
+            if (mesh)
+            {
+                // MeshRendererã‚’åˆæœŸåŒ–ï¼ˆé ‚ç‚¹ãƒ»ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ä½œæˆï¼‰
+                m_Renderer.Init(*mesh);
 
-            // ƒ}ƒeƒŠƒAƒ‹‚ğì¬
-            CreateMaterials();
+                // ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’ä½œæˆ
+                CreateMaterials();
 
-            // ‰Šú‰»Ï‚İƒtƒ‰ƒO‚ğ—§‚Ä‚é
-            m_Initialized = true;
+                // åˆæœŸåŒ–æ¸ˆã¿ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
+                m_Initialized = true;
+            }
         }
     }
 
     // ===================================================================
-    // ƒƒbƒVƒ…İ’è
+    // ãƒ¡ãƒƒã‚·ãƒ¥è¨­å®šï¼ˆshared_ptrç‰ˆï¼‰
     // ===================================================================
     void SetMesh(std::shared_ptr<StaticMesh> mesh)
     {
-        m_Mesh = mesh;
-
-        if (m_Mesh)
+        if (!mesh)
         {
-            // MeshRenderer‚ğ‰Šú‰»
-            m_Renderer.Init(*m_Mesh);
+            std::cerr << "[MeshRendererComponent] Null mesh provided" << std::endl;
+            return;
+        }
 
-            // ƒ}ƒeƒŠƒAƒ‹‚ğì¬
-            CreateMaterials();
-            
-            // ‰Šú‰»Ï‚İƒtƒ‰ƒO‚ğ—§‚Ä‚é
-            m_Initialized = true;
+        // ResourceHandleã‚’ä½œæˆï¼ˆæ—¢å­˜ã®shared_ptrã‚’ãƒ©ãƒƒãƒ—ï¼‰
+        m_MeshHandle = ResourceHandle<StaticMesh>(mesh, m_ModelPath);
+
+        // MeshRendererã‚’åˆæœŸåŒ–
+        m_Renderer.Init(*mesh);
+
+        // ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’ä½œæˆ
+        CreateMaterials();
+
+        // åˆæœŸåŒ–æ¸ˆã¿ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
+        m_Initialized = true;
+    }
+
+    // ===================================================================
+    // ãƒ¡ãƒƒã‚·ãƒ¥è¨­å®šï¼ˆResourceHandleç‰ˆï¼‰
+    // ===================================================================
+    void SetMesh(const ResourceHandle<StaticMesh>& meshHandle)
+    {
+        m_MeshHandle = meshHandle;
+
+        if (m_MeshHandle)
+        {
+            auto* mesh = m_MeshHandle.Get();
+            if (mesh)
+            {
+                // MeshRendererã‚’åˆæœŸåŒ–
+                m_Renderer.Init(*mesh);
+
+                // ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’ä½œæˆ
+                CreateMaterials();
+
+                // åˆæœŸåŒ–æ¸ˆã¿ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
+                m_Initialized = true;
+            }
         }
     }
 
     // ===================================================================
-    // ƒVƒF[ƒ_[İ’è
+    // ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼è¨­å®šï¼ˆshared_ptrç‰ˆï¼‰
     // ===================================================================
     
-    // g—p‚·‚éƒVƒF[ƒ_[‚ğİ’è
+    // ä½¿ç”¨ã™ã‚‹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’è¨­å®š
     void SetShader(std::shared_ptr<Shader> shader)
     {
-        m_Shader = shader;
+        if (!shader)
+        {
+            std::cerr << "[MeshRendererComponent] Null shader provided" << std::endl;
+            return;
+        }
+
+        // ResourceHandleã‚’ä½œæˆ
+        m_ShaderHandle = ResourceHandle<Shader>(shader, "CustomShader");
     }
 
-    // g—p‚³‚ê‚Ä‚¢‚éƒVƒF[ƒ_‚ğæ“¾
+    // ===================================================================
+    // ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼è¨­å®šï¼ˆResourceHandleç‰ˆï¼‰
+    // ===================================================================
+    void SetShader(const ResourceHandle<Shader>& shaderHandle)
+    {
+        m_ShaderHandle = shaderHandle;
+    }
+
+    // ===================================================================
+    // ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼å–å¾—
+    // ===================================================================
     std::shared_ptr<Shader> GetShader() const
     {
-        return m_Shader;
+        return m_ShaderHandle.GetShared();
     }
 
     // ===================================================================
-    // ƒ}ƒeƒŠƒAƒ‹æ“¾
+    // ãƒãƒ†ãƒªã‚¢ãƒ«å–å¾—
     // ===================================================================
-    
-    // w’è‚µ‚½ƒCƒ“ƒfƒbƒNƒX‚Ìƒ}ƒeƒŠƒAƒ‹‚ğæ“¾
+
+    // æŒ‡å®šã—ãŸã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’å–å¾—
     Material* GetMaterial(size_t index)
     {
         if (index < m_Materials.size())
@@ -121,104 +180,164 @@ public:
         }
         return nullptr;
     }
-    
-    // ‚·‚×‚Ä‚Ìƒ}ƒeƒŠƒAƒ‹‚ğæ“¾
+
+    // ã™ã¹ã¦ã®ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’å–å¾—
     const std::vector<std::unique_ptr<Material>>& GetMaterials() const
     {
         return m_Materials;
     }
 
     // ===================================================================
-    // ƒf[ƒ^æ“¾
+    // ãƒ‡ãƒ¼ã‚¿å–å¾—
     // ===================================================================
-    std::string GetModelPath() { return m_modelPath; }     // ƒ‚ƒfƒ‹ƒf[ƒ^‚ÌŠi”[ƒpƒX
-    std::string GetTexturePath() { return m_texturePath; }    // ƒeƒNƒXƒ`ƒƒƒf[ƒ^ƒpƒX
+    const std::string& GetModelPath() const { return m_ModelPath; }
+    const std::string& GetTexturePath() const { return m_TexturePath; }
 
     // ===================================================================
-    // •`‰æˆ—
+    // æ›´æ–°å‡¦ç†
+    // ===================================================================
+    void Update() override
+    {
+        auto* mesh = m_MeshHandle.Get();
+        if (!mesh) return;
+        
+        m_Frame++;
+        mesh->UpdateAnimation(m_curAnimation.c_str(), m_Frame);
+    }
+
+    // ===================================================================
+    // æç”»å‡¦ç†
     // ===================================================================
     void Draw(Camera* camera) override
     {
-        // ‰Šú‰»ƒ`ƒFƒbƒN
-        if (!m_Initialized || !m_Mesh || !m_Shader)
+        // åˆæœŸåŒ–ãƒã‚§ãƒƒã‚¯
+        if (!m_Initialized || !m_MeshHandle || !m_ShaderHandle)
         {
             return;
         }
 
-        // Transform‚©‚çƒ[ƒ‹ƒhs—ñ‚ğæ“¾
+        auto* mesh = m_MeshHandle.Get();
+        auto* shader = m_ShaderHandle.Get();
+
+        if (!mesh || !shader)
+        {
+            return;
+        }
+
+        // ã‚«ãƒ¡ãƒ©è¨­å®šï¼ˆWORLDå±¤ã®ã¿ï¼‰
+        if (camera && GetRenderLayer() == RenderLayer::WORLD)
+        {
+            camera->SetCamera(0); // 3Dãƒ¢ãƒ¼ãƒ‰
+        }
+
+        // Transformã‹ã‚‰ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã‚’å–å¾—
         Matrix worldMatrix = m_pOwner->GetTransform().GetWorldMatrix();
-        // GPU‚Éİ’è
+        // GPUã«è¨­å®š
         Renderer::SetWorldMatrix(&worldMatrix);
 
-        // ƒVƒF[ƒ_[İ’è
-        m_Shader->SetGPU();
+        // ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼è¨­å®š
+        shader->SetGPU();
 
-        // •`‰æ‘Oˆ—
+        // ãƒœãƒ¼ãƒ³è¡Œåˆ—ã‚’GPUã«è¨­å®š
+        Renderer::ResetBoneMatrix();
+        const auto& boneMatrices = mesh->GetBoneMatrices();
+        if (boneMatrices.size() > 0)
+        {
+            Renderer::SetBoneMatrix(boneMatrices);
+        }  
+
+        // æç”»å‰å‡¦ç†
         m_Renderer.BeforeDraw();
 
-        // ƒTƒuƒZƒbƒg‚²‚Æ‚É•`‰æ
-        const auto& subsets = m_Mesh->GetSubsets();     // ƒTƒuƒZƒbƒgî•ñ‚ğæ“¾
-        const auto& textures = m_Mesh->GetTextures();   // ƒeƒNƒXƒ`ƒƒƒŠƒXƒg‚ğæ“¾
+        // ã‚µãƒ–ã‚»ãƒƒãƒˆã”ã¨ã«æç”»
+        const auto& subsets = mesh->GetSubsets();
+        const auto& textureHandles = mesh->GetTextureHandles();
 
         for (size_t i = 0; i < subsets.size(); i++)
         {
             const auto& subset = subsets[i];
 
-            // ƒ}ƒeƒŠƒAƒ‹‚ğGPU‚Éİ’è
+            // ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’GPUã«è¨­å®š
             if (i < m_Materials.size())
             {
                 m_Materials[i]->SetGPU();
             }
 
-            // ƒeƒNƒXƒ`ƒƒ‚ğGPU‚Éİ’è
-            if (subset.MaterialIdx < textures.size() && textures[subset.MaterialIdx])
+            // ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’GPUã«è¨­å®š
+            if (subset.MaterialIdx < textureHandles.size() && textureHandles[subset.MaterialIdx])
             {
-                textures[subset.MaterialIdx]->SetGPU();
+                auto* texture = textureHandles[subset.MaterialIdx].Get();
+                if (texture)
+                {
+                    texture->SetGPU();
+                }
             }
 
-            // ƒTƒuƒZƒbƒg•`‰æ
+            // ã‚µãƒ–ã‚»ãƒƒãƒˆæç”»
             m_Renderer.DrawSubset(
-                subset.IndexNum,    // •`‰æ‚·‚éƒCƒ“ƒfƒbƒNƒX”
-                subset.IndexBase,   // ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ÌŠJnˆÊ’u
-                subset.VertexBase   // ’¸“_ƒoƒbƒtƒ@‚ÌŠJnˆÊ’u
+                subset.IndexNum,    // æç”»ã™ã‚‹ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹æ•°
+                subset.IndexBase,   // ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®é–‹å§‹ä½ç½®
+                subset.VertexBase   // é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®é–‹å§‹ä½ç½®
             );
         }
     }
 
     // ===================================================================
-    // I—¹ˆ—
+    // çµ‚äº†å‡¦ç†
     // ===================================================================
     void Uninit() override
     {
-        // ƒ}ƒeƒŠƒAƒ‹‚ğƒNƒŠƒA
+        // ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’ã‚¯ãƒªã‚¢
         m_Materials.clear();
 
-        // ƒƒbƒVƒ…‚ÆƒVƒF[ƒ_[‚ğƒŠƒZƒbƒg
-        m_Mesh.reset();
-        m_Shader.reset();
+        // ãƒªã‚½ãƒ¼ã‚¹ãƒãƒ³ãƒ‰ãƒ«ã‚’ãƒªã‚»ãƒƒãƒˆ
+        m_MeshHandle = ResourceHandle<StaticMesh>();
+        m_ShaderHandle = ResourceHandle<Shader>();
 
         m_Initialized = false;
     }
 
+    // ===================================================================
+    // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³é–¢ä¿‚
+    // ===================================================================
+    void ChangeAnimation(std::string newAnimaiton)
+    {
+        m_Frame = 0;
+        m_curAnimation = newAnimaiton;
+    }
+
 private:
     // ===================================================================
-    // ƒ}ƒeƒŠƒAƒ‹ì¬
+    // ãƒãƒ†ãƒªã‚¢ãƒ«ä½œæˆ
     // ===================================================================
     void CreateMaterials()
     {
-        if (!m_Mesh) return;
+        auto* mesh = m_MeshHandle.Get();
+        if (!mesh) return;
 
-        // Šù‘¶‚Ìƒ}ƒeƒŠƒAƒ‹‚ğƒNƒŠƒA
+        // æ—¢å­˜ã®ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’ã‚¯ãƒªã‚¢
         m_Materials.clear();
 
-        // ƒƒbƒVƒ…‚©‚çƒ}ƒeƒŠƒAƒ‹î•ñ‚ğæ“¾
-        const auto& meshMaterials = m_Mesh->GetMaterials();
+        // ãƒ¡ãƒƒã‚·ãƒ¥ã‹ã‚‰ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã‚’å–å¾—
+        const auto& meshMaterials = mesh->GetMaterials();
 
-        // ƒ}ƒeƒŠƒAƒ‹‚²‚Æ‚ÉMaterialƒIƒuƒWƒFƒNƒg‚ğì¬
-        for (const auto& mtrl : meshMaterials)
+        // ãƒãƒ†ãƒªã‚¢ãƒ«ã”ã¨ã«Materialã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä½œæˆ
+        for (size_t i = 0; i < meshMaterials.size(); i++)
         {
-            auto material = std::make_unique<Material>(mtrl);
-            m_Materials.push_back(std::move(material));
+            const auto& mtrl = meshMaterials[i];
+
+            // ãƒ¦ãƒ‹ãƒ¼ã‚¯ãªåå‰ã‚’ç”Ÿæˆ
+            std::string materialName = m_ModelPath + "_Material_" + std::to_string(i);
+
+            // ResourceManagerçµŒç”±ã§ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’ä½œæˆï¼ˆã‚­ãƒ£ãƒƒã‚·ãƒ¥æ´»ç”¨ï¼‰
+            auto materialHandle = M_RESOURCE.CreateMaterial(materialName, mtrl);
+
+            if (materialHandle)
+            {
+                // shared_ptrã¨ã—ã¦å–å¾—ã—ã¦unique_ptrã«å¤‰æ›
+                auto material = std::make_unique<Material>(mtrl);
+                m_Materials.push_back(std::move(material));
+            }
         }
     }
 };

@@ -1,4 +1,7 @@
-// ƒƒ‚FƒVƒF[ƒ_[‚Ìí—Ş@lit ¨Œõ‚Ì‰e‹¿‚ğó‚¯‚é@unlit ¨Œõ‚Ì‰e‹¿‚ğó‚¯‚È‚¢
+//=======================================
+// Renderer.h
+// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ç¨®é¡ã€€lit â†’å…‰ã®å½±éŸ¿ã‚’å—ã‘ã‚‹ã€€unlit â†’å…‰ã®å½±éŸ¿ã‚’å—ã‘ãªã„
+//=======================================
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
 #include	<d3d11.h>
@@ -10,67 +13,87 @@
 #include	<d3dcompiler.h>
 #include	<locale.h>
 
-//ŠO•”ƒ‰ƒCƒuƒ‰ƒŠ
+//å¤–éƒ¨ãƒ©ã‚¤ãƒ–ãƒ©ãƒª
 #pragma comment(lib,"directxtk.lib")
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"d3dcompiler.lib")
 
-// Direct3D‰ğ•ú‚ÌŠÈ—ª‰»ƒ}ƒNƒ
+// Direct3Dè§£æ”¾ã®ç°¡ç•¥åŒ–ãƒã‚¯ãƒ­
 #define SAFE_RELEASE(p) { if( NULL != p ) { p->Release(); p = NULL; } }
 
-// ‚R‚c’¸“_ƒf[ƒ^
+//=======================================
+// ï¼“ï¼¤é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿
+//=======================================
 struct VERTEX_3D
 {
 	DirectX::SimpleMath::Vector3 position;
 	DirectX::SimpleMath::Vector3 normal;
 	DirectX::SimpleMath::Color color;
 	DirectX::SimpleMath::Vector2 uv;
+	int boneIndex[4];		// ãƒœãƒ¼ãƒ³æƒ…å ±
+	float boneWeight[4];	// é‡ã¿ä»˜ã‘
 };
 
-// ƒuƒŒƒ“ƒhƒXƒe[ƒg
+//=======================================
+// ãƒ–ãƒ¬ãƒ³ãƒ‰ã‚¹ãƒ†ãƒ¼ãƒˆ
+//=======================================
 enum EBlendState {
-	BS_NONE = 0,							// ”¼“§–¾‡¬–³‚µ
-	BS_ALPHABLEND,							// ”¼“§–¾‡¬
-	BS_ADDITIVE,							// ‰ÁZ‡¬
-	BS_SUBTRACTION,							// Œ¸Z‡¬
+	BS_NONE = 0,							// åŠé€æ˜åˆæˆç„¡ã—
+	BS_ALPHABLEND,							// åŠé€æ˜åˆæˆ
+	BS_ADDITIVE,							// åŠ ç®—åˆæˆ
+	BS_SUBTRACTION,							// æ¸›ç®—åˆæˆ
 	MAX_BLENDSTATE
 };
 
-// •½sŒõŒ¹
+// ãƒ©ã‚¹ã‚¿ãƒ©ã‚¤ã‚¶ã‚¹ãƒ†ãƒ¼ãƒˆ
+enum ERasterizerState {
+	RS_NORMAL = 0,							// åŠé€æ˜åˆæˆç„¡ã—
+	RS_CULLFRONT,							// è£é¢ã ã‘æç”»
+	RS_CULLNONE,								// ä¸¡é¢æç”»
+	RS_WIREFRAME,							// ãƒ¯ã‚¤ãƒ¤ãƒ¼ãƒ•ãƒ¬ãƒ¼ãƒ 
+	MAX_RASTERIZERSTATE
+};
+//=======================================
+// å¹³è¡Œå…‰æº
+//=======================================
 struct  LIGHT
 {
 	BOOL Enable;
 	BOOL Dummy[3];
-	DirectX::SimpleMath::Vector4 Direction;	// •ûŒü
-	DirectX::SimpleMath::Color Diffuse;		// •½sŒõŒ¹‚Ì‹­‚³‚ÆF
-	DirectX::SimpleMath::Color Ambient;	// ŠÂ‹«Œõ‚Ì‹­‚³‚ÆF
+	DirectX::SimpleMath::Vector4 Direction;	// æ–¹å‘
+	DirectX::SimpleMath::Color Diffuse;		// å¹³è¡Œå…‰æºã®å¼·ã•ã¨è‰²
+	DirectX::SimpleMath::Color Ambient;	// ç’°å¢ƒå…‰ã®å¼·ã•ã¨è‰²
 };
 
-// ƒTƒuƒZƒbƒg
+//=======================================
+// ã‚µãƒ–ã‚»ãƒƒãƒˆ
+//=======================================
 struct SUBSET {
-	std::string		MtrlName;			// ƒ}ƒeƒŠƒAƒ‹–¼
-	unsigned int	IndexNum = 0;		// ƒCƒ“ƒfƒbƒNƒX”
-	unsigned int	VertexNum = 0;		// ’¸“_”
-	unsigned int	IndexBase = 0;		// ŠJnƒCƒ“ƒfƒbƒNƒX
-	unsigned int	VertexBase = 0;		// ’¸“_ƒx[ƒX
-	unsigned int	MaterialIdx = 0;	// ƒ}ƒeƒŠƒAƒ‹‚Ì”Ô†
+	std::string		MtrlName;			// ãƒãƒ†ãƒªã‚¢ãƒ«å
+	unsigned int	IndexNum = 0;		// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹æ•°
+	unsigned int	VertexNum = 0;		// é ‚ç‚¹æ•°
+	unsigned int	IndexBase = 0;		// é–‹å§‹ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+	unsigned int	VertexBase = 0;		// é ‚ç‚¹ãƒ™ãƒ¼ã‚¹
+	unsigned int	MaterialIdx = 0;	// ãƒãƒ†ãƒªã‚¢ãƒ«ã®ç•ªå·
 };
 
-// ƒ}ƒeƒŠƒAƒ‹
+//=======================================
+// ãƒãƒ†ãƒªã‚¢ãƒ«
+//=======================================
 struct MATERIAL
 {
-	DirectX::SimpleMath::Color Ambient;		// ŠÂ‹«”½Ë
-	DirectX::SimpleMath::Color Diffuse;		// ŠgU”½ËiàƒJƒ‰[j
-	DirectX::SimpleMath::Color Specular;	// ‹¾–Ê”½Ë
-	DirectX::SimpleMath::Color Emission;	// ”­Œõ
-	float Shiness;		// Œõ‘ò‚ÌŠŠ‚ç‚©‚³
-	BOOL TextureEnable;	// ƒeƒNƒXƒ`ƒƒ‚ğg‚¤‚©‚Ìƒtƒ‰ƒO
+	DirectX::SimpleMath::Color Ambient;		// ç’°å¢ƒåå°„
+	DirectX::SimpleMath::Color Diffuse;		// æ‹¡æ•£åå°„ï¼ˆâ‰’ã‚«ãƒ©ãƒ¼ï¼‰
+	DirectX::SimpleMath::Color Specular;	// é¡é¢åå°„
+	DirectX::SimpleMath::Color Emission;	// ç™ºå…‰
+	float Shininess;		// å…‰æ²¢ã®æ»‘ã‚‰ã‹ã•
+	BOOL TextureEnable;	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ä½¿ã†ã‹ã®ãƒ•ãƒ©ã‚°
 	BOOL Dummy[2];
 };
 
-//-----------------------------------------------------------------------------
-//RendererƒNƒ‰ƒX
-//-----------------------------------------------------------------------------
+//=======================================
+//Rendererã‚¯ãƒ©ã‚¹
+//=======================================
 class Renderer
 {
 private:
@@ -82,16 +105,23 @@ private:
 	static IDXGISwapChain*         m_pSwapChain;
 	static ID3D11RenderTargetView* m_pRenderTargetView;
 	static ID3D11DepthStencilView* m_pDepthStencilView;
+	static ID3D11RasterizerState* m_pRasterizerStateNormal;
+	static ID3D11RasterizerState* m_pRsterizerCullFront;
+	static ID3D11RasterizerState* m_pRsterizerCullNone;
+	static ID3D11RasterizerState* m_pRsterizerWireframe;
 
 	static ID3D11Buffer*			m_pWorldBuffer;
 	static ID3D11Buffer*			m_pViewBuffer;
 	static ID3D11Buffer*			m_pProjectionBuffer;
 	static ID3D11Buffer*			m_pLightBuffer;
+	static ID3D11Buffer*			m_pMaterialBuffer;
+	static ID3D11Buffer*			m_pTextureBuffer;	// UVè¨­å®š
+	static ID3D11Buffer*			m_pBoneBuffer;
 
 	static ID3D11DepthStencilState* m_pDepthStateEnable;
 	static ID3D11DepthStencilState* m_pDepthStateDisable;
 
-	static ID3D11BlendState*		m_pBlendState[MAX_BLENDSTATE]; // ƒuƒŒƒ“ƒh ƒXƒe[ƒg;
+	static ID3D11BlendState*		m_pBlendState[MAX_BLENDSTATE]; // ãƒ–ãƒ¬ãƒ³ãƒ‰ ã‚¹ãƒ†ãƒ¼ãƒˆ;
 	static ID3D11BlendState*		m_pBlendStateATC;
 
 	static HRESULT CreateRenderAndDepthResources();
@@ -109,6 +139,8 @@ public:
 
 	static void SetATCEnable(bool Enable);
 
+	static void SetBlendStateEnable(bool Enable);
+
 	static void SetWorldViewProjection2D();
 	static void SetWorldMatrix(DirectX::SimpleMath::Matrix* WorldMatrix);
 	static void SetViewMatrix(DirectX::SimpleMath::Matrix* ViewMatrix);
@@ -116,6 +148,23 @@ public:
 
 	static ID3D11Device* GetDevice( void ){ return m_pDevice; }
 	static ID3D11DeviceContext* GetDeviceContext( void ){ return m_pDeviceContext; }
+	static ID3D11RasterizerState* GetRasterizer(ERasterizerState _state)
+	{
+		switch (_state)
+		{
+		case RS_NORMAL:
+			return m_pRasterizerStateNormal;
+		case RS_CULLFRONT:
+			return m_pRsterizerCullFront;
+		case RS_CULLNONE:
+			return m_pRsterizerCullNone;
+		case RS_WIREFRAME:
+			return m_pRsterizerWireframe;
+		case MAX_RASTERIZERSTATE:
+		default:
+			return nullptr;
+		}		
+	}
 
 	static HRESULT CompileShader(const char* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, void** ppShaderObject, int* pShaderObjectSize);
 	static HRESULT CreateVertexShader(ID3D11VertexShader** ppVertexShader, ID3D11InputLayout** ppVertexLayout, D3D11_INPUT_ELEMENT_DESC* pLayout, unsigned int numElements, const char* szFileName);
@@ -127,9 +176,15 @@ public:
 
 	static bool CreateConstantBuffer(unsigned int bytesize, ID3D11Buffer** pConstantBuffer);
 	static bool CreateConstantBufferWrite(unsigned int bytesize, ID3D11Buffer** pConstantBuffer);
+	
 	static void SetLight(LIGHT light);
+	static void SetMaterial(MATERIAL Material);
+	static void SetUV(float u, float v, float uw, float vh);
+	static void SetBoneMatrix(const std::vector<DirectX::SimpleMath::Matrix>& matrices);
+	static void ResetBoneMatrix();
+
 	//=============================================================================
-	// ƒuƒŒƒ“ƒh ƒXƒe[ƒgİ’è
+	// ãƒ–ãƒ¬ãƒ³ãƒ‰ ã‚¹ãƒ†ãƒ¼ãƒˆè¨­å®š
 	//=============================================================================
 	static void SetBlendState(int nBlendState)
 	{
@@ -138,4 +193,8 @@ public:
 			m_pDeviceContext->OMSetBlendState(m_pBlendState[nBlendState], blendFactor, 0xffffffff);
 		}
 	}
+	//=============================================================================
+	// ãƒ‡ãƒãƒƒã‚°ç”¨
+	//=============================================================================
+	static void DebugUIInit();
 };

@@ -1,6 +1,7 @@
 #include "DebugUI.h"
 
 std::vector<std::function<void(void)>> DebugUI::m_debugfunction;
+std::vector<int> DebugUI::m_idList;
 
 void DebugUI::Init(ID3D11Device* device, ID3D11DeviceContext* context) 
 {
@@ -29,8 +30,15 @@ void DebugUI::DisposeUI() {
 }
 
 // デバッグ表示関数の登録
-void DebugUI::RedistDebugFunction(std::function<void(void)> f) {
-    m_debugfunction.push_back(std::move(f));
+void DebugUI::RedistDebugFunction(int id, std::function<void()> func) {
+    // 同じ ID がすでに存在するか確認
+    auto it = std::find_if(m_idList.begin(), m_idList.end(),
+        [id](const int& i) { return i == id; });
+
+    if (it == m_idList.end()) {
+        m_debugfunction.push_back({ std::move(func) });
+        m_idList.push_back(id);
+    }
 }
 
 void DebugUI::Render() {

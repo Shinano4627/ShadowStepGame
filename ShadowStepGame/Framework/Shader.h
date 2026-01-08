@@ -5,13 +5,24 @@
 
 using Microsoft::WRL::ComPtr;
 
-//-----------------------------------------------------------------------------
+//=======================================
 //Shaderクラス
-//-----------------------------------------------------------------------------
+//=======================================
 class Shader{
+private:
+	int m_rastrizerState = 0;
 public:
+	//=======================================
+	// コンストラクタ・デストラクタ
+	//=======================================
+	Shader() {}
+	~Shader() {}
+	//=======================================
+	// その他関数
+	//=======================================
 	void Create(std::string vs, std::string ps);
 	void SetGPU();
+	void SetRasterizeState(int state);
 private:
 	ComPtr<ID3D11VertexShader> m_pVertexShader;		// 頂点シェーダー
 	ComPtr<ID3D11PixelShader>  m_pPixelShader;		// ピクセルシェーダー
