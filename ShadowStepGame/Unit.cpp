@@ -15,6 +15,8 @@ Unit::Unit()
     , m_camp(UnitCamp::Player)  //陣営(一旦デフォでプレイヤー)
     , m_type(UnitType::Normal)  //ユニットの種類
     , m_state(UnitState::Idle)  //状態
+    , m_hp(5)                   //仮
+    , m_maxHp(5)
 {
     UpdateWorldMatrix();
 }
@@ -112,6 +114,22 @@ bool Unit::HasFinishedTurn() const
 }
 
 //---------------------
+// 被ダメ関数
+//---------------------
+void Unit::TakeDamage(int damage)
+{
+    m_hp -= damage;
+
+    if (m_hp <= 0)
+    {
+        m_hp = 0;
+
+        //HP0になったら次のターン行動不能
+        Disable();
+    }
+}
+
+//---------------------
 // 攻撃などで行動不能にする
 //---------------------
 void Unit::Disable()
@@ -120,8 +138,8 @@ void Unit::Disable()
     if (m_state == UnitState::Disabled)
         return;
 
-    m_state = UnitState::Disabled;
     m_disabledThisTurn = true;
+    m_state = UnitState::Disabled;
 }
 
 //---------------------
