@@ -234,6 +234,12 @@
     <ClInclude Include="Framework\Texture2D.h">
       <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
+    <ClInclude Include="UnitSystemComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSystemComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\AABBCollider.cpp">
@@ -369,6 +375,9 @@
       <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
     <ClCompile Include="Framework\Texture2D.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSystemComponent.cpp">
       <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
   </ItemGroup>

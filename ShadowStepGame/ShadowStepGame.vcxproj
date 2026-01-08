@@ -211,6 +211,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="Framework\utility.h" />
     <ClInclude Include="Framework\VertexBuffer.h" />
     <ClInclude Include="Framework\XmlRW.h" />
+    <ClInclude Include="GameSystemComponent.h" />
     <ClInclude Include="MapSystemComponent.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneProto.h" />
@@ -260,6 +261,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClCompile Include="Framework\Timer.cpp" />
     <ClCompile Include="Framework\utility.cpp" />
     <ClCompile Include="Framework\XmlRW.cpp" />
+    <ClCompile Include="GameSystemComponent.cpp" />
     <ClCompile Include="MapSystemComponent.cpp" />
     <ClCompile Include="SceneProto.cpp" />
   </ItemGroup>
