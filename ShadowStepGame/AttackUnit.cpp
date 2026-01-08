@@ -60,9 +60,9 @@ void AttackUnit::Attack(Unit* target)
 	//・エフェクト
 	//・SE再生など
 
-	//攻撃成功
-	target->Disable();
+	//仮ダメージ
+	int damage = 5;
+	target->TakeDamage(damage);
 
-
-	m_state = UnitState::Done;
+	EndTurn();
 }

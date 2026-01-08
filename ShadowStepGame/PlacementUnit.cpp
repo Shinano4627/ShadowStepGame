@@ -54,5 +54,5 @@ void PlacementUnit::PlaceObject(const XMINT2& gridPos)
 	//・フィールド/マップ管理クラスへ登録
 	//・配置演出
 
-	m_state = UnitState::Done;
+	EndTurn();
 }

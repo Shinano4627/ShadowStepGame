@@ -26,10 +26,10 @@ enum class UnitType
 // ユニットの状態(仮)
 enum class UnitState
 {
-    Idle,       //行動可能
+    Idle,       //行動可能(ターンが来たら動ける)
     Acting,     //行動中
     Done,       //行動終了
-    Disabled    //行動不能(攻撃を受けた)
+    Disabled    //行動不能(攻撃を受けた)(休み)
 };
 
 class UnitModel;
@@ -43,6 +43,7 @@ public:
     Unit();             //インストラクタ
     virtual ~Unit();    //デストラクタ
 
+    bool IsMyTurn() const;      //自ターンか判定
     virtual void StartTurn();   //ターン開始(行動リセット)
     virtual void Update();      //更新
     virtual void Draw() const;  //描画
@@ -56,6 +57,8 @@ public:
     virtual void EndTurn();                     //ターン終了
     bool HasFinishedTurn() const;               //終了判定
 
+    //被ダメ
+    virtual void TakeDamage(int damage);
     //行動不能にする(攻撃を受けた結果)
     virtual void Disable(); 
 
@@ -68,6 +71,9 @@ public:
     UnitCamp GetCamp() const { return m_camp; }
     UnitState GetState() const { return m_state; }
     int GetSpeed() const { return m_speed; }
+    int GetHP() const { return m_hp; }
+    int GetMaxHP() const { return m_maxHp; }
+    bool isHPZero() const { return m_hp <= 0; }
     const XMINT2& GetGridPos() const { return m_gridPos; }
     const Matrix& GetWorldMatrix() const { return m_world; }
    
@@ -93,6 +99,8 @@ protected:
     // パラメータ
     int        m_moveRange;     //移動可能距離
     int        m_speed;         //素早さ
+    int        m_hp;            //現在HP
+    int        m_maxHp;         //最大HP
 
     //行動不能管理
     bool m_disabledThisTurn = false;    //このターン行動不能か
@@ -102,4 +110,6 @@ protected:
     UnitType   m_type;  //ユニット種類
     UnitState  m_state; //行動状態
 
+    //プロトタイプ用ターン判定フラグ
+    bool m_isMyTurn = false;
 };

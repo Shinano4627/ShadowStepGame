@@ -15,7 +15,7 @@ Unit::Unit()
     , m_camp(UnitCamp::Player)  //陣営(一旦デフォでプレイヤー)
     , m_type(UnitType::Normal)  //ユニットの種類
     , m_state(UnitState::Idle)  //状態
-    , m_hp(5)                   //仮
+    , m_hp(5)                   //仮 ユニットごとにHP変更する場合は派生クラスのコンストラクタで上書き
     , m_maxHp(5)
 {
     UpdateWorldMatrix();
@@ -29,6 +29,21 @@ Unit::~Unit()
 }
 
 //---------------------
+// 自ターン判定
+//---------------------
+bool Unit::IsMyTurn() const
+{
+    if (m_state == UnitState::Disabled)
+        return false;
+
+    //TODO:
+    //ターン管理(TurnManager等)で選ばれているかを返す
+
+    //プロトタイプ用に簡易フラグ
+    return m_state != UnitState::Disabled && m_isMyTurn;
+}
+
+//---------------------
 // ターン開始処理
 //---------------------
 void Unit::StartTurn()
@@ -39,14 +54,18 @@ void Unit::StartTurn()
         //このターンは行動不能のまま
         m_state = UnitState::Disabled;
 
+        //HP回復
+        m_hp = m_maxHp;
+
         //次のターンには解除されるようフラグをおろす
         m_disabledThisTurn = false;
+
+        m_isMyTurn = false; //行動不可
+        return;
     }
-    else
-    {
-        //通常通り行動可能
-        m_state = UnitState::Idle;
-    }
+
+    m_state = UnitState::Idle;
+    m_isMyTurn = true;  //行動可
 }
 
 //---------------------
@@ -54,6 +73,10 @@ void Unit::StartTurn()
 //---------------------
 void Unit::Update()
 {
+    if (m_state == UnitState::Disabled)
+    {
+        return;
+    }
     //（アニメーションや状態更新用）
 }
 
@@ -92,19 +115,26 @@ void Unit::MoveTo(const XMINT2& gridPos)
     m_gridPos = gridPos;
     UpdateWorldMatrix();
 
-    m_state = UnitState::Done;
+    //行動完了
+    EndTurn();
 }
 
 bool Unit::CanMove() const
 {
-    //現状Idleなら移動可能
-    //TODO:m_moveRangeに基づく範囲チェック追加
-    return m_state == UnitState::Idle;
+    if (!CanAct()) return false;
+
+    //TODO:距離チェック
+    return true;
 }
 
 void Unit::EndTurn()
 {
+    //すでに終了しているなら何もしない
+    if (m_state == UnitState::Done)
+        return;
+
     m_state = UnitState::Done;
+    m_isMyTurn = false;
 }
 
 bool Unit::HasFinishedTurn() const
@@ -134,7 +164,6 @@ void Unit::TakeDamage(int damage)
 //---------------------
 void Unit::Disable()
 {
-    //すでに行動不能なら重ね掛けしない
     if (m_state == UnitState::Disabled)
         return;
 
@@ -175,12 +204,13 @@ int Unit::CalcDistanceFromSelf(const XMINT2& target) const
 //---------------------
 bool Unit::CanShadowMove(const XMINT2& targetGridPos, const ShadowMap& shadowMap) const
 {
+    if (!CanAct()) return false;
     //TODO:
     //1.現在位置の隣マスに影が存在するか
     //2.影がtargetGridPosまで連結しているか
     //3.targetGridPosが有効マスか(範囲外・障害物チェック)
 
-    return false; //仮実装
+    return true; //仮実装
 }
 
 void Unit::ShadowMove(const XMINT2& targetGridPos, const ShadowMap& shadowMap)
@@ -200,5 +230,5 @@ void Unit::ShadowMove(const XMINT2& targetGridPos, const ShadowMap& shadowMap)
     m_gridPos = targetGridPos;
     UpdateWorldMatrix();
 
-    m_state = UnitState::Done;
+    EndTurn();
 }

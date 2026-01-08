@@ -20,5 +20,19 @@ public:
 	void Update() override;
 
 protected:
+	//プレイヤーの行動フェーズ
+	enum class PlayerActionState
+	{
+		None,			//何もしていない
+		SelectAction,	//行動選択中
+		Executing		//行動実行中
+	};
+
+	PlayerActionState m_actionState;
+
+	//各フェーズ処理
+	void Update_SelectAction();
+	void Update_Executing();
+
 	//--入力・選択関連--//
 };

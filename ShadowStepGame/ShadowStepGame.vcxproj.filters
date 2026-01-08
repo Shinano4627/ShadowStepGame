@@ -28,6 +28,9 @@
     <Filter Include="ソース ファイル\Unit">
       <UniqueIdentifier>{e6e86f58-9ac2-4531-8e55-3c066ac871ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Unit\ProtoCode">
+      <UniqueIdentifier>{69991b8e-c385-48eb-8fb2-7c9f6288700e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\AABBCollider.h">
@@ -248,6 +251,9 @@
     </ClInclude>
     <ClInclude Include="PlacementUnit.h">
       <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="TurnManager.h">
+      <Filter>ソース ファイル\Unit\ProtoCode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

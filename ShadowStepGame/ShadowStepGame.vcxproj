@@ -215,6 +215,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="GiantUnit.h" />
     <ClInclude Include="NormalUnit.h" />
     <ClInclude Include="PlacementUnit.h" />
+    <ClInclude Include="TurnManager.h" />
     <ClInclude Include="UnitModel.h" />
     <ClInclude Include="PlayerUnit.h" />
     <ClInclude Include="Scene.h" />

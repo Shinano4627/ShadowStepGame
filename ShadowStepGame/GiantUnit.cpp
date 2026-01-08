@@ -57,5 +57,5 @@ void GiantUnit::BreakWall(const XMINT2& wallGridPos)
 	//・SE/エフェクト
 	//・マップ更新通知
 
-	m_state = UnitState::Done;
+	EndTurn();
 }
