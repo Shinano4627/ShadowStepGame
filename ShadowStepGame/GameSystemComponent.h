@@ -12,8 +12,8 @@
 
 // 各システムの前方宣言
 class MapSystemComponent;
-//class UnitSystemComponent;
-//class SunManageComponent;
+class UnitSystemComponent;
+class SunManageComponent;
 class Unit;
 
 class GameSystemComponent : public Component
@@ -117,7 +117,8 @@ private:
 	// UnitSystemComponent* m_unitSystem = nullptr;
 
 	// Tag "SunSystem" から取得
-	// SunManageComponent* m_sunSystem = nullptr;
+	SunManageComponent* m_sunSystem = nullptr;
+
 
 	//=======================================
 	// 状態データ

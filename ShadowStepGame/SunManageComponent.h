@@ -245,6 +245,23 @@ public:
         SetSunPosition(m_TurnProgress);
     }
 
+    void AdvanceTurn()
+    {
+        m_TurnProgress++;
+
+        const SunData& data = m_SunList[m_CurIdx];
+        int maxProgress = (data.axis == 0) ? m_MapWidth : m_MapHeight;
+
+        // パターン切り替え
+        if (m_TurnProgress >= maxProgress)
+        {
+            m_CurIdx = (m_CurIdx + 1) % static_cast<int>(m_SunList.size());
+            m_TurnProgress = 0;
+        }
+
+        SetSunPosition(m_TurnProgress);
+    }
+
     // ===================================================================
     // 現在の太陽データを取得
     // ===================================================================

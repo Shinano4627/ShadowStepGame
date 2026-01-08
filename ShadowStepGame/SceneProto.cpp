@@ -11,6 +11,7 @@
 #include "SimplePlaneRendererComponent.h"
 #include "MapSystemComponent.h"
 #include "SunManageComponent.h"
+#include "GameSystemComponent.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -29,15 +30,23 @@ void SceneProto::Init()
     // 追加コンポーネント
     {
         // マップシステム
-        auto* mapSystem = FindGameObjectWithTag("MapSystem")->AddComponent<MapSystemComponent>("TestMap.csv");
+        auto* mapSystem = FindGameObjectWithTag("System")->AddComponent<MapSystemComponent>("TestMap.csv");
         mapSystem->MakeMap(m_GameObjects);    // マップの読み込み
         float heightMap = mapSystem->GetMapSizeHeight();
         float widthMap = mapSystem->GetMapSizeWidth();
 
         // 太陽
-        auto* sun = FindGameObjectWithTag("Sun")->AddComponent<SunManageComponent>(
+        auto* sun = FindGameObjectWithTag("System")->AddComponent<SunManageComponent>(
             widthMap, heightMap, mapSystem->GetMapHeight(), mapSystem->GetMapWidth());
         sun->Init();
+
+        // ゲームシステム
+        auto* gameSystem = FindGameObjectWithTag("System")->AddComponent<GameSystemComponent>();
+        gameSystem->Init();
+
+        // ここで SunManageComponent をセット
+        // ※m_sunSystem は現状 private なので、public setter または friend でアクセス推奨
+        // gameSystem->SetSunSystem(sun); // setter を作ると良い
     }  
 
     // Init Camera
@@ -76,6 +85,7 @@ void SceneProto::Update()
 
     // Update GameObjectList
     UpdateObjectList();
+
 }
 
 void SceneProto::Draw()

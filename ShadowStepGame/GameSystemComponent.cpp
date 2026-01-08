@@ -8,30 +8,35 @@
 // 他システム
 #include "MapSystemComponent.h"
 // #include "UnitSystemComponent.h"
-// #include "SunManageComponent.h"
+#include "SunManageComponent.h"
 
 void GameSystemComponent::Init()
 {
-    // Tag 経由で各 SystemComponent を取得
-    /*m_mapSystem = m_pOwner->GetOwner()->FindGameObjectWithTag("MapSystem")
-        ->GetComponent<MapSystemComponent>();
+    // 同じ GameObject にある他の SystemComponent を取得
+    m_mapSystem = m_pOwner->GetComponent<MapSystemComponent>();
+    // m_unitSystem = m_pOwner->GetComponent<UnitSystemComponent>();
+    m_sunSystem = m_pOwner->GetComponent<SunManageComponent>();
 
-    m_unitSystem = m_pOwner->GetOwner()->FindGameObjectWithTag("UnitSystem")
-        ->GetComponent<UnitSystemComponent>();
-
-    m_sunSystem = m_pOwner->GetOwner()->FindGameObjectWithTag("SunSystem")
-        ->GetComponent<SunManageComponent>();*/
+    // 安全チェック
+    if (!m_mapSystem)  std::cout << "[GameSystem] MapSystemComponent が見つかりません！\n";
+    // if (!m_unitSystem) std::cout << "[GameSystem] UnitSystemComponent が見つかりません！\n";
+    if (!m_sunSystem)  std::cout << "[GameSystem] SunManageComponent が見つかりません！\n";
 
     m_State = BattleState::Init;
     m_TurnCount = 0;
     m_TimelineIndex = 0;
+
 
     ChangeState(BattleState::Init);
 }
 
 void GameSystemComponent::Update()
 {
-    UpdateState();
+    // VK_W が押されたら状態更新（テスト用）
+    if (IO_MANAGER.GetKeyDownKeyBord(VK_W))
+    {
+        UpdateState();
+    }
 }
 
 void GameSystemComponent::ChangeState(BattleState next)
@@ -63,7 +68,6 @@ void GameSystemComponent::UpdateState()
     }
 }
 
-// 以下は中身未実装（契約だけ）
 
 void GameSystemComponent::UpdateInit()
 {
@@ -161,23 +165,26 @@ void GameSystemComponent::UpdateTurnEnd()
 
 void GameSystemComponent::UpdateSunMove()
 {
-    // SunSystem に更新依頼
+    if (m_sunSystem)
+    {
+        // 太陽を1ターン進める
+        m_sunSystem->AdvanceTurn(); // 自動でターン進行に応じて太陽を動かす
+
+    }
+
+    // 次は勝敗判定へ
     ChangeState(BattleState::Judge);
 }
 
 void GameSystemComponent::UpdateJudge()
 {
-    if (IsEnemyAllDead())
+    if (IsEnemyAllDead() || IsPlayerAllDead())
     {
-        ChangeState(BattleState::End); // 勝利
-    }
-    else if (IsPlayerAllDead())
-    {
-        ChangeState(BattleState::End); // 敗北
+        ChangeState(BattleState::End);
     }
     else
     {
-        ChangeState(BattleState::TurnStart); // 次ターンへ
+        ChangeState(BattleState::TurnStart);
     }
 }
 
