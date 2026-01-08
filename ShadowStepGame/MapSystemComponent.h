@@ -55,6 +55,8 @@ public:
     // ===================================================================
     // ê›íË
     // ===================================================================
-    float GetMapHeight() const { return (float)m_MapHeight * m_SizePiece; }
-    float GetMapWidth() const { return (float)m_MapWidth * m_SizePiece; }
+    float GetMapSizeHeight() const { return (float)m_MapHeight * m_SizePiece; }
+    float GetMapSizeWidth() const { return (float)m_MapWidth * m_SizePiece; }
+    float GetMapHeight() const { return (float)m_MapHeight; }
+    float GetMapWidth() const { return (float)m_MapWidth; }
 };

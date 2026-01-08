@@ -31,11 +31,12 @@ void SceneProto::Init()
         // マップシステム
         auto* mapSystem = FindGameObjectWithTag("MapSystem")->AddComponent<MapSystemComponent>("TestMap.csv");
         mapSystem->MakeMap(m_GameObjects);    // マップの読み込み
-        float heightMap = mapSystem->GetMapHeight();
-        float widthMap = mapSystem->GetMapWidth();
+        float heightMap = mapSystem->GetMapSizeHeight();
+        float widthMap = mapSystem->GetMapSizeWidth();
 
         // 太陽
-        auto* sun = FindGameObjectWithTag("Sun")->AddComponent<SunManageComponent>(widthMap, heightMap);
+        auto* sun = FindGameObjectWithTag("Sun")->AddComponent<SunManageComponent>(
+            widthMap, heightMap, mapSystem->GetMapHeight(), mapSystem->GetMapWidth());
         sun->Init();
     }  
 
