@@ -12,9 +12,9 @@ class MapSystemComponent : public Component
 {
 private:
     std::string m_DataFile;      // CSVファイル名
-    int m_MapWidth;     // CSVから読み取り
-    int m_MapHeight;    // CSVから読み取り
-    int** m_MapData;  // CSVから読み取ったデータを数値で管理
+    int m_MapWidth = 0;     // CSVから読み取り
+    int m_MapHeight = 0;    // CSVから読み取り
+    int** m_MapData = nullptr;  // CSVから読み取ったデータを数値で管理
 
     float m_SizePiece = 5.f;
     float m_DrawStartPosX = 0.f;
