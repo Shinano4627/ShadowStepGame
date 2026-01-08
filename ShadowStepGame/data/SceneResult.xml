@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Objects>
-
-    <Object 
-    	ID="1"
-        ObjectName="Floor"
-        ObjectType="SimplePlane"
-        Tag = "Floor"
-        FileName=""
-        Texture=""
-
-        PosX="0.0"  PosY="0.0"  PosZ="0.0"
-        RotX="0.0"  RotY="0.0" RotZ="0.0"
-        SclX="30.0"  SclY="1.0"  SclZ="30.0"
-
-        ColR="0.4" ColG="0.4" ColB="0.6" ColA="1.0"
-    />
-    <Object 
-    	ID="2"
-        ObjectName="ModelObject"
-        ObjectType="Model"
-        Tag = "ModelObject"
-        FileName="asset/model/Bot.obj"
-        Texture="asset/texture"
-
-        PosX="0.0"  PosY="1.0"  PosZ="0.0"
-        RotX="0.0"  RotY="0.0" RotZ="0.0"
-        SclX="0.01"  SclY="0.01"  SclZ="0.01"
-
-        ColR="1.0" ColG="1.0" ColB="1.0" ColA="1.0"
-    />
-
+    <Object ID="0">
+        <ObjectName Value="Floor"/>
+        <ObjectType Value="SimplePlane"/>
+        <Tag Value="Floor"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/floor.jpg"/>
+        <Posision X="0.0" Y="0.0" Z="0.0"/>
+        <Rotation X="0.0" Y="0.0" Z="0.0"/>
+        <Scale X="30.0" Y="1.0" Z="30.0"/>
+        <Color R="0.4" G="0.4" B="0.6" A="1.0"/>
+    </Object>
+    <Object ID="1">
+        <ObjectName Value="ModelObject"/>
+        <ObjectType Value="Model"/>
+        <Tag Value="ModelObject"/>
+        <FileName Value="asset/model/Bot.fbx"/>
+        <Animations>
+            <Animation Name="Run" Path="asset/model/Bot_SlowRun.fbx"/>
+            <Animation Name="Idle" Path="asset/model/Bot_Idle.fbx"/>
+        </Animations>
+        <Texture Value="asset/texture"/>
+        <Posision X="0.0" Y="1.0" Z="0.0"/>
+        <Rotation X="0.0" Y="0.0" Z="0.0"/>
+        <Scale X="0.01" Y="0.01" Z="0.01"/>
+        <Color R="1.0" G="1.0" B="1.0" A="1.0"/>
+    </Object>
 </Objects>

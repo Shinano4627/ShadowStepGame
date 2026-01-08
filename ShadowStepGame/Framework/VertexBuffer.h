@@ -1,13 +1,13 @@
 #pragma once
 #include	<vector>
 #include	<wrl/client.h>
-#include	"renderer.h"
+#include	"Renderer.h"
 
 using Microsoft::WRL::ComPtr;
 
-//-----------------------------------------------------------------------------
+//=======================================
 //VertexBufferƒNƒ‰ƒX
-//-----------------------------------------------------------------------------
+//=======================================
 template <typename T> class VertexBuffer{
 
 	ComPtr<ID3D11Buffer> m_VertexBuffer;

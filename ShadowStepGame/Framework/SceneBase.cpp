@@ -38,12 +38,16 @@ void SceneBase::MakeObjectList(const char* _stage)
 			// キューブ描画コンポーネント（WORLD層）
 			if (tag == &tag_cube)
 			{
-				newObject->AddMeshComponent<SimpleCubeRendererComponent>(Vector4(object.color));
+				newObject->AddMeshComponent<SimpleCubeRendererComponent>(
+					Vector4(object.color),
+					object.texture);
 			}
 			// 平面描画コンポーネント（WORLD層）
 			else if (tag == &tag_plane)
 			{
-				newObject->AddMeshComponent<SimplePlaneRendererComponent>(Vector4(object.color));
+				newObject->AddMeshComponent<SimplePlaneRendererComponent>(
+					Vector4(object.color),
+					object.texture);
 			}
 			// モデルコンポーネント（WORLD層）
 			else if (tag == &tag_model)
@@ -52,6 +56,12 @@ void SceneBase::MakeObjectList(const char* _stage)
 				std::cout << "[" << _stage << "] " << "Attempting to load model : " << object.fileName << std::endl;
 				loadModel(newObject, object);
 				std::cout << "[" << _stage << "] " << "OBJ Model loaded successfully!" << std::endl;
+			}
+			else if (tag == &tag_2D)
+			{
+				auto* renderer = newObject->AddMeshComponent<Texture2D>(
+					object.texture, 
+					Vector4(object.color));
 			}
 		}
 
@@ -62,6 +72,8 @@ void SceneBase::MakeObjectList(const char* _stage)
 
 		n++;
 	}
+
+	m_lastID = n;
 }
 
 void loadModel(GameObject* modelObject, const ObjectData& objectData)
@@ -75,36 +87,51 @@ void loadModel(GameObject* modelObject, const ObjectData& objectData)
 	{
 		// MeshRendererComponent作成
 		auto* meshRenderer = modelObject->GetMeshComponent<MeshRendererComponent>();
-		meshRenderer->SetRenderLayer(RenderLayer::WORLD);
 
-		// メッシュ読み込み
-		auto mesh = M_RESOURCE.LoadMesh(objectData.fileName, objectData.texture);
+		// ResourceManager経由でメッシュ読み込み
+		auto meshHandle = M_RESOURCE.LoadMesh(objectData.fileName, objectData.texture);
 
-		if (mesh)
+		// アニメーションの読み込み
+		for (auto anim : objectData.animations)
 		{
-			meshRenderer->SetMesh(mesh);
+			M_RESOURCE.LoadAnimation(meshHandle.GetShared(), anim.path.c_str(), anim.name.c_str(), true);
+		}
+
+		if (meshHandle)
+		{
+			// shared_ptrとして取得してセット
+			meshRenderer->SetMesh(meshHandle.GetShared());
 
 			// シェーダー設定
-			auto shader = M_RESOURCE.LoadShader("shader/litTextureVS.hlsl", "shader/litTexturePS.hlsl");
-			if (shader)
+			ResourceHandle<Shader> shaderHandle;
+			if (objectData.animations.size() != 0)
 			{
-				meshRenderer->SetShader(shader);
+				shaderHandle = M_RESOURCE.LoadShader("shader/litTextureAnimationVS.hlsl", "shader/litTexturePS.hlsl");
+			}
+			else
+			{
+				shaderHandle = M_RESOURCE.LoadShader("shader/litTextureVS.hlsl", "shader/litTexturePS.hlsl");
+			}
+
+			if (shaderHandle)
+			{
+				meshRenderer->SetShader(shaderHandle.GetShared());
 			}
 
 			modelLoaded = true;
 		}
 		else
 		{
-#ifdef _DEBUG	
-			assert(mesh);	// デバッグ時のみメッシュ読み込み失敗にエラーを出す
-#endif	// _DEBUG
-			std::cerr << "[SceneResult] Model file not found or failed to load" << std::endl;
+#ifdef _DEBUG   
+			std::cerr << "[SceneBase] Model file not found or failed to load: "
+				<< objectData.fileName << std::endl;
+#endif  // _DEBUG
 			modelObject->RemoveMeshComponent<MeshRendererComponent>();
 		}
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << "[SceneResult] Exception loading model: " << e.what() << std::endl;
+		std::cerr << "[SceneBase] Exception loading model: " << e.what() << std::endl;
 		// MeshRendererComponentを削除（もし追加されていたら）
 		if (modelObject->GetMeshComponent<MeshRendererComponent>())
 		{
@@ -117,22 +144,24 @@ void loadModel(GameObject* modelObject, const ObjectData& objectData)
 	// ===================================================================
 	if (!modelLoaded)
 	{
-		std::cout << "[SceneResult] Using fallback: SimpleCubeRenderer" << std::endl;
+		std::cout << "[SceneBase] Using fallback: SimpleCubeRenderer" << std::endl;
 
-		auto* cubeRenderer = modelObject->AddMeshComponent<SimpleCubeRendererComponent>(Color(1, 1, 0, 1)); // 黄色
+		auto* cubeRenderer = modelObject->AddMeshComponent<SimpleCubeRendererComponent>(
+			Color(1, 1, 0, 1));  // 黄色（警告色）
 		cubeRenderer->SetRenderLayer(RenderLayer::WORLD);
 	}
 }
 
+
 // ===================================================================
-// GameObjectリスト削除
+// GameObjectリストを保存
 // ===================================================================
 void SceneBase::SaveObjectData(const char* _stage)
 {
 	XmlRW xml;
 	std::vector<ObjectData> objects;
 
-	//　全データをコンポーネントデータに変換してリストに格納
+	// 全データをObjectDataに変換してリストに格納
 	for (auto& gameObject : m_GameObjects)
 	{
 		ObjectData object;
@@ -149,17 +178,25 @@ void SceneBase::SaveObjectData(const char* _stage)
 		{
 			object.objectType = strSimpleCube;
 			color = component->GetColor();
+			object.texture = component->GetTexturePath();  // テクスチャパス取得
 		}
-		else if(auto component = gameObject->GetMeshComponent<SimplePlaneRendererComponent>())
+		else if (auto component = gameObject->GetMeshComponent<SimplePlaneRendererComponent>())
 		{
 			object.objectType = strSimplePlane;
 			color = component->GetColor();
+			object.texture = component->GetTexturePath();  // テクスチャパス取得
 		}
 		else if (auto component = gameObject->GetMeshComponent<MeshRendererComponent>())
 		{
 			object.objectType = strModel;
-			object.fileName = component->GetModelPath();	// モデルデータ上書き
-			object.texture = component->GetTexturePath();	// テクスチャデータ上書き
+			object.fileName = component->GetModelPath();     // モデルデータ
+			object.texture = component->GetTexturePath();    // テクスチャデータ
+		}
+		else if (auto component = gameObject->GetMeshComponent<Texture2D>())
+		{
+			object.objectType = str2D;
+			object.texture = component->GetTexturePath();    // テクスチャデータ
+			color = component->GetColor();
 		}
 		else
 		{

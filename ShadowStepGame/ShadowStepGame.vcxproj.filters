@@ -28,6 +28,9 @@
     <Filter Include="ソース ファイル\Component">
       <UniqueIdentifier>{cd102b61-4b71-4128-aa3b-3189934a62ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Component\Mesh">
+      <UniqueIdentifier>{a1d637a5-4487-4b47-943e-bb6cf5e7edcf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\AABBCollider.h">
@@ -141,12 +144,6 @@
     <ClInclude Include="Framework\Shader.h">
       <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\SimpleCubeRendererComponent.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\SimplePlaneRendererComponent.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
     <ClInclude Include="Framework\singleton.h">
       <Filter>Framework</Filter>
     </ClInclude>
@@ -226,6 +223,15 @@
       <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
     <ClInclude Include="MapSystemComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SimpleCubeRendererComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SimplePlaneRendererComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Texture2D.h">
       <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
   </ItemGroup>
@@ -356,6 +362,15 @@
     <ClCompile Include="MapSystemComponent.cpp">
       <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
+    <ClCompile Include="Framework\SimpleCubeRendererComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SimplePlaneRendererComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Texture2D.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader\common.hlsl">
@@ -377,6 +392,9 @@
       <Filter>リソース ファイル</Filter>
     </FxCompile>
     <FxCompile Include="shader\unlitTextureVS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\litTextureAnimationVS.hlsl">
       <Filter>リソース ファイル</Filter>
     </FxCompile>
   </ItemGroup>

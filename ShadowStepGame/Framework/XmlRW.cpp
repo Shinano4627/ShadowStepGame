@@ -1,3 +1,7 @@
+//=======================================
+// XmlRW.cpp
+// xmlファイルを読み込み各SceneのGameObjectDataを作成する
+//=======================================
 #include "XmlRW.h"
 
 #include <iostream>
@@ -40,30 +44,73 @@ int XmlRW::GetObjectData(const char* _stage, std::vector<ObjectData>& _objectLis
     {
         ObjectData data;
 
-        // 文字列属性
-        data.objectName = elem->Attribute("ObjectName");
-        data.objectType = elem->Attribute("ObjectType");
-        data.objectTag = elem->Attribute("Tag");
-        data.fileName = elem->Attribute("FileName");
-        data.texture = elem->Attribute("Texture");
+        elem->QueryIntAttribute("ID", &data.id);
 
-        // float属性
-        data.pos[0] = GetFloatAttribute(elem, "PosX");
-        data.pos[1] = GetFloatAttribute(elem, "PosY");
-        data.pos[2] = GetFloatAttribute(elem, "PosZ");
+        // -----------------------------
+        // Value属性取得用
+        // -----------------------------
+        auto GetValue = [&](const char* tag) -> std::string {
+            XMLElement* e = elem->FirstChildElement(tag);
+            return e && e->Attribute("Value") ? e->Attribute("Value") : "";
+            };
 
-        data.rot[0] = GetFloatAttribute(elem, "RotX");
-        data.rot[1] = GetFloatAttribute(elem, "RotY");
-        data.rot[2] = GetFloatAttribute(elem, "RotZ");
+        data.objectName = GetValue("ObjectName");
+        data.objectType = GetValue("ObjectType");
+        data.objectTag = GetValue("Tag");
+        data.fileName = GetValue("FileName");
+        data.texture = GetValue("Texture");
 
-        data.scl[0] = GetFloatAttribute(elem, "SclX", 1.0f);
-        data.scl[1] = GetFloatAttribute(elem, "SclY", 1.0f);
-        data.scl[2] = GetFloatAttribute(elem, "SclZ", 1.0f);
+         //-----------------------------
+         //Animations（可変個）
+         //-----------------------------
+        XMLElement* animsElem = elem->FirstChildElement("Animations");
+        if (animsElem)
+        {
+            for (XMLElement* animElem = animsElem->FirstChildElement("Animation");
+                animElem;
+                animElem = animElem->NextSiblingElement("Animation"))
+            {
+                AnimationData anim{};
+                if (animElem->Attribute("Name"))
+                    anim.name = animElem->Attribute("Name");
+                if (animElem->Attribute("Path"))
+                    anim.path = animElem->Attribute("Path");
 
-        data.color[0] = GetFloatAttribute(elem, "ColR", 1.0f);
-        data.color[1] = GetFloatAttribute(elem, "ColG", 1.0f);
-        data.color[2] = GetFloatAttribute(elem, "ColB", 1.0f);
-        data.color[3] = GetFloatAttribute(elem, "ColA", 1.0f);
+                data.animations.push_back(anim);
+            }
+        }
+
+        // -----------------------------
+        // Transform / Color
+        // -----------------------------
+        XMLElement* pos = elem->FirstChildElement("Posision");
+        if (pos) {
+            pos->QueryFloatAttribute("X", &data.pos[0]);
+            pos->QueryFloatAttribute("Y", &data.pos[1]);
+            pos->QueryFloatAttribute("Z", &data.pos[2]);
+        }
+
+        XMLElement* rot = elem->FirstChildElement("Rotation");
+        if (rot) {
+            rot->QueryFloatAttribute("X", &data.rot[0]);
+            rot->QueryFloatAttribute("Y", &data.rot[1]);
+            rot->QueryFloatAttribute("Z", &data.rot[2]);
+        }
+
+        XMLElement* scl = elem->FirstChildElement("Scale");
+        if (scl) {
+            scl->QueryFloatAttribute("X", &data.scl[0]);
+            scl->QueryFloatAttribute("Y", &data.scl[1]);
+            scl->QueryFloatAttribute("Z", &data.scl[2]);
+        }
+
+        XMLElement* col = elem->FirstChildElement("Color");
+        if (col) {
+            col->QueryFloatAttribute("R", &data.color[0]);
+            col->QueryFloatAttribute("G", &data.color[1]);
+            col->QueryFloatAttribute("B", &data.color[2]);
+            col->QueryFloatAttribute("A", &data.color[3]);
+        }
 
         _objectList.push_back(data);
     }
@@ -100,7 +147,7 @@ void XmlRW::UpdateObjectsInXML(const std::vector<ObjectData>& objects, const cha
     }
 
     // ----------------------------------------
-    // 1. newObjects を照合して更新 or 追加
+    // newObjects を照合して更新 or 追加
     // ----------------------------------------
     for (const auto& obj : objects)
     {
@@ -114,38 +161,71 @@ void XmlRW::UpdateObjectsInXML(const std::vector<ObjectData>& objects, const cha
         else {
             // 新規オブジェクト → 追加
             element = doc.NewElement("Object");
+            element->SetAttribute("ID", obj.id);
             root->InsertEndChild(element);
         }
 
+        // 新規エレメント追加関数
+        auto AddValueElement = [&](const char* tag, const std::string& value)
+            {
+                XMLElement* e = doc.NewElement(tag);
+                e->SetAttribute("Value", value.c_str());
+                element->InsertEndChild(e);
+            };
+
         // 属性設定（上書き）
         // 文字列属性
-        element->SetAttribute("ObjectName", obj.objectName.c_str());
-        element->SetAttribute("ObjectType", obj.objectType.c_str());
-        element->SetAttribute("Tag", obj.objectTag.c_str());
-        element->SetAttribute("FileName", obj.fileName.c_str());
-        element->SetAttribute("Texture", obj.texture.c_str());
+        // 新規オブジェクト → 追加
+        AddValueElement("ObjectName", obj.objectName.c_str());
+        AddValueElement("ObjectType", obj.objectType.c_str());
+        AddValueElement("Tag", obj.objectTag.c_str());
+        AddValueElement("FileName", obj.fileName.c_str());
+        AddValueElement("Texture", obj.texture.c_str());
+
+        // Animations（可変個）
+        if (!obj.animations.empty())
+        {
+            XMLElement* animsElem = doc.NewElement("Animations");
+            element->InsertEndChild(animsElem);
+
+            for (const auto& anim : obj.animations)
+            {
+                XMLElement* animElem = doc.NewElement("Animation");
+                animElem->SetAttribute("Name", anim.name.c_str());
+                animElem->SetAttribute("Path", anim.path.c_str());
+                animsElem->InsertEndChild(animElem);
+            }
+        }
 
         // float属性
-        element->SetAttribute("PosX", obj.pos[0]);
-        element->SetAttribute("PosY", obj.pos[1]);
-        element->SetAttribute("PosZ", obj.pos[2]);
+        XMLElement* pos = doc.NewElement("Posision");
+        pos->SetAttribute("X", obj.pos[0]);
+        pos->SetAttribute("Y", obj.pos[1]);
+        pos->SetAttribute("Z", obj.pos[2]);
+        element->InsertEndChild(pos);
 
-        element->SetAttribute("RotX", obj.rot[0]);
-        element->SetAttribute("RotY", obj.rot[1]);
-        element->SetAttribute("RotZ", obj.rot[2]);
+        XMLElement* rot = doc.NewElement("Rotation");
+        rot->SetAttribute("X", obj.rot[0]);
+        rot->SetAttribute("Y", obj.rot[1]);
+        rot->SetAttribute("Z", obj.rot[2]);
+        element->InsertEndChild(rot);
 
-        element->SetAttribute("SclX", obj.scl[0]);
-        element->SetAttribute("SclY", obj.scl[1]);
-        element->SetAttribute("SclZ", obj.scl[2]);
+        XMLElement* scl = doc.NewElement("Scale");
+        element->InsertEndChild(scl);
+        scl->SetAttribute("X", obj.scl[0]);
+        scl->SetAttribute("Y", obj.scl[1]);
+        scl->SetAttribute("Z", obj.scl[2]);
 
-        element->SetAttribute("ColR", obj.color[0]);
-        element->SetAttribute("ColG", obj.color[1]);
-        element->SetAttribute("ColB", obj.color[2]);
-        element->SetAttribute("ColA", obj.color[3]);
+        XMLElement* col = doc.NewElement("Color");        
+        col->SetAttribute("R", obj.color[0]);
+        col->SetAttribute("G", obj.color[1]);
+        col->SetAttribute("B", obj.color[2]);
+        col->SetAttribute("A", obj.color[3]);
+        element->InsertEndChild(col);
     }
 
     // ----------------------------------------
-    // 2. 削除オプション（新しいデータに無い Object を削除）
+    // 削除オプション（新しいデータに無い Object を削除）
     // ----------------------------------------
     bool enableDelete = true;
 
@@ -172,6 +252,10 @@ void XmlRW::UpdateObjectsInXML(const std::vector<ObjectData>& objects, const cha
     // 保存
     XMLError err = doc.SaveFile(fileName.c_str());
     if (err != XML_SUCCESS) {
-        printf("Failed to save XML: %s\n", fileName);
+        std::cout << "Failed to save XML:" << fileName << std::endl;
+    }
+    else
+    {
+        std::cout << "Success to save XML:" << fileName << std::endl;
     }
 }

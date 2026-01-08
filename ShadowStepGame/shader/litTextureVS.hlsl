@@ -25,7 +25,8 @@ PS_IN main(in VS_IN input)
 	
     output.col.xyz = input.col.xyz * d * Light.Diffuse.xyz; // 拡散光の影響を乗算
     output.col.xyz += input.col.xyz * Light.Ambient.xyz; // アンビエント光を加算
-    output.col.a = input.col.a; // アルファ値はそのまま使用
+    output.col.xyz += Material.Emission.xyz;	// Emissionを加算
+    output.col.a = input.col.a * Material.Diffuse.a; // アルファ値
 	
 	//texture=============================
 	// テクスチャ座標はそのまま使用

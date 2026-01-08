@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Objects>
-    <Object ID="1" ObjectName="MapSystem" ObjectType="" Tag="MapSystem" FileName="" Texture="" PosX="0" PosY="0" PosZ="0" RotX="0" RotY="0" RotZ="0" SclX="4" SclY="4" SclZ="4" ColR="1" ColG="1" ColB="1" ColA="1"/>
-	<Object ID="2" ObjectName="Sun" ObjectType="SimpleCube" Tag="Sun" FileName="" Texture="" PosX="0" PosY="-1" PosZ="0" RotX="0" RotY="0" RotZ="0" SclX="2" SclY="2" SclZ="2" ColR="1" ColG="1" ColB="1" ColA="1"/>
+    <Object ID="1">
+        <ObjectName Value="MapSystem"/>
+        <ObjectType Value=""/>
+        <Tag Value="MapSystem"/>
+        <FileName Value=""/>
+        <Texture Value=""/>
+
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="4" Y="4" Z="4"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="2">
+        <ObjectName Value="Sun"/>
+        <ObjectType Value="SimpleCube"/>
+        <Tag Value="Sun"/>
+        <FileName Value=""/>
+        <Texture Value=""/>
+
+        <Posision X="0" Y="-1" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="2" Y="2" Z="2"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
 </Objects>
