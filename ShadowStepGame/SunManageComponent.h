@@ -20,13 +20,19 @@ class SunManageComponent : public Component
 {
 private:
     std::vector<SunData> m_SunList;
-    int curIdx = 0;
-
+    int m_CurIdx = 0;
+    int m_CurPosMapX = 0;
+    int m_CurPosMapY = 0;
+    int m_MapWidth = 0;
+    int m_MapHeight = 0;
+    int m_TurnProgress = 0;     // 一周するまでの経過時間
 public:
     // ===================================================================
     // コンストラクタ
     // ===================================================================
     SunManageComponent(float widthMap, float heightMap)
+        : m_MapWidth(widthMap)
+        , m_MapHeight(heightMap)
     {
         float CenterMapX = 0;
         float CenterMapZ = 0;
@@ -78,6 +84,8 @@ public:
     void Init() override
     {
         m_pOwner->GetTransform().SetPosition(DirectX::SimpleMath::Vector3(m_SunList[0].startPosX, 0.f, m_SunList[0].startPosZ));
+        m_CurPosMapX = m_SunList[0].startPosX;
+        m_CurPosMapY = m_SunList[0].startPosZ;
     }
 
     // ===================================================================
@@ -92,18 +100,22 @@ public:
             return;
         }
 
-        static int count = 0;
+        m_TurnProgress++;
+        m_CurPosMapX++;
+        m_CurPosMapY++;
 
         Transform& transform = m_pOwner->GetTransform();
-        DirectX::SimpleMath::Vector3 newPos = transform.GetPosition();
-        newPos.x += m_SunList[curIdx].moveDir.x;
-        newPos.z += m_SunList[curIdx].moveDir.y;
+        DirectX::SimpleMath::Vector3 newPos;
+        newPos.x = m_SunList[m_CurIdx].startPosX;
+        newPos.z = m_SunList[m_CurIdx].startPosZ;
+        newPos.x += m_SunList[m_CurIdx].moveDir.x * m_TurnProgress;
+        newPos.z += m_SunList[m_CurIdx].moveDir.y * m_TurnProgress;
 
-        if (curIdx == 0 || curIdx == 1)
+        if (m_CurIdx == 0 || m_CurIdx == 1)
         {
             if (newPos.z * newPos.z <= 0.01)
             {
-                newPos.y = 7;
+                newPos.y = m_MapHeight;
             }
             else
             {
@@ -114,7 +126,7 @@ public:
         {
             if (newPos.x * newPos.x <= 0.01)
             {
-                newPos.y = 7;
+                newPos.y = m_MapHeight;
             }
             else
             {
@@ -122,16 +134,15 @@ public:
             }
         }
 
-        count++;
-
-        if (count >= 8)
+        if (m_TurnProgress >= 7)
         {
-            curIdx = (curIdx + 1) % 4;
-            newPos.x = m_SunList[curIdx].startPosX;
-            newPos.z = m_SunList[curIdx].startPosZ;
+            m_CurIdx = (m_CurIdx + 1) % 4;
+            newPos.x = m_SunList[m_CurIdx].startPosX;
+            newPos.z = m_SunList[m_CurIdx].startPosZ;
             newPos.y = 0;
 
-            count = 0;
+
+            m_TurnProgress = 0;
         }
 
         transform.SetPosition(newPos);
