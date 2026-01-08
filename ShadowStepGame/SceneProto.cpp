@@ -6,12 +6,14 @@
 #include "SceneManager.h"
 #include "IOManager.h"
 #include <iostream>
+#include <DirectXMath.h>
 
 // Components
 #include "SimplePlaneRendererComponent.h"
 #include "MapSystemComponent.h"
 #include "SunManageComponent.h"
 #include "GameSystemComponent.h"
+#include "OrbitCameraComponent.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -44,9 +46,15 @@ void SceneProto::Init()
         auto* gameSystem = FindGameObjectWithTag("System")->AddComponent<GameSystemComponent>();
         gameSystem->Init();
 
+        // カメラ
+        auto* orbitCamera = FindGameObjectWithTag("System")->AddComponent<OrbitCameraComponent>(&m_Camera);
+        orbitCamera->SetGameSystem(gameSystem);
+        orbitCamera->SetRotationSpeed(0.02f);
+        
         // ここで SunManageComponent をセット
         // ※m_sunSystem は現状 private なので、public setter または friend でアクセス推奨
         // gameSystem->SetSunSystem(sun); // setter を作ると良い
+
     }  
 
     // Init Camera
@@ -80,13 +88,17 @@ void SceneProto::UnInit()
 
 void SceneProto::Update()
 {
-    // Update Camera
-    m_Camera.Update();
-
-    // Update GameObjectList
+    // ============================
+    // オブジェクト更新
+    // ============================
     UpdateObjectList();
 
+    // カメラ更新
+    m_Camera.Update();
 }
+
+
+
 
 void SceneProto::Draw()
 {

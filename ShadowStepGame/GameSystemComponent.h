@@ -69,6 +69,8 @@ public:
 	//=======================================
 	void Update() override;
 
+
+	BattleState GetBattleState() { return m_State; }
 private:
 	//=======================================
 	// ó‘ÔŠÇ—ŠÖ”

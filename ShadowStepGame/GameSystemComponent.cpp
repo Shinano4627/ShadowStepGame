@@ -32,8 +32,8 @@ void GameSystemComponent::Init()
 
 void GameSystemComponent::Update()
 {
-    // VK_W が押されたら状態更新（テスト用）
-    if (IO_MANAGER.GetKeyDownKeyBord(VK_W))
+    // VK_E が押されたら状態更新（テスト用）
+    if (IO_MANAGER.GetKeyDownKeyBord(VK_E))
     {
         UpdateState();
     }
