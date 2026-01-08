@@ -25,6 +25,9 @@
     <Filter Include="ソース ファイル\Scene">
       <UniqueIdentifier>{74df3266-3c60-4f98-8981-e8edc5cbac58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Unit">
+      <UniqueIdentifier>{e6e86f58-9ac2-4531-8e55-3c066ac871ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\AABBCollider.h">
@@ -222,6 +225,30 @@
     <ClInclude Include="SceneProto.h">
       <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Unit.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerUnit.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyUnit.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitModel.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="AttackUnit.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="GiantUnit.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="NormalUnit.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="PlacementUnit.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\AABBCollider.cpp">
@@ -346,6 +373,30 @@
     </ClCompile>
     <ClCompile Include="SceneProto.cpp">
       <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerUnit.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyUnit.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitModel.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="AttackUnit.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="GiantUnit.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="NormalUnit.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="PlacementUnit.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
