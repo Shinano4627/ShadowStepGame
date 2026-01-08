@@ -2,13 +2,27 @@
 #include	<iostream>
 #include	"Texture.h"
 #include	"stb_image.h"
-#include	"renderer.h"
+#include	"Renderer.h"
+
+//=======================================
+// コンストラクタ・デストラクタ
+//=======================================
+Texture::Texture()
+{
+
+}
+
+Texture::~Texture()
+{
+	m_srv.Reset();	// 明示的にSRVを解放
+}
+
 
 // テクスチャをロード
 bool Texture::Load(const std::string& filename)
 {
 	bool sts = true;
-	unsigned char* pixels;
+	unsigned char* pixels = nullptr;
 
 	// 画像読み込み
 	pixels = stbi_load(filename.c_str(), &m_width, &m_height, &m_bpp, 4);
@@ -20,8 +34,7 @@ bool Texture::Load(const std::string& filename)
 	// テクスチャ2Dリソース生成
 	ComPtr<ID3D11Texture2D> pTexture;
 
-	D3D11_TEXTURE2D_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
+	D3D11_TEXTURE2D_DESC desc{};
 
 	desc.Width = m_width;
 	desc.Height = m_height;
@@ -56,9 +69,6 @@ bool Texture::Load(const std::string& filename)
 	// ピクセルイメージ解放
 	stbi_image_free(pixels);
 
-	// テクスチャ解放
-	pTexture->Release();
-
 	return true;
 }
 
@@ -66,7 +76,7 @@ bool Texture::Load(const std::string& filename)
 bool Texture::LoadFromFemory(const unsigned char* Data, int len) {
 
 	bool sts = true;
-	unsigned char* pixels;
+	unsigned char* pixels = nullptr;
 
 	// 画像読み込み
 	pixels = stbi_load_from_memory(Data,
@@ -80,7 +90,6 @@ bool Texture::LoadFromFemory(const unsigned char* Data, int len) {
 	ComPtr<ID3D11Texture2D> pTexture;
 
 	D3D11_TEXTURE2D_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
 
 	desc.Width = m_width;
 	desc.Height = m_height;

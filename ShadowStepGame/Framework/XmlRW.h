@@ -1,6 +1,16 @@
+//=======================================
+// XmlRW.h
+// xmlファイルを読み込み各SceneのGameObjectDataを作成する
+//=======================================
 #pragma once
 #include <vector>
 #include <string>
+
+struct AnimationData
+{
+    std::string name;
+    std::string path;
+};
 
 struct ObjectData
 {
@@ -10,6 +20,8 @@ struct ObjectData
     std::string objectTag;
     std::string fileName;
     std::string texture;
+    std::vector<AnimationData> animations;
+
     float pos[3];
     float rot[3];
     float scl[3];

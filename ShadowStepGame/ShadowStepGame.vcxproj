@@ -207,6 +207,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="Framework\SystemCommon.h" />
     <ClInclude Include="Framework\TestCube.h" />
     <ClInclude Include="Framework\Texture.h" />
+    <ClInclude Include="Framework\Texture2D.h" />
     <ClInclude Include="Framework\Timer.h" />
     <ClInclude Include="Framework\Transform.h" />
     <ClInclude Include="Framework\utility.h" />
@@ -215,12 +216,16 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="GiantUnit.h" />
     <ClInclude Include="NormalUnit.h" />
     <ClInclude Include="PlacementUnit.h" />
-    <ClInclude Include="TurnManager.h" />
+    <ClInclude Include="testTurnManager.h" />
+    <ClInclude Include="TurnComponent.h" />
+    <ClInclude Include="UnitComponent.h" />
     <ClInclude Include="UnitModel.h" />
     <ClInclude Include="PlayerUnit.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneProto.h" />
     <ClInclude Include="Unit.h" />
+    <ClInclude Include="MapSystemComponent.h" />
+    <ClInclude Include="UnitSystemComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AttackUnit.cpp" />
@@ -255,6 +260,8 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClCompile Include="Framework\SceneResult.cpp" />
     <ClCompile Include="Framework\SceneTitle.cpp" />
     <ClCompile Include="Framework\Shader.cpp" />
+    <ClCompile Include="Framework\SimpleCubeRendererComponent.cpp" />
+    <ClCompile Include="Framework\SimplePlaneRendererComponent.cpp" />
     <ClCompile Include="Framework\singleton.cpp" />
     <ClCompile Include="Framework\sound.cpp" />
     <ClCompile Include="Framework\SoundManager.cpp" />
@@ -262,14 +269,19 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClCompile Include="Framework\StaticMesh.cpp" />
     <ClCompile Include="Framework\TestCube.cpp" />
     <ClCompile Include="Framework\Texture.cpp" />
+    <ClCompile Include="Framework\Texture2D.cpp" />
     <ClCompile Include="Framework\Timer.cpp" />
     <ClCompile Include="Framework\utility.cpp" />
     <ClCompile Include="Framework\XmlRW.cpp" />
     <ClCompile Include="GiantUnit.cpp" />
     <ClCompile Include="NormalUnit.cpp" />
     <ClCompile Include="PlacementUnit.cpp" />
+    <ClCompile Include="testTurnManager.cpp" />
+    <ClCompile Include="TurnComponent.cpp" />
+    <ClCompile Include="UnitComponent.cpp" />
     <ClCompile Include="UnitModel.cpp" />
     <ClCompile Include="PlayerUnit.cpp" />
+    <ClCompile Include="MapSystemComponent.cpp" />
     <ClCompile Include="SceneProto.cpp" />
     <ClCompile Include="Unit.cpp" />
   </ItemGroup>
@@ -277,30 +289,50 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <FxCompile Include="shader\common.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="shader\litTextureAnimationVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="shader\litTexturePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="shader\litTextureVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="shader\outlineShaderPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="shader\outlineShaderVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="shader\unlitTexturePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="shader\unlitTextureVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

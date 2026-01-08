@@ -15,6 +15,9 @@ class Material {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pConstantBufferMaterial;
 
 public:
+	//=======================================
+	// コンストラクタ・デストラクタ
+	//=======================================
 	Material() {}
 	Material(MATERIAL mtrl) {
 		Create(mtrl);
@@ -23,6 +26,9 @@ public:
 		Uninit();
 	}
 
+	//=======================================
+	// ライフサイクル・その他関数
+	//=======================================
 	bool Create(MATERIAL mtrl) {
 
 		ID3D11Device* dev;
@@ -41,7 +47,7 @@ public:
 		m_Material.Diffuse = mtrl.Diffuse;
 		m_Material.Specular = mtrl.Specular;
 		m_Material.Emission = mtrl.Emission;
-		m_Material.Shiness = mtrl.Shiness;
+		m_Material.Shininess = mtrl.Shininess;
 		m_Material.TextureEnable = mtrl.TextureEnable;
 
 		Update();
@@ -126,8 +132,8 @@ public:
 		m_Material.Emission = emission;
 	}
 
-	void SetShiness(float shiness) {
-		m_Material.Shiness = shiness;
+	void SetShininess(float shiness) {
+		m_Material.Shininess = shiness;
 	}
 
 	bool isTextureEnable() {

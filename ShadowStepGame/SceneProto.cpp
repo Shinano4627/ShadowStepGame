@@ -1,50 +1,63 @@
 // ===================================================================
 // SceneProto.cpp
-// タイトルシーン実装
+// Plese Write scene explanation
 // ===================================================================
 #include "SceneProto.h"
 #include "SceneManager.h"
 #include "IOManager.h"
-
-// コンポーネント
-#include "RotatorComponent.h"
-
 #include <iostream>
+
+// Components
+#include "SimplePlaneRendererComponent.h"
+#include "MapSystemComponent.h"
+#include "UnitComponent.h"
+#include "TurnComponent.h"
+
+using namespace DirectX::SimpleMath;
+
 
 void SceneProto::Init()
 {
     std::cout << "========================================" << std::endl;
     std::cout << "[SceneProto] Init START" << std::endl;
 
-    // 既存オブジェクトを削除
+    // Delete ObjectList
     DeleteObjectList();
 
-    using namespace DirectX::SimpleMath;
-
-    // オブジェクトリスト作成
-    MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_TITLE).c_str());
+    // Make ObjectList
+    MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_PROTO).c_str());
 
     // 追加コンポーネント
     {
+        // マップシステム
+        auto* mapSystem = FindGameObjectWithTag("MapSystem")->AddComponent<MapSystemComponent>("TestMap.csv");
+        mapSystem->MakeMap(m_GameObjects);    // マップの読み込み
 
+        // プレイヤー
+        auto* playerObj = FindGameObjectWithTag("Player");
+        auto* playerUnit = playerObj->AddComponent<UnitComponent>();
+        playerUnit->SetCamp(UnitCamp::Player);
+        playerUnit->TakeDamage(0);  // 初期HP確認用
 
-    }
+        // エネミー
+        auto* enemyObj = FindGameObjectWithTag("Enemy");
+        auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
+        enemyUnit->SetCamp(UnitCamp::Enemy);
+        enemyUnit->TakeDamage(0);  // 初期HP確認用
 
-    // カメラ初期化
+    }  
+
+    // Init Camera
     m_Camera.Init();
 
+    // Init Data
     m_nextScene = SCENE_NONE;
 
-    // 初期化完了
+    // Complete
     m_isInitialized = true;
 
     std::cout << "[SceneProto] Initialized successfully" << std::endl;
     std::cout << "========================================" << std::endl;
-    std::cout << "" << std::endl;
-    std::cout << "=== TITLE PROTO ===" << std::endl;
-    std::cout << "Controls:" << std::endl;
-    std::cout << "  ENTER - Start Game" << std::endl;
-    std::cout << "  SPACE - Go to TestCube" << std::endl;
     std::cout << "" << std::endl;
 }
 
@@ -53,40 +66,35 @@ void SceneProto::UnInit()
     std::cout << "[SceneProto] UnInit" << std::endl;
     DeleteObjectList();
 
-    // カメラ終了処理
+    // UnInit Camera
     m_Camera.Uninit();
 
+    // Complete
     m_isInitialized = false;
 }
 
 void SceneProto::Update()
 {
-    // カメラ更新
+    // 1. カメラ更新
     m_Camera.Update();
 
-    // Enterキーでゲーム開始
-    if (IO_MANAGER.GetKeyDown(TYPE_OK) || IO_MANAGER.GetKeyDownKeyBord(VK_RETURN))
-    {
-        std::cout << "[SceneProto] ENTER pressed - Starting Game" << std::endl;
-        m_nextScene = SCENE_GAME;
-        return;
-    }
-
-    // GameObjectリストを更新
+    // 2. 全GameObject更新
     UpdateObjectList();
 }
 
+
+
 void SceneProto::Draw()
 {
-    // 3D描画
+    // World
     Draw(&m_Camera);
 
-    // UI層のみ描画（カメラ不使用）
-    DrawLayer(nullptr, RenderLayer::UI);
+    // Ui
+    DrawLayer(&m_Camera, RenderLayer::UI);
 }
 
 void SceneProto::Draw(Camera* camera)
 {
-    // WORLD層を描画（カメラ使用）
     DrawLayer(camera, RenderLayer::WORLD);
 }
+

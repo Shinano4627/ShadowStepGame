@@ -71,11 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\directxtk\include;C:\assimp\5.2.5\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\directxtk\include;C:\assimp\5.2.5\include;$(SolutionDir)GameFramework;$(IncludePath)</IncludePath>
     <LibraryPath>C:\assimp\5.2.5\lib;C:\directxtk\lib\x64\Debug;$(LibraryPath);C:\assimp\5.2.5\lib;C:\assimp\5.2.5\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\directxtk\include;C:\assimp\5.2.5\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\directxtk\include;C:\assimp\5.2.5\include;$(SolutionDir)GameFramework;$(SolutionDir)GameFramework;$(IncludePath)</IncludePath>
     <LibraryPath>C:\assimp\5.2.5\lib;C:\directxtk\lib\x64\Release;$(LibraryPath);C:\assimp\5.2.5\lib;C:\assimp\5.2.5\lib</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -135,6 +135,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\SceneDebug.cpp" />
+    <ClCompile Include="..\SceneGame.cpp" />
+    <ClCompile Include="..\SceneResult.cpp" />
+    <ClCompile Include="..\SceneTitle.cpp" />
     <ClCompile Include="AABBCollider.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="AssimpPerse.cpp" />
@@ -159,23 +163,27 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="SceneBase.cpp" />
-    <ClCompile Include="SceneDebug.cpp" />
-    <ClCompile Include="SceneGame.cpp" />
     <ClCompile Include="SceneManager.cpp" />
-    <ClCompile Include="SceneResult.cpp" />
-    <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SimpleCubeRendererComponent.cpp" />
+    <ClCompile Include="SimplePlaneRendererComponent.cpp" />
     <ClCompile Include="singleton.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="StaticMesh.cpp" />
+    <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="XmlRW.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Scene.h" />
+    <ClInclude Include="..\SceneDebug.h" />
+    <ClInclude Include="..\SceneGame.h" />
+    <ClInclude Include="..\SceneResult.h" />
+    <ClInclude Include="..\SceneTitle.h" />
     <ClInclude Include="AABBCollider.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="AssimpPerse.h" />
@@ -216,13 +224,8 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="RotatorComponent.h" />
-    <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneBase.h" />
-    <ClInclude Include="SceneDebug.h" />
-    <ClInclude Include="SceneGame.h" />
     <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="SceneResult.h" />
-    <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SimpleCubeRendererComponent.h" />
     <ClInclude Include="SimplePlaneRendererComponent.h" />
@@ -234,6 +237,7 @@
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="SystemCommon.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="utility.h" />
@@ -244,22 +248,38 @@
     <FxCompile Include="shader\common.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="shader\litTextureAnimationVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="shader\litTexturePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="shader\litTextureVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="shader\unlitTexturePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="shader\unlitTextureVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

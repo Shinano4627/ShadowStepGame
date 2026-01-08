@@ -1,0 +1,464 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{e51369fc-bfc2-42bc-9ae6-2c78c46ab7a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\download">
+      <UniqueIdentifier>{d9e70d25-2873-4f38-acbd-f1d829f06ebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\imgui">
+      <UniqueIdentifier>{1db91c86-dbd3-4a88-8504-c75156e14625}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Scene">
+      <UniqueIdentifier>{74df3266-3c60-4f98-8981-e8edc5cbac58}</UniqueIdentifier>
+    </Filter>
+<<<<<<< HEAD
+    <Filter Include="ソース ファイル\Unit">
+      <UniqueIdentifier>{e6e86f58-9ac2-4531-8e55-3c066ac871ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Unit\ProtoCode">
+      <UniqueIdentifier>{69991b8e-c385-48eb-8fb2-7c9f6288700e}</UniqueIdentifier>
+=======
+    <Filter Include="ソース ファイル\Component">
+      <UniqueIdentifier>{cd102b61-4b71-4128-aa3b-3189934a62ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Mesh">
+      <UniqueIdentifier>{a1d637a5-4487-4b47-943e-bb6cf5e7edcf}</UniqueIdentifier>
+>>>>>>> develop
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Framework\AABBCollider.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Application.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\AssimpPerse.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Camera.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\CameraFollowComponent.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\CameraRelativeMoverComponent.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\CameraRotatorComponent.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Collider.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Component.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\DataManager.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\DebugUI.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\EmptyRender.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Game.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\GameObject.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\IndexBuffer.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\input.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\IOManager.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\main.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Material.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Mesh.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\MeshComponent.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\MeshComponentWrapper.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\MeshRenderer.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\MeshRendererComponent.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\PhysicsCommon.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\PhysicsManager.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\PlayerMoverComponent.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Renderer.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\ResourceManager.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\RigidBody.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\RotatorComponent.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SceneBase.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SceneDebug.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SceneGame.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SceneManager.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SceneResult.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Shader.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\singleton.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\sound.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SoundManager.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SphereCollider.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\StaticMesh.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\stb_image.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SystemCommon.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\TestCube.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Texture.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Timer.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Transform.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\utility.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\VertexBuffer.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\XmlRW.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\download\tinyxml2.h">
+      <Filter>Framework\download</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\imgui\imconfig.h">
+      <Filter>Framework\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\imgui\imgui.h">
+      <Filter>Framework\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\imgui\imgui_impl_dx11.h">
+      <Filter>Framework\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\imgui\imgui_impl_win32.h">
+      <Filter>Framework\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\imgui\imgui_internal.h">
+      <Filter>Framework\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\imgui\imstb_rectpack.h">
+      <Filter>Framework\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\imgui\imstb_textedit.h">
+      <Filter>Framework\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\imgui\imstb_truetype.h">
+      <Filter>Framework\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneProto.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="Unit.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerUnit.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyUnit.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitModel.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="AttackUnit.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="GiantUnit.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="NormalUnit.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="PlacementUnit.h">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="TurnManager.h">
+      <Filter>ソース ファイル\Unit\ProtoCode</Filter>
+=======
+    <ClInclude Include="Framework\SceneTitle.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="MapSystemComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SimpleCubeRendererComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SimplePlaneRendererComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Texture2D.h">
+      <Filter>ソース ファイル\Component</Filter>
+>>>>>>> develop
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Framework\AABBCollider.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Application.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\AssimpPerse.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Camera.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Collider.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\DataManager.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\DebugUI.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Game.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\input.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\IOManager.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\main.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\PhysicsManager.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Renderer.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\ResourceManager.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\RigidBody.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SceneBase.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SceneDebug.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SceneGame.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SceneManager.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SceneResult.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Shader.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\singleton.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\sound.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SoundManager.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SphereCollider.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\StaticMesh.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\TestCube.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Texture.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Timer.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\utility.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\XmlRW.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\download\tinyxml2.cpp">
+      <Filter>Framework\download</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\imgui\imgui.cpp">
+      <Filter>Framework\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\imgui\imgui_demo.cpp">
+      <Filter>Framework\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\imgui\imgui_draw.cpp">
+      <Filter>Framework\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\imgui\imgui_impl_dx11.cpp">
+      <Filter>Framework\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\imgui\imgui_impl_win32.cpp">
+      <Filter>Framework\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\imgui\imgui_tables.cpp">
+      <Filter>Framework\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\imgui\imgui_widgets.cpp">
+      <Filter>Framework\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneProto.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+<<<<<<< HEAD
+    <ClCompile Include="Unit.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerUnit.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyUnit.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitModel.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="AttackUnit.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="GiantUnit.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="NormalUnit.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="PlacementUnit.cpp">
+      <Filter>ソース ファイル\Unit</Filter>
+=======
+    <ClCompile Include="Framework\SceneTitle.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="MapSystemComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SimpleCubeRendererComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SimplePlaneRendererComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Texture2D.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+>>>>>>> develop
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shader\common.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\litTexturePS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\litTextureVS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\outlineShaderPS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\outlineShaderVS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\unlitTexturePS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\unlitTextureVS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\litTextureAnimationVS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

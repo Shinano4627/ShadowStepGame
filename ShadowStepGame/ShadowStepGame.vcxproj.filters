@@ -25,11 +25,20 @@
     <Filter Include="ソース ファイル\Scene">
       <UniqueIdentifier>{74df3266-3c60-4f98-8981-e8edc5cbac58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Scene">
+      <UniqueIdentifier>{74df3266-3c60-4f98-8981-e8edc5cbac58}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ソース ファイル\Unit">
       <UniqueIdentifier>{e6e86f58-9ac2-4531-8e55-3c066ac871ce}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Unit\ProtoCode">
       <UniqueIdentifier>{69991b8e-c385-48eb-8fb2-7c9f6288700e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component">
+      <UniqueIdentifier>{cd102b61-4b71-4128-aa3b-3189934a62ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Mesh">
+      <UniqueIdentifier>{a1d637a5-4487-4b47-943e-bb6cf5e7edcf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -141,16 +150,7 @@
     <ClInclude Include="Framework\SceneResult.h">
       <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\SceneTitle.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
     <ClInclude Include="Framework\Shader.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\SimpleCubeRendererComponent.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\SimplePlaneRendererComponent.h">
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\singleton.h">
@@ -252,8 +252,32 @@
     <ClInclude Include="PlacementUnit.h">
       <Filter>ソース ファイル\Unit</Filter>
     </ClInclude>
-    <ClInclude Include="TurnManager.h">
+    <ClInclude Include="testTurnManager.h">
       <Filter>ソース ファイル\Unit\ProtoCode</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SceneTitle.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="MapSystemComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SimpleCubeRendererComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SimplePlaneRendererComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Texture2D.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitSystemComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="TurnComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -315,9 +339,6 @@
       <Filter>Framework</Filter>
     </ClCompile>
     <ClCompile Include="Framework\SceneResult.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Framework\SceneTitle.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
     <ClCompile Include="Framework\Shader.cpp">
@@ -404,6 +425,31 @@
     <ClCompile Include="PlacementUnit.cpp">
       <Filter>ソース ファイル\Unit</Filter>
     </ClCompile>
+    <!-- Component / SceneTitle 系 -->
+    <ClCompile Include="Framework\SceneTitle.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="MapSystemComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SimpleCubeRendererComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SimplePlaneRendererComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Texture2D.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="testTurnManager.cpp">
+      <Filter>ソース ファイル\Unit\ProtoCode</Filter>
+    </ClCompile>
+    <ClCompile Include="TurnComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader\common.hlsl">
@@ -425,6 +471,9 @@
       <Filter>リソース ファイル</Filter>
     </FxCompile>
     <FxCompile Include="shader\unlitTextureVS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\litTextureAnimationVS.hlsl">
       <Filter>リソース ファイル</Filter>
     </FxCompile>
   </ItemGroup>

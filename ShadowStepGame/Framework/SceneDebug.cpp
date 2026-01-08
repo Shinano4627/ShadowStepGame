@@ -221,7 +221,7 @@ void SceneDebug::DebugUI()
 
 void SceneDebug::DebugUIInit()
 {
-	DebugUI::RedistDebugFunction(std::bind(&SceneDebug::DebugUI, this));
+	DebugUI::RedistDebugFunction(0, std::bind(&SceneDebug::DebugUI, this));
 }
 
 void SceneDebug::DebugUIUnInit()

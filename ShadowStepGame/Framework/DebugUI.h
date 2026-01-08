@@ -11,12 +11,13 @@
 
 class DebugUI {
     static std::vector<std::function<void(void)>> m_debugfunction;
+    static std::vector<int> m_idList;
 public:
 
     static void Init(ID3D11Device* device, ID3D11DeviceContext* context);
 
     // デバッグ表示関数の登録
-    static void RedistDebugFunction(std::function<void(void)> f);
+    static void RedistDebugFunction(int id, std::function<void(void)> f);
 
     static void Render();
 

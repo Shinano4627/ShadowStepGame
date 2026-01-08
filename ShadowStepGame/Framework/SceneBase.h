@@ -28,6 +28,7 @@ protected:
 	bool m_isInitialized = false;
 	bool m_isActive = false;
 	int m_nextScene = 999;
+	int m_lastID = 0;
 
 	// ƒJƒƒ‰
 	Camera  m_Camera;

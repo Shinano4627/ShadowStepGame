@@ -17,7 +17,7 @@ private:
 public:
 	void Init();
 	void Update();
-	void SetCamera();
+	void SetCamera(int mode = 0);
 	void Uninit();
 
 	// ================================================================== =

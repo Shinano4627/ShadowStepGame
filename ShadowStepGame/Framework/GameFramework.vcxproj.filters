@@ -66,9 +66,6 @@
     <ClCompile Include="SceneManager.cpp">
       <Filter>ソース ファイル\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="SceneBase.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="singleton.cpp">
       <Filter>ソース ファイル\Util</Filter>
     </ClCompile>
@@ -132,15 +129,6 @@
     <ClCompile Include="RigidBody.cpp">
       <Filter>ソース ファイル\GameObject\PhysicsComponent</Filter>
     </ClCompile>
-    <ClCompile Include="SceneTitle.cpp">
-      <Filter>ソース ファイル\Scene\TestScene</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneGame.cpp">
-      <Filter>ソース ファイル\Scene\TestScene</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneResult.cpp">
-      <Filter>ソース ファイル\Scene\TestScene</Filter>
-    </ClCompile>
     <ClCompile Include="DebugUI.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -165,7 +153,28 @@
     <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="SceneDebug.cpp">
+    <ClCompile Include="Texture2D.cpp">
+      <Filter>ソース ファイル\GameObject\MeshComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="SimplePlaneRendererComponent.cpp">
+      <Filter>ソース ファイル\GameObject\MeshComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleCubeRendererComponent.cpp">
+      <Filter>ソース ファイル\GameObject\MeshComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SceneDebug.cpp">
+      <Filter>ソース ファイル\Scene\TestScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SceneGame.cpp">
+      <Filter>ソース ファイル\Scene\TestScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SceneResult.cpp">
+      <Filter>ソース ファイル\Scene\TestScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SceneTitle.cpp">
+      <Filter>ソース ファイル\Scene\TestScene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneBase.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
   </ItemGroup>
@@ -187,12 +196,6 @@
     </ClInclude>
     <ClInclude Include="SystemCommon.h">
       <Filter>ソース ファイル\Util</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneBase.h">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
     <ClInclude Include="ResourceManager.h">
       <Filter>ソース ファイル\Manager</Filter>
@@ -263,9 +266,6 @@
     <ClInclude Include="Component.h">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>ソース ファイル\Util</Filter>
     </ClInclude>
@@ -286,15 +286,6 @@
     </ClInclude>
     <ClInclude Include="RigidBody.h">
       <Filter>ソース ファイル\GameObject\PhysicsComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneTitle.h">
-      <Filter>ソース ファイル\Scene\TestScene</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneGame.h">
-      <Filter>ソース ファイル\Scene\TestScene</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneResult.h">
-      <Filter>ソース ファイル\Scene\TestScene</Filter>
     </ClInclude>
     <ClInclude Include="RotatorComponent.h">
       <Filter>ソース ファイル\GameObject\TestComponent</Filter>
@@ -338,15 +329,6 @@
     <ClInclude Include="imgui\imstb_truetype.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MeshComponentWrapper.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneDebug.h">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshComponent.h">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="SimpleCubeRendererComponent.h">
       <Filter>ソース ファイル\GameObject\MeshComponent</Filter>
     </ClInclude>
@@ -358,6 +340,36 @@
     </ClInclude>
     <ClInclude Include="EmptyRender.h">
       <Filter>ソース ファイル\GameObject\MeshComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshComponentWrapper.h">
+      <Filter>ソース ファイル\GameObject\MeshComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture2D.h">
+      <Filter>ソース ファイル\GameObject\MeshComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>ソース ファイル\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshComponent.h">
+      <Filter>ソース ファイル\GameObject\MeshComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Scene.h">
+      <Filter>ソース ファイル\Scene\TestScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SceneDebug.h">
+      <Filter>ソース ファイル\Scene\TestScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SceneGame.h">
+      <Filter>ソース ファイル\Scene\TestScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SceneResult.h">
+      <Filter>ソース ファイル\Scene\TestScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SceneTitle.h">
+      <Filter>ソース ファイル\Scene\TestScene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneBase.h">
+      <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -374,6 +386,9 @@
       <Filter>リソース ファイル</Filter>
     </FxCompile>
     <FxCompile Include="shader\unlitTextureVS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\litTextureAnimationVS.hlsl">
       <Filter>リソース ファイル</Filter>
     </FxCompile>
   </ItemGroup>

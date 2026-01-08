@@ -9,7 +9,15 @@ PS_IN main(in VS_IN input)
 	wvp = mul(wvp, Projection);
 
     output.pos = mul(input.pos, wvp);
-    output.tex = input.tex;
+    
+    // UVÀ•W‚ğˆÚ“®‚³‚¹‚é
+    float4 uv;
+    uv.xy = input.tex; // s—ñŠ|‚¯Z‚Ì‚½‚ßfloat4Œ^‚ÉÊ‚·
+    uv.z = 0.0f;
+    uv.w = 1.0f;
+    uv = mul(uv, matrixTex); // UVÀ•W‚ÆˆÚ“®s—ñ‚ğŠ|‚¯Z
+    output.tex = uv.xy; // Š|‚¯Z‚ÌŒ‹‰Ê‚ğ‘—M—p•Ï”‚ÉƒZƒbƒg
+    
     output.col = input.col;
 	
     return output;

@@ -6,6 +6,8 @@
 #pragma once
 #include "SystemCommon.h"
 #include "Component.h"
+#include "Shader.h"
+#include "Renderer.h"
 
 // ===================================================================
 // 前方宣言
@@ -26,13 +28,19 @@ protected:
     bool m_Displayed = true;            // メッシュを表示するか
     RenderLayer m_RenderLayer = RenderLayer::WORLD; // 描画レイヤー
     DirectX::SimpleMath::Color m_Color;
+    bool m_DispOutline = false;
+    std::shared_ptr<Shader> m_ShaderOutline;
 public:
     // ===================================================================
     // コンストラクタ・デストラクタ
     // ===================================================================
     MeshComponent(const DirectX::SimpleMath::Color& color = DirectX::SimpleMath::Color(1, 1, 1, 1))
         : m_RenderLayer(RenderLayer::WORLD)
-        , m_Color(color) {}
+        , m_Color(color)
+    {
+        MakeShaderOutline();
+        m_ShaderOutline->SetRasterizeState(RS_CULLFRONT);   // 裏面だけ描画
+    }
 
     virtual ~MeshComponent() = default;
 
@@ -68,4 +76,16 @@ public:
     //virtual void SetColor(const DirectX::SimpleMath::Color& color) {}
 
     DirectX::SimpleMath::Color GetColor() { return m_Color; };
+
+    // ===================================================================
+    // アウトライン
+    // ===================================================================
+    void MakeShaderOutline()
+    {
+        // シェーダー作成
+        m_ShaderOutline = std::make_shared<Shader>();
+        m_ShaderOutline->Create("shader/outlineShaderVS.hlsl", "shader/outlineShaderPS.hlsl");
+    }
+    void SetDispOutline(bool enabled) { m_DispOutline = enabled; };
+    bool IsDispOutline() { return m_DispOutline; };
 };
