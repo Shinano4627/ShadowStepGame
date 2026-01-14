@@ -28,8 +28,8 @@ public:
 		UnitActionSelect,	// ユニットの操作入力
 		UnitActing,	// ユニット行動実行中
 		UnitEnd,	// ユニット行動終了処理
-		TurnEnd,	// 全ユニット行動終了
 		SunMove,	// 太陽移動＆影更新
+		TurnEnd,	// 全ユニット行動終了
 		Judge,	// 勝敗判定
 		End,	// 終了
 	};
