@@ -129,3 +129,80 @@ void MapSystemComponent::MakeMap(std::vector<std::unique_ptr<GameObject>>& objec
     }
     
 }
+
+// ===================================================================
+    // GameSystemで行うMap更新処理
+    // UnitData,ShadowData,地形MapDataを元にMapDataを更新する
+    // ===================================================================
+void MapSystemComponent::UpdateMap()
+{
+    if (!m_pOwner) return;
+
+    //=======================================
+    // マップを初期化（地形のみ残す）
+    //=======================================
+    for (int z = 0; z < m_MapHeight; ++z)
+    {
+        for (int x = 0; x < m_MapWidth; ++x)
+        {
+            // 地形はそのまま、それ以外はEmptyに
+            if (m_MapData[z][x] != (int)EMapTile::Wall &&
+                m_MapData[z][x] != (int)EMapTile::Tree)
+            {
+                m_MapData[z][x] = (int)EMapTile::Empty;
+            }
+        }
+    }
+
+    //=======================================
+    // UnitSystemからプレイヤー・敵の位置を取得・反映
+    //=======================================
+    /*
+        想定するUnitSystemの関数・データ：
+        - static const std::vector<Unit*>& GetUnits();
+            → 登録されている全Unitを返す
+        - Unitクラス側で持っている関数：
+            int GetMapX() const;      // マップ上のX座標
+            int GetMapZ() const;      // マップ上のZ座標
+            bool IsPlayer() const;    // プレイヤーかどうか
+    */
+    /*
+    for(auto* unit : UnitSystem::GetUnits())
+    {
+        // 位置情報取得
+        int mapX = unit->GetMapX();
+        int mapz = unit->GetMapZ();
+
+        // ユニットがプレイヤーか敵か
+        if (unit->IsPlayer())
+            m_MapData[mapZ][mapX] = (int)EMapTile::Player;
+        else
+            m_MapData[mapZ][mapX] = (int)EMapTile::Enemy;
+
+    }        
+    */
+
+    //=======================================
+    // ShadowSystemから影情報を取得・反映
+    // 空いているセルのみ反映
+    //=======================================
+    /*
+        想定するShadowSystemの関数：
+        - static bool IsShadowAt(int x, int z);
+            → 座標(x,z)に影があるかどうか返す
+        - static void AddShadow(int x, int z);    // 影を登録
+        - static void ClearShadows();              // 毎フレームリセット
+    */
+    /*
+    for (int z = 0; z < m_MapHeight; ++z)
+    {
+        for (int x = 0; x < m_MapWidth; ++x)
+        {
+            if (m_MapData[z][x] == (int)EMapTile::Empty && ShadowSystem::IsShadowAt(x, z))
+            {
+                m_MapData[z][x] = (int)EMapTile::Shadow;
+            }
+        }
+    }
+    */
+}
