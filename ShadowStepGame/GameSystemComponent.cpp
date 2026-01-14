@@ -155,6 +155,7 @@ void GameSystemComponent::UpdateUnitActing()
 
 void GameSystemComponent::UpdateUnitEnd()
 {
+
     NextTimeline();
 }
 
@@ -169,7 +170,8 @@ void GameSystemComponent::UpdateSunMove()
     {
         // 太陽を1ターン進める
         m_sunSystem->AdvanceTurn(); // 自動でターン進行に応じて太陽を動かす
-
+        // UpdateMap()
+        // UpdateShadow()
     }
 
     // 次は勝敗判定へ
@@ -243,6 +245,15 @@ void GameSystemComponent::NextTimeline()
 {
     m_TimelineIndex++;
 
+    // UpdateShadow()←ShadowSystem
+    // 光源情報を元に全てのオブジェクトの影を更新する。
+    // ↑を元に↓をやる
+    // UpdateMap()←MapSystem
+    // ユニットの位置、オブジェクトの位置、影の位置を取ってきて表示する
+    // UnitSystemの情報とShadowSystemの情報を元にMapを更新する。
+
+    // Map情報の更新はGameSystemで行う。
+
     if (m_TimelineIndex >= static_cast<int>(m_Timeline.size()))
     {
         // 全員行動終了
@@ -250,6 +261,7 @@ void GameSystemComponent::NextTimeline()
     }
     else
     {
+        // まだ行動待ちユニットが残っている
         ChangeState(BattleState::UnitSelect);
     }
 }

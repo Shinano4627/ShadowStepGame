@@ -99,6 +99,9 @@ void MapSystemComponent::MakeMap(std::vector<std::unique_ptr<GameObject>>& objec
                     //Ž÷
                     color = Color(0, 1.0f, 0, 1.0f);
                     break;
+                case 5:
+                    //‰e
+                    color = Color(0.5f, 0.5f, 0.5f, 1.0f);
                 default:
                     break;
                 }
