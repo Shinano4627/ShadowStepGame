@@ -20,16 +20,6 @@ private:
     float m_DrawStartPosX = 0.f;
     float m_DrawStartPosZ = 0.f;
 
-    enum class EMapTile
-    {
-        Empty = 0,  // 何もない
-        Wall = 1,   // 壁
-        Player = 2, // プレイヤー
-        Enemy = 3,  // 敵
-        Tree = 4,   // 樹
-        Shadow = 5, // 影
-    };
-
 public:
     // ===================================================================
     // コンストラクタ
@@ -60,19 +50,11 @@ public:
         if (!m_pOwner) return;
     }
 
-    // ===================================================================
-    // GameSystemで行うMap更新処理
-    // UnitData,ShadowData,地形MapDataを元にMapDataを更新する
-    // ===================================================================
-    void UpdateMap();
-
     void MakeMap(std::vector<std::unique_ptr<GameObject>>& objectList);      // CSVデータ読み込みとマップオブジェクトの作成
 
     // ===================================================================
     // 設定
     // ===================================================================
-    float GetMapSizeHeight() const { return (float)m_MapHeight * m_SizePiece; }
-    float GetMapSizeWidth() const { return (float)m_MapWidth * m_SizePiece; }
-    float GetMapHeight() const { return (float)m_MapHeight; }
-    float GetMapWidth() const { return (float)m_MapWidth; }
+    //void SetMoveSpeed(float speed) { m_MoveSpeed = speed; }
+    //float GetMoveSpeed() const { return m_MoveSpeed; }
 };

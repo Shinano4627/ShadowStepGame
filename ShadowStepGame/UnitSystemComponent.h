@@ -12,12 +12,6 @@ class UnitSystemComponent : public Component
 {
 private:
 
-    struct UnitInfo
-    {
-        // 敵かプレイヤー
-        // 位置情報
-    };
-
 public:
     // ===================================================================
     // コンストラクタ
@@ -42,9 +36,6 @@ public:
     }
 
     void MakeMap(std::vector<std::unique_ptr<GameObject>>& objectList);      // CSVデータ読み込みとマップオブジェクトの作成
-
-    // Unitの
-    std::vector<UnitInfo> GetUnitInfo();
 
     // ===================================================================
     // 設定

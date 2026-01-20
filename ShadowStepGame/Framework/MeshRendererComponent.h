@@ -258,9 +258,9 @@ public:
             const auto& subset = subsets[i];
 
             // マテリアルをGPUに設定
-            if (subset.MaterialIdx < m_Materials.size())
+            if (i < m_Materials.size())
             {
-                m_Materials[subset.MaterialIdx]->SetGPU();
+                m_Materials[i]->SetGPU();
             }
 
             // テクスチャをGPUに設定

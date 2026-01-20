@@ -6,15 +6,11 @@
 #include "SceneManager.h"
 #include "IOManager.h"
 #include <iostream>
-#include <DirectXMath.h>
 
 // Components
 #include "SimplePlaneRendererComponent.h"
 #include "MapSystemComponent.h"
 #include "UnitComponent.h"
-#include "SunManageComponent.h"
-#include "GameSystemComponent.h"
-#include "OrbitCameraComponent.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -33,7 +29,7 @@ void SceneProto::Init()
     // 追加コンポーネント
     {
         // マップシステム
-        auto* mapSystem = FindGameObjectWithTag("System")->AddComponent<MapSystemComponent>("TestMap.csv");
+        auto* mapSystem = FindGameObjectWithTag("MapSystem")->AddComponent<MapSystemComponent>("TestMap.csv");
         mapSystem->MakeMap(m_GameObjects);    // マップの読み込み
 
         // プレイヤー
@@ -46,35 +42,10 @@ void SceneProto::Init()
         auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
         enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
 
-        float heightMap = mapSystem->GetMapSizeHeight();
-        float widthMap = mapSystem->GetMapSizeWidth();
-
-        // 太陽
-        auto* sun = FindGameObjectWithTag("System")->AddComponent<SunManageComponent>(
-            widthMap, heightMap, mapSystem->GetMapHeight(), mapSystem->GetMapWidth());
-        sun->Init();
-
-        // ゲームシステム
-        auto* gameSystem = FindGameObjectWithTag("System")->AddComponent<GameSystemComponent>();
-        gameSystem->Init();
-
-        // カメラ
-        auto* orbitCamera = FindGameObjectWithTag("System")->AddComponent<OrbitCameraComponent>(&m_Camera);
-        orbitCamera->SetGameSystem(gameSystem);
-        orbitCamera->SetRotationSpeed(0.02f);
-        
-        // ここで SunManageComponent をセット
-        // ※m_sunSystem は現状 private なので、public setter または friend でアクセス推奨
-        // gameSystem->SetSunSystem(sun); // setter を作ると良い
-
-
     }  
 
     // Init Camera
     m_Camera.Init();
-    Vector3 newPos = m_Camera.GetPosition();
-    newPos.z = -100;
-    m_Camera.SetPosition(newPos);
 
     // Init Data
     m_nextScene = SCENE_NONE;
@@ -101,26 +72,13 @@ void SceneProto::UnInit()
 
 void SceneProto::Update()
 {
-
     // 1. カメラ更新
     m_Camera.Update();
 
     // 2. 全GameObject更新
     UpdateObjectList();
 
-
-    // ============================
-    // オブジェクト更新
-    // ============================
-    UpdateObjectList();
-
-    // カメラ更新
-    m_Camera.Update();
-
 }
-
-
-
 
 
 
