@@ -240,7 +240,17 @@
     <ClInclude Include="UnitSystemComponent.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+
     <ClInclude Include="UnitComponent.h">
+
+    <ClInclude Include="GameSystemComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="SunManageComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="OrbitCameraComponent.h">
+
       <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
   </ItemGroup>
@@ -381,7 +391,11 @@
     <ClCompile Include="Framework\Texture2D.cpp">
       <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
+
     <ClCompile Include="UnitComponent.cpp">
+
+    <ClCompile Include="GameSystemComponent.cpp">
+
       <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
   </ItemGroup>
