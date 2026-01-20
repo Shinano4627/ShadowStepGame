@@ -32,4 +32,5 @@ public:
 	bool LoadFromFemory(const unsigned char* data, int len);
 
 	void SetGPU();
+	void UnbindGPU();
 };

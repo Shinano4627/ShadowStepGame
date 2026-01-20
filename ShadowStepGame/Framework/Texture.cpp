@@ -136,3 +136,11 @@ void Texture::SetGPU()
 	ID3D11DeviceContext* devicecontext = Renderer::GetDeviceContext();
 	devicecontext->PSSetShaderResources(0, 1, m_srv.GetAddressOf());
 }
+
+// テクスチャ解除
+void Texture::UnbindGPU()
+{
+	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+	ID3D11DeviceContext* devicecontext = Renderer::GetDeviceContext();
+	devicecontext->PSSetShaderResources(0, 1, nullSRV);
+}
