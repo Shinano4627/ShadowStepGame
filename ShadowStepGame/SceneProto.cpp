@@ -11,7 +11,7 @@
 #include "SimplePlaneRendererComponent.h"
 #include "MapSystemComponent.h"
 #include "UnitComponent.h"
-#include "TurnComponent.h"
+#include "TestTurnComponent.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -36,15 +36,18 @@ void SceneProto::Init()
         // プレイヤー
         auto* playerObj = FindGameObjectWithTag("Player");
         auto* playerUnit = playerObj->AddComponent<UnitComponent>();
-        playerUnit->SetCamp(UnitCamp::Player);
-        playerUnit->TakeDamage(0);  // 初期HP確認用
+        playerUnit->SetCamp(UnitComponent::UnitCamp::UnitPlayer);
 
-        // エネミー
+        //エネミー
         auto* enemyObj = FindGameObjectWithTag("Enemy");
         auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
-        enemyUnit->SetCamp(UnitCamp::Enemy);
-        enemyUnit->TakeDamage(0);  // 初期HP確認用
+        enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
 
+        //ターン管理
+        auto* turnManagerObj = FindGameObjectWithTag("TurnManager");
+        auto* turn = turnManagerObj->AddComponent<TestTurnComponent>();
+        turn->AddUnit(playerUnit);
+        turn->AddUnit(enemyUnit);
     }  
 
     // Init Camera
@@ -80,6 +83,7 @@ void SceneProto::Update()
 
     // 2. 全GameObject更新
     UpdateObjectList();
+
 }
 
 

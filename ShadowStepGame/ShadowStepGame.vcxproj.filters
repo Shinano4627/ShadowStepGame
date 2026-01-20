@@ -276,7 +276,7 @@
     <ClInclude Include="UnitComponent.h">
       <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
-    <ClInclude Include="TurnComponent.h">
+    <ClInclude Include="TestTurnComponent.h">
       <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
   </ItemGroup>
@@ -447,7 +447,7 @@
     <ClCompile Include="testTurnManager.cpp">
       <Filter>ソース ファイル\Unit\ProtoCode</Filter>
     </ClCompile>
-    <ClCompile Include="TurnComponent.cpp">
+    <ClCompile Include="TestTurnComponent.cpp">
       <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
   </ItemGroup>

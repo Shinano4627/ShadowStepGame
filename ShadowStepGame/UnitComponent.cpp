@@ -1,63 +1,91 @@
 #include "UnitComponent.h"
+#include "IOManager.h"
+#include <iostream>
+// ===================================================================
+// コンストラクタ
+// ===================================================================
+UnitComponent::UnitComponent()
+{
+	//初期化
+	m_status.camp = UnitCamp::UnitPlayer;
+	m_status.state = UnitState::UnitWait;
+	m_status.model = UnitModel::UnitNormal;
+	m_status.hp = 5;
+}
 
+// ===================================================================
+// 更新
+// ・自ターン中のみ処理
+// /現状プレイヤーのみ入力受付
+// ===================================================================
 void UnitComponent::Update()
 {
-    // 今は特になし。将来的に状態アニメーション等追加
+	if (m_status.state != UnitState::UnitActive)
+		return;
+
+	if (m_status.camp == UnitCamp::UnitPlayer)
+	{
+		//仮実装：エンターでターン終了
+		if (IO_MANAGER.GetKeyDown(TYPE_OK))
+		{
+			std::cout << "[Player] End Turn" << std::endl;
+			EndTurn();
+		}
+	}
 }
 
+// ===================================================================
 // ターン開始
-void UnitComponent::StartTurn()
+// ===================================================================
+void UnitComponent::BeginTurn()
 {
-    if (m_disabledThisTurn)
-    {
-        m_state = UnitState::Disabled;
-        m_hp = m_maxHp;        // HP回復（プロトタイプ）
-        m_disabledThisTurn = false;
-        m_isMyTurn = false;
-        return;
-    }
+	if (m_status.state == UnitState::UnitDown)
+	{
+		m_status.state = UnitState::UnitWait;
+		return;
+	}
 
-    m_state = UnitState::Idle;
-    m_isMyTurn = true;
+	m_status.state = UnitState::UnitActive;
+
+	std::cout << "[BeginTurn]"
+		<< (m_status.camp == UnitCamp::UnitPlayer ? "Player" : "Enemy")
+		<< std::endl;
+
+	//仮仕様：エネミーは即ターン終了
+	if (m_status.camp == UnitCamp::UnitEnemy)
+	{
+		EndTurn();
+	}
 }
 
+// ===================================================================
 // ターン終了
+// ===================================================================
 void UnitComponent::EndTurn()
 {
-    if (m_state == UnitState::Done)
-        return;
+	if (m_status.state != UnitState::UnitActive)
+		return;
 
-    m_state = UnitState::Done;
-    m_isMyTurn = false;
+	m_status.state = UnitState::UnitWait;
+
+	std::cout << "[EndTurn]"
+		<< (m_status.camp == UnitCamp::UnitPlayer ? "Player" : "Enemy")
+		<< std::endl;
 }
 
-bool UnitComponent::IsMyTurn() const
-{
-    return m_state != UnitState::Disabled && m_isMyTurn;
-}
-
+// ===================================================================
+// ターン終了判定
+// ===================================================================
 bool UnitComponent::HasFinishedTurn() const
 {
-    return m_state == UnitState::Done;
+	return m_status.state == UnitState::UnitWait;
 }
 
+// ===================================================================
+// 行動可能判定
+// ===================================================================
 bool UnitComponent::CanAct() const
 {
-    return m_state == UnitState::Idle;
+	return m_status.state == UnitState::UnitActive;
 }
 
-void UnitComponent::TakeDamage(int damage)
-{
-    m_hp -= damage;
-    if (m_hp <= 0)
-    {
-        m_hp = 0;
-        Disable();
-    }
-}
-
-void UnitComponent::Disable()
-{
-    m_disabledThisTurn = true;
-    m_state = UnitState::Disabled;
-}

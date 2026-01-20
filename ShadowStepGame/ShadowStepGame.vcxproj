@@ -217,7 +217,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="NormalUnit.h" />
     <ClInclude Include="PlacementUnit.h" />
     <ClInclude Include="testTurnManager.h" />
-    <ClInclude Include="TurnComponent.h" />
+    <ClInclude Include="TestTurnComponent.h" />
     <ClInclude Include="UnitComponent.h" />
     <ClInclude Include="UnitModel.h" />
     <ClInclude Include="PlayerUnit.h" />
@@ -277,7 +277,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClCompile Include="NormalUnit.cpp" />
     <ClCompile Include="PlacementUnit.cpp" />
     <ClCompile Include="testTurnManager.cpp" />
-    <ClCompile Include="TurnComponent.cpp" />
+    <ClCompile Include="TestTurnComponent.cpp" />
     <ClCompile Include="UnitComponent.cpp" />
     <ClCompile Include="UnitModel.cpp" />
     <ClCompile Include="PlayerUnit.cpp" />

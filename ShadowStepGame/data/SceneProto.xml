@@ -39,7 +39,7 @@
         <Color R="0" G="0" B="1" A="1"/>
     </Object>
 
-    <Object ID="3">
+    <Object ID="4">
         <ObjectName Value="TurnManager"/>
         <ObjectType Value=""/>
         <Tag Value="TurnManager"/>
