@@ -213,9 +213,9 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="Framework\XmlRW.h" />
     <ClInclude Include="GameSystemComponent.h" />
     <ClInclude Include="MapSystemComponent.h" />
-    <ClInclude Include="OrbitCameraComponent.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneProto.h" />
+    <ClInclude Include="UnitComponent.h" />
     <ClInclude Include="ShadowStepGameCommon.h" />
     <ClInclude Include="ShadowSystemComponent.h" />
     <ClInclude Include="SunManageComponent.h" />
@@ -268,6 +268,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClCompile Include="GameSystemComponent.cpp" />
     <ClCompile Include="MapSystemComponent.cpp" />
     <ClCompile Include="SceneProto.cpp" />
+    <ClCompile Include="UnitSystemComponent.cpp" />
     <ClCompile Include="ShadowSystemComponent.cpp" />
   </ItemGroup>
   <ItemGroup>

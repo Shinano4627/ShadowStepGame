@@ -1,37 +1,28 @@
 // ===================================================================
-// ShadowSystemComponent.h
-// すべての影を管理
+// UnitComponent.h
+// 個別のユニット制御を行う
 // ===================================================================
 #pragma once
 #include "Component.h"
 #include "GameObject.h"
 #include "IOManager.h"
 #include "Game.h"
-#include "ShadowStepGameCommon.h"
 
-class ShadowSystemComponent : public Component
+class UnitComponent : public Component
 {
 private:
-    int** m_ShadowMapData = nullptr; 
-
-    int m_MapWidth = 0;   // 初期設定から変更しない想定
-    int m_MapHeight = 0;  
-
 public:
     // ===================================================================
     // コンストラクタ
     // ===================================================================
-    ShadowSystemComponent(int mapWidth, int mapHeight)
-        : m_MapWidth(mapWidth)
-        , m_MapHeight(mapHeight)
+    UnitComponent()
     {
-        MakeShadowMap();
     }
 
     // ===================================================================
     // デストラクタ
     // ===================================================================
-    ~ShadowSystemComponent()
+    ~UnitComponent()
     {
     }
 
@@ -41,20 +32,24 @@ public:
     void Update() override
     {
         if (!m_pOwner) return;
+
     }
 
     // ===================================================================
-    // 内部関数
+    // 終了処理
     // ===================================================================
-    void MakeShadowMap()
+    void Uninit() override
     {
-        // 空データの作成
+        if (!m_pOwner) return;
     }
 
-    void UpdateShadowMap(const int* mapData, const CellPosision* sunPos);   // 光源情報を元に全てのオブジェクトの影を更新する
+    // ===================================================================
+    // 独自処理
+    // ===================================================================
 
     // ===================================================================
-    // ゲッター・セッター
+    // 設定
     // ===================================================================
-    const int** GetShdowMap() { return m_ShadowMapData;};
+    //void SetMoveSpeed(float speed) { m_MoveSpeed = speed; }
+    //float GetMoveSpeed() const { return m_MoveSpeed; }
 };
