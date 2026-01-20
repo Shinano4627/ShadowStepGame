@@ -147,8 +147,6 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AttackUnit.h" />
-    <ClInclude Include="EnemyUnit.h" />
     <ClInclude Include="Framework\AABBCollider.h" />
     <ClInclude Include="Framework\Application.h" />
     <ClInclude Include="Framework\AssimpPerse.h" />
@@ -213,23 +211,13 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="Framework\utility.h" />
     <ClInclude Include="Framework\VertexBuffer.h" />
     <ClInclude Include="Framework\XmlRW.h" />
-    <ClInclude Include="GiantUnit.h" />
-    <ClInclude Include="NormalUnit.h" />
-    <ClInclude Include="PlacementUnit.h" />
-    <ClInclude Include="testTurnManager.h" />
-    <ClInclude Include="TestTurnComponent.h" />
     <ClInclude Include="UnitComponent.h" />
-    <ClInclude Include="UnitModel.h" />
-    <ClInclude Include="PlayerUnit.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneProto.h" />
-    <ClInclude Include="Unit.h" />
     <ClInclude Include="MapSystemComponent.h" />
     <ClInclude Include="UnitSystemComponent.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AttackUnit.cpp" />
-    <ClCompile Include="EnemyUnit.cpp" />
     <ClCompile Include="Framework\AABBCollider.cpp" />
     <ClCompile Include="Framework\Application.cpp" />
     <ClCompile Include="Framework\AssimpPerse.cpp" />
@@ -273,17 +261,9 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClCompile Include="Framework\Timer.cpp" />
     <ClCompile Include="Framework\utility.cpp" />
     <ClCompile Include="Framework\XmlRW.cpp" />
-    <ClCompile Include="GiantUnit.cpp" />
-    <ClCompile Include="NormalUnit.cpp" />
-    <ClCompile Include="PlacementUnit.cpp" />
-    <ClCompile Include="testTurnManager.cpp" />
-    <ClCompile Include="TestTurnComponent.cpp" />
     <ClCompile Include="UnitComponent.cpp" />
-    <ClCompile Include="UnitModel.cpp" />
-    <ClCompile Include="PlayerUnit.cpp" />
     <ClCompile Include="MapSystemComponent.cpp" />
     <ClCompile Include="SceneProto.cpp" />
-    <ClCompile Include="Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader\common.hlsl">

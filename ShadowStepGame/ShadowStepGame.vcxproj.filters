@@ -28,12 +28,6 @@
     <Filter Include="ソース ファイル\Scene">
       <UniqueIdentifier>{74df3266-3c60-4f98-8981-e8edc5cbac58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Unit">
-      <UniqueIdentifier>{e6e86f58-9ac2-4531-8e55-3c066ac871ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Unit\ProtoCode">
-      <UniqueIdentifier>{69991b8e-c385-48eb-8fb2-7c9f6288700e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Component">
       <UniqueIdentifier>{cd102b61-4b71-4128-aa3b-3189934a62ff}</UniqueIdentifier>
     </Filter>
@@ -228,33 +222,6 @@
     <ClInclude Include="SceneProto.h">
       <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Unit.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerUnit.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyUnit.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="UnitModel.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="AttackUnit.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="GiantUnit.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="NormalUnit.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="PlacementUnit.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="testTurnManager.h">
-      <Filter>ソース ファイル\Unit\ProtoCode</Filter>
-    </ClInclude>
     <ClInclude Include="Framework\SceneTitle.h">
       <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
@@ -274,9 +241,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="UnitComponent.h">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="TestTurnComponent.h">
       <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
   </ItemGroup>
@@ -401,30 +365,6 @@
     <ClCompile Include="SceneProto.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Unit.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerUnit.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyUnit.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="UnitModel.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="AttackUnit.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="GiantUnit.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="NormalUnit.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="PlacementUnit.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClCompile>
     <!-- Component / SceneTitle 系 -->
     <ClCompile Include="Framework\SceneTitle.cpp">
       <Filter>ソース ファイル\Scene</Filter>
@@ -442,12 +382,6 @@
       <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
     <ClCompile Include="UnitComponent.cpp">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="testTurnManager.cpp">
-      <Filter>ソース ファイル\Unit\ProtoCode</Filter>
-    </ClCompile>
-    <ClCompile Include="TestTurnComponent.cpp">
       <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
   </ItemGroup>

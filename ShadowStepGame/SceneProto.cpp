@@ -11,7 +11,6 @@
 #include "SimplePlaneRendererComponent.h"
 #include "MapSystemComponent.h"
 #include "UnitComponent.h"
-#include "TestTurnComponent.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -43,11 +42,6 @@ void SceneProto::Init()
         auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
         enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
 
-        //ƒ^[ƒ“ŠÇ—
-        auto* turnManagerObj = FindGameObjectWithTag("TurnManager");
-        auto* turn = turnManagerObj->AddComponent<TestTurnComponent>();
-        turn->AddUnit(playerUnit);
-        turn->AddUnit(enemyUnit);
     }  
 
     // Init Camera
