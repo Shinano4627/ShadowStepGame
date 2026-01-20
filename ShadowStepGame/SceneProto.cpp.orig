@@ -11,13 +11,10 @@
 // Components
 #include "SimplePlaneRendererComponent.h"
 #include "MapSystemComponent.h"
-<<<<<<< HEAD
 #include "UnitComponent.h"
-=======
 #include "SunManageComponent.h"
 #include "GameSystemComponent.h"
 #include "OrbitCameraComponent.h"
->>>>>>> develop
 
 using namespace DirectX::SimpleMath;
 
@@ -38,7 +35,6 @@ void SceneProto::Init()
         // マップシステム
         auto* mapSystem = FindGameObjectWithTag("System")->AddComponent<MapSystemComponent>("TestMap.csv");
         mapSystem->MakeMap(m_GameObjects);    // マップの読み込み
-<<<<<<< HEAD
 
         // プレイヤー
         auto* playerObj = FindGameObjectWithTag("Player");
@@ -49,7 +45,7 @@ void SceneProto::Init()
         auto* enemyObj = FindGameObjectWithTag("Enemy");
         auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
         enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
-=======
+
         float heightMap = mapSystem->GetMapSizeHeight();
         float widthMap = mapSystem->GetMapSizeWidth();
 
@@ -70,7 +66,6 @@ void SceneProto::Init()
         // ここで SunManageComponent をセット
         // ※m_sunSystem は現状 private なので、public setter または friend でアクセス推奨
         // gameSystem->SetSunSystem(sun); // setter を作ると良い
->>>>>>> develop
 
     }  
 
@@ -105,14 +100,8 @@ void SceneProto::UnInit()
 
 void SceneProto::Update()
 {
-<<<<<<< HEAD
-    // 1. カメラ更新
-    m_Camera.Update();
 
-    // 2. 全GameObject更新
-    UpdateObjectList();
 
-=======
     // ============================
     // オブジェクト更新
     // ============================
@@ -120,15 +109,19 @@ void SceneProto::Update()
 
     // カメラ更新
     m_Camera.Update();
->>>>>>> develop
+
+    // ============================
+    // オブジェクト更新
+    // ============================
+    UpdateObjectList();
+
+    // カメラ更新
+    m_Camera.Update();
 }
 
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> develop
 void SceneProto::Draw()
 {
     // World
