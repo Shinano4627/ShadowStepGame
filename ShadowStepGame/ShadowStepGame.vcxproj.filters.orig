@@ -25,19 +25,14 @@
     <Filter Include="ソース ファイル\Scene">
       <UniqueIdentifier>{74df3266-3c60-4f98-8981-e8edc5cbac58}</UniqueIdentifier>
     </Filter>
-<<<<<<< HEAD
-    <Filter Include="ソース ファイル\Unit">
-      <UniqueIdentifier>{e6e86f58-9ac2-4531-8e55-3c066ac871ce}</UniqueIdentifier>
+    <Filter Include="ソース ファイル\Scene">
+      <UniqueIdentifier>{74df3266-3c60-4f98-8981-e8edc5cbac58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Unit\ProtoCode">
-      <UniqueIdentifier>{69991b8e-c385-48eb-8fb2-7c9f6288700e}</UniqueIdentifier>
-=======
     <Filter Include="ソース ファイル\Component">
       <UniqueIdentifier>{cd102b61-4b71-4128-aa3b-3189934a62ff}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Component\Mesh">
       <UniqueIdentifier>{a1d637a5-4487-4b47-943e-bb6cf5e7edcf}</UniqueIdentifier>
->>>>>>> develop
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -227,34 +222,6 @@
     <ClInclude Include="SceneProto.h">
       <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="Unit.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerUnit.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyUnit.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="UnitModel.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="AttackUnit.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="GiantUnit.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="NormalUnit.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="PlacementUnit.h">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="TurnManager.h">
-      <Filter>ソース ファイル\Unit\ProtoCode</Filter>
-=======
     <ClInclude Include="Framework\SceneTitle.h">
       <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
@@ -269,7 +236,22 @@
     </ClInclude>
     <ClInclude Include="Framework\Texture2D.h">
       <Filter>ソース ファイル\Component</Filter>
->>>>>>> develop
+    </ClInclude>
+    <ClInclude Include="UnitSystemComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+
+    <ClInclude Include="UnitComponent.h">
+
+    <ClInclude Include="GameSystemComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="SunManageComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="OrbitCameraComponent.h">
+
+      <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -393,31 +375,7 @@
     <ClCompile Include="SceneProto.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-<<<<<<< HEAD
-    <ClCompile Include="Unit.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerUnit.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyUnit.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="UnitModel.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="AttackUnit.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="GiantUnit.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="NormalUnit.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="PlacementUnit.cpp">
-      <Filter>ソース ファイル\Unit</Filter>
-=======
+    <!-- Component / SceneTitle 系 -->
     <ClCompile Include="Framework\SceneTitle.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
@@ -432,7 +390,13 @@
     </ClCompile>
     <ClCompile Include="Framework\Texture2D.cpp">
       <Filter>ソース ファイル\Component</Filter>
->>>>>>> develop
+    </ClCompile>
+
+    <ClCompile Include="UnitComponent.cpp">
+
+    <ClCompile Include="GameSystemComponent.cpp">
+
+      <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

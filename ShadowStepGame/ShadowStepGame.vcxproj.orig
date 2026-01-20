@@ -120,8 +120,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy $(SolutionDir)ShadowStepGame\data $(OutDir)data *.xml /s /e /COPY:DT
-robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,8 +147,6 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AttackUnit.h" />
-    <ClInclude Include="EnemyUnit.h" />
     <ClInclude Include="Framework\AABBCollider.h" />
     <ClInclude Include="Framework\Application.h" />
     <ClInclude Include="Framework\AssimpPerse.h" />
@@ -213,26 +211,24 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="Framework\utility.h" />
     <ClInclude Include="Framework\VertexBuffer.h" />
     <ClInclude Include="Framework\XmlRW.h" />
-<<<<<<< HEAD
-    <ClInclude Include="GiantUnit.h" />
-    <ClInclude Include="NormalUnit.h" />
-    <ClInclude Include="PlacementUnit.h" />
-    <ClInclude Include="TurnManager.h" />
-    <ClInclude Include="UnitModel.h" />
-    <ClInclude Include="PlayerUnit.h" />
+
+    <ClInclude Include="UnitComponent.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneProto.h" />
-    <ClInclude Include="Unit.h" />
-=======
     <ClInclude Include="MapSystemComponent.h" />
+
+    <ClInclude Include="GameSystemComponent.h" />
+    <ClInclude Include="MapSystemComponent.h" />
+    <ClInclude Include="OrbitCameraComponent.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneProto.h" />
+    <ClInclude Include="ShadowStepGameCommon.h" />
+    <ClInclude Include="ShadowSystemComponent.h" />
+    <ClInclude Include="SunManageComponent.h" />
+
     <ClInclude Include="UnitSystemComponent.h" />
->>>>>>> develop
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AttackUnit.cpp" />
-    <ClCompile Include="EnemyUnit.cpp" />
     <ClCompile Include="Framework\AABBCollider.cpp" />
     <ClCompile Include="Framework\Application.cpp" />
     <ClCompile Include="Framework\AssimpPerse.cpp" />
@@ -276,17 +272,14 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClCompile Include="Framework\Timer.cpp" />
     <ClCompile Include="Framework\utility.cpp" />
     <ClCompile Include="Framework\XmlRW.cpp" />
-<<<<<<< HEAD
-    <ClCompile Include="GiantUnit.cpp" />
-    <ClCompile Include="NormalUnit.cpp" />
-    <ClCompile Include="PlacementUnit.cpp" />
-    <ClCompile Include="UnitModel.cpp" />
-    <ClCompile Include="PlayerUnit.cpp" />
-=======
+
+    <ClCompile Include="UnitComponent.cpp" />
+
+    <ClCompile Include="GameSystemComponent.cpp" />
+
     <ClCompile Include="MapSystemComponent.cpp" />
->>>>>>> develop
     <ClCompile Include="SceneProto.cpp" />
-    <ClCompile Include="Unit.cpp" />
+    <ClCompile Include="ShadowSystemComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader\common.hlsl">
