@@ -16,17 +16,19 @@ void GameSystemComponent::Init()
     m_mapSystem = m_pOwner->GetComponent<MapSystemComponent>();
     // m_unitSystem = m_pOwner->GetComponent<UnitSystemComponent>();
     m_sunSystem = m_pOwner->GetComponent<SunManageComponent>();
+    // m_shadowSystem = m_pOwner->GetComponet<ShadowComponent>();
 
     // 安全チェック
     if (!m_mapSystem)  std::cout << "[GameSystem] MapSystemComponent が見つかりません！\n";
     // if (!m_unitSystem) std::cout << "[GameSystem] UnitSystemComponent が見つかりません！\n";
     if (!m_sunSystem)  std::cout << "[GameSystem] SunManageComponent が見つかりません！\n";
+    // if (!m_shadowSystem) std::cout << "[GameSystem] ShadowSystemComponent が見つかりません！\n";
 
-    m_State = BattleState::Init;
+    // 状態データ初期化
     m_TurnCount = 0;
     m_TimelineIndex = 0;
 
-
+    // 次のBattleStateへ
     ChangeState(BattleState::Init);
 }
 
@@ -35,6 +37,7 @@ void GameSystemComponent::Update()
     // VK_E が押されたら状態更新（テスト用）
     if (IO_MANAGER.GetKeyDownKeyBord(VK_E))
     {
+        // ターン状態に合わせた関数を呼び出し
         UpdateState();
     }
 }
@@ -46,13 +49,16 @@ void GameSystemComponent::ChangeState(BattleState next)
         << " -> "
         << static_cast<int>(next)
         << std::endl;
-
+    // 今のStateを保存
+    m_beforeState = m_State;
+    // 次のStateへ変更
     m_State = next;
 }
 
 
 void GameSystemComponent::UpdateState()
 {
+    // 現在のターン状態に合わせて関数を呼び出し
     switch (m_State)
     {
     case BattleState::Init:          UpdateInit(); break;
@@ -68,27 +74,43 @@ void GameSystemComponent::UpdateState()
     }
 }
 
-
+//=======================================
+// BattleState:Init
+// Scene開始、初期化直後にすべき処理
+//=======================================
 void GameSystemComponent::UpdateInit()
 {
+    // 戦闘ターンを始める
     ChangeState(BattleState::TurnStart);
 }
 
+//=======================================
+// BattleState:TurnStart
+// Turn開始。各ターンの最初にすべき処理
+//=======================================
 void GameSystemComponent::UpdateTurnStart()
 {
+    // 現在ターンの加算
     m_TurnCount++;
+    
+    // タイムライン作成
     BuildTimeline();
     m_TimelineIndex = 0;
+
+    // 次のBattleStateへ
     ChangeState(BattleState::UnitSelect);
 }
 
-
+//=======================================
+// BattleState:UnitSelect
+// タイムラインから次に動くユニットを決定
+//=======================================
 void GameSystemComponent::UpdateUnitSelect()
 {
     // 現在のタイムラインを取得
     Timeline* current = GetCurrentTimeline();
 
-    // 安全チェック：範囲外ならターン終了
+    // タイムラインがなければターン終了
     if (!current)
     {
         ChangeState(BattleState::TurnEnd);
@@ -139,26 +161,40 @@ void GameSystemComponent::UpdateUnitSelect()
     ChangeState(BattleState::UnitActionSelect);
 }
 
-
-
+//=======================================
+// BattleState:UnitActionSelect
+// プレイヤー入力待ち状態
+//=======================================
 void GameSystemComponent::UpdateUnitActionSelect()
 {
     // TODO: プレイヤー入力待ち
     // m_CurrentUnit->StartActionInput(); など
 }
 
+//=======================================
+// BattleState:UnitActing
+// ユニットの行動処理中
+//=======================================
 void GameSystemComponent::UpdateUnitActing()
 {
     // TODO: 敵AI行動開始
     // m_CurrentUnit->ExecuteAIAction(); など
 }
 
+//=======================================
+// BattleState:UnitEnd
+// 現在タイムラインのユニット行動終了
+//=======================================
 void GameSystemComponent::UpdateUnitEnd()
 {
-
+    // タイムラインを確認し全てのユニット操作完了か調べる
     NextTimeline();
 }
 
+//=======================================
+// BattleState:TurnEnd
+// ターン終了処理
+//=======================================
 void GameSystemComponent::UpdateTurnEnd()
 {
     ChangeState(BattleState::SunMove);

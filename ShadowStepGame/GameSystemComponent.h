@@ -121,11 +121,15 @@ private:
 	// Tag "SunSystem" から取得
 	SunManageComponent* m_sunSystem = nullptr;
 
+	// Tag "ShadowSystem" から取得
+	// ShadowSystemComponent* m_shadowSystem = nullptr;
+
 
 	//=======================================
 	// 状態データ
 	//=======================================
-	BattleState m_State;
+	BattleState m_State;	// 今のBattleState
+	BattleState m_beforeState;	// 前のBattleState
 	int m_TurnCount;
 
 	//=======================================
