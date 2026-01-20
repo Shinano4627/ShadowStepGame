@@ -36,6 +36,7 @@ void SceneProto::Init()
         auto* mapSystem = FindGameObjectWithTag("System")->AddComponent<MapSystemComponent>("TestMap.csv");
         mapSystem->MakeMap(m_GameObjects);    // マップの読み込み
 
+
         // プレイヤー
         auto* playerObj = FindGameObjectWithTag("Player");
         auto* playerUnit = playerObj->AddComponent<UnitComponent>();
@@ -45,6 +46,8 @@ void SceneProto::Init()
         auto* enemyObj = FindGameObjectWithTag("Enemy");
         auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
         enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
+
+
 
         float heightMap = mapSystem->GetMapSizeHeight();
         float widthMap = mapSystem->GetMapSizeWidth();
@@ -66,6 +69,9 @@ void SceneProto::Init()
         // ここで SunManageComponent をセット
         // ※m_sunSystem は現状 private なので、public setter または friend でアクセス推奨
         // gameSystem->SetSunSystem(sun); // setter を作ると良い
+
+
+
 
 
     }  
@@ -102,11 +108,14 @@ void SceneProto::UnInit()
 void SceneProto::Update()
 {
 
-    // 1. カメラ更新
-    m_Camera.Update();
 
-    // 2. 全GameObject更新
+    // ============================
+    // オブジェクト更新
+    // ============================
     UpdateObjectList();
+
+    // カメラ更新
+    m_Camera.Update();
 
 
     // ============================
@@ -118,6 +127,7 @@ void SceneProto::Update()
     m_Camera.Update();
 
 }
+
 
 
 
