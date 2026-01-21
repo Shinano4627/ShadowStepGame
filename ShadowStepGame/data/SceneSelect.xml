@@ -14,7 +14,7 @@
     <Object ID="1">
         <ObjectName Value="Button"/>
         <ObjectType Value="2D"/>
-        <Tag Value="Button"/>
+        <Tag Value="ButtonTemplate"/>
         <FileName Value=""/>
         <Texture Value="asset/texture/Buttons/Select_Button.png"/>
         <Posision X="0" Y="0" Z="0"/>
@@ -42,6 +42,17 @@
         <Posision X="300" Y="0" Z="0"/>
         <Rotation X="0" Y="0" Z="0"/>
         <Scale X="300" Y="300" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="3">
+        <ObjectName Value="ButtonArea"/>
+        <ObjectType Value="Empty"/>
+        <Tag Value="ButtonArea"/>
+        <FileName Value=""/>
+        <Texture Value=""/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="1000" Y="500" Z="0"/>
         <Color R="1" G="1" B="1" A="1"/>
     </Object>
 </Objects>

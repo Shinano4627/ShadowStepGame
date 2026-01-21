@@ -119,7 +119,7 @@ void Texture2D::Draw(Camera* cam)
     float v = m_NumV - 1.0f;
     float uw = 1.0f / m_SplitX;
     float vh = 1.0f / m_SplitY;
-    Renderer::SetUV(u * uw, v * vh, uw, vh);
+    Renderer::SetUV(u, v, uw, vh);
 
     // •`‰æ
     devicecontext->DrawIndexed(
@@ -188,7 +188,7 @@ void Texture2D::UpdateUV(bool updateU, bool updateV)
     {
         m_NumU += 1.0f;
 
-        if (m_NumU >= m_SplitX)
+        if (m_NumU > m_SplitX)
         {
             m_NumU -= m_SplitX;
         }
@@ -197,7 +197,7 @@ void Texture2D::UpdateUV(bool updateU, bool updateV)
     if (updateV)
     {
         m_NumV += 1.0f;
-        if (m_NumV >= m_SplitY)
+        if (m_NumV > m_SplitY)
         {
             m_NumV -= m_SplitY;
         }

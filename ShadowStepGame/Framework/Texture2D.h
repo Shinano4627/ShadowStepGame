@@ -35,10 +35,10 @@ private:
 	std::string m_TexturePath;
 
 	// UVÀ•W‚Ìî•ñ
-	float m_NumU = 1;
-	float m_NumV = 1;
-	float m_SplitX = 1;
-	float m_SplitY = 1;
+	float m_NumU = 1.f;
+	float m_NumV = 1.f;
+	float m_SplitX = 1.f;
+	float m_SplitY = 1.f;
 
 public:
 	//=======================================
