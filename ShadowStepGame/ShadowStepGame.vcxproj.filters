@@ -132,16 +132,7 @@
     <ClInclude Include="Framework\SceneBase.h">
       <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\SceneDebug.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\SceneGame.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
     <ClInclude Include="Framework\SceneManager.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\SceneResult.h">
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\Shader.h">
@@ -222,9 +213,6 @@
     <ClInclude Include="SceneProto.h">
       <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\SceneTitle.h">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="MapSystemComponent.h">
       <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
@@ -242,6 +230,36 @@
     </ClInclude>
     <ClInclude Include="UnitComponent.h">
       <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\LoadingScreen.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSystemComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowStepGameCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowSystemComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SunManageComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneDebug.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneGame.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneTitle.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneResult.h">
+      <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -293,16 +311,7 @@
     <ClCompile Include="Framework\SceneBase.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\SceneDebug.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Framework\SceneGame.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\SceneManager.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Framework\SceneResult.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
     <ClCompile Include="Framework\Shader.cpp">
@@ -366,9 +375,6 @@
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
     <!-- Component / SceneTitle 系 -->
-    <ClCompile Include="Framework\SceneTitle.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="MapSystemComponent.cpp">
       <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
@@ -383,6 +389,21 @@
     </ClCompile>
     <ClCompile Include="UnitComponent.cpp">
       <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\LoadingScreen.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneDebug.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGame.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneTitle.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneResult.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
