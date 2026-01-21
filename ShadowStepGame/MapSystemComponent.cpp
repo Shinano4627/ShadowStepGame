@@ -102,7 +102,9 @@ void MapSystemComponent::MakeMap(std::vector<std::unique_ptr<GameObject>>& objec
                 case 5:
                     //影
                     color = Color(0.5f, 0.5f, 0.5f, 1.0f);
+                    break;
                 default:
+
                     break;
                 }
                 newObject->AddMeshComponent<SimplePlaneRendererComponent>(color);
@@ -160,11 +162,9 @@ void MapSystemComponent::UpdateMap()
     /*
         想定するUnitSystemの関数・データ：
         - static const std::vector<Unit*>& GetUnits();
-            → 登録されている全Unitを返す
-        - Unitクラス側で持っている関数：
-            int GetMapX() const;      // マップ上のX座標
-            int GetMapZ() const;      // マップ上のZ座標
-            bool IsPlayer() const;    // プレイヤーかどうか
+            → 登録されている全UnitのStatusを返す
+        - Unit側で持っている情報：
+            マップ上のX座標 マップ上のZ座標 プレイヤーかどうか
     */
     /*
     for(auto* unit : UnitSystem::GetUnits())

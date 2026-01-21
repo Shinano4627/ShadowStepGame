@@ -26,8 +26,8 @@ private:
     int m_CurIdx = 0;
     int m_CurPosX = 0;          // マップ升目上のX座標（左上が0）
     int m_CurPosZ = 0;          // マップ升目上のZ座標（左上が0）
-    float m_MapSizeWidth = 0;
-    float m_MapSizeHeight = 0;
+    int m_MapSizeWidth = 0;
+    int m_MapSizeHeight = 0;
     int m_MapWidth = 0;
     int m_MapHeight = 0;
     int m_TurnProgress = 0;     // 経過ターン数
