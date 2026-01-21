@@ -8,6 +8,7 @@
 #include "SceneGame.h"
 #include "SceneResult.h"
 #include "SceneProto.h"
+#include "SceneSelect.h"
 // Add Header	*Don't erase this line!
 
 enum SCENE
@@ -17,6 +18,7 @@ enum SCENE
 	SCENE_GAME,
 	SCENE_RESULT,
 	SCENE_PROTO,
+	SCENE_SELECT,
 // Add Label	*Don't erase this line!
 	SCENE_NUM,
 
@@ -38,6 +40,7 @@ public:
 		m_sceneTable[SCENE_GAME] = std::make_unique<SceneGame>();
 		m_sceneTable[SCENE_RESULT] = std::make_unique<SceneResult>();
 		m_sceneTable[SCENE_PROTO] = std::make_unique<SceneProto > ();
+		m_sceneTable[SCENE_SELECT] = std::make_unique<SceneSelect > ();
 // Add Table	*Don't erase this line!
 
 		m_sceneNameList.resize(SCENE_NUM);
@@ -45,6 +48,7 @@ public:
 		m_sceneNameList[SCENE_GAME] = "SceneGame";
 		m_sceneNameList[SCENE_RESULT] = "SceneResult";
 		m_sceneNameList[SCENE_PROTO] = "SceneProto";
+		m_sceneNameList[SCENE_SELECT] = "SceneSelect";
 // Add List	*Don't erase this line!
 	}
 	~Scene()

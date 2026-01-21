@@ -211,6 +211,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="SceneDebug.h" />
     <ClInclude Include="SceneGame.h" />
     <ClInclude Include="SceneResult.h" />
+    <ClInclude Include="SceneSelect.h" />
     <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="UnitComponent.h" />
     <ClInclude Include="Scene.h" />
@@ -267,6 +268,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClCompile Include="SceneDebug.cpp" />
     <ClCompile Include="SceneGame.cpp" />
     <ClCompile Include="SceneResult.cpp" />
+    <ClCompile Include="SceneSelect.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="UnitComponent.cpp" />
     <ClCompile Include="MapSystemComponent.cpp" />
