@@ -1,3 +1,4 @@
+
 // ===================================================================
 // UnitSystemComponent.h
 // ユニットの制御を行う
@@ -7,16 +8,15 @@
 #include "GameObject.h"
 #include "IOManager.h"
 #include "Game.h"
+#include "UnitCommon.h"
+
 
 class UnitSystemComponent : public Component
 {
-private:
 
-    struct UnitInfo
-    {
-        // 敵かプレイヤー
-        // 位置情報
-    };
+private:
+    // UnitStatusList
+    std::vector<std::unique_ptr<UnitStatus>> m_UnitList;
 
 public:
     // ===================================================================
@@ -36,19 +36,35 @@ public:
     // ===================================================================
     // 更新処理
     // ===================================================================
-    void Update() override
-    {
-        if (!m_pOwner) return;
-    }
-
-    void MakeMap(std::vector<std::unique_ptr<GameObject>>& objectList);      // CSVデータ読み込みとマップオブジェクトの作成
-
-    // Unitの
-    std::vector<UnitInfo> GetUnitInfo();
+    void Update() override;
 
     // ===================================================================
-    // 設定
+    // 終了処理
     // ===================================================================
-    //void SetMoveSpeed(float speed) { m_MoveSpeed = speed; }
-    //float GetMoveSpeed() const { return m_MoveSpeed; }
+    void Uninit() override;
+
+    //=======================================
+    // 登録・削除
+    //=======================================
+    void RegisterUnit(const UnitStatus& status);
+    void KillUnit(int id);      // Listから削除
+    void DamageUnit(int id, int damage);    // 0以下ならKill     
+
+    //=======================================
+    // 取得関数
+    //=======================================
+    std::vector<UnitStatus*> GetAllUnits() const;
+    std::vector<UnitStatus*> GetUnitsSortedBySpeed() const;
+
+    //=======================================
+    // 検索
+    //=======================================
+    UnitStatus* FindUnit(int id);
+
+    //=======================================
+    // 勝敗判定
+    //=======================================
+    bool IsPlayerAllDead() const;
+    bool IsEnemyAllDead() const;
+
 };

@@ -6,15 +6,17 @@
 #include "SceneManager.h"
 #include "IOManager.h"
 #include <iostream>
-#include <DirectXMath.h>
 
 // Components
 #include "SimplePlaneRendererComponent.h"
 #include "MapSystemComponent.h"
 #include "UnitComponent.h"
+<<<<<<< HEAD
 #include "SunManageComponent.h"
 #include "GameSystemComponent.h"
 #include "OrbitCameraComponent.h"
+=======
+>>>>>>> origin/develop
 
 using namespace DirectX::SimpleMath;
 
@@ -33,8 +35,10 @@ void SceneProto::Init()
     // 追加コンポーネント
     {
         // マップシステム
-        auto* mapSystem = FindGameObjectWithTag("System")->AddComponent<MapSystemComponent>("TestMap.csv");
+        auto* mapSystem = FindGameObjectWithTag("MapSystem")->AddComponent<MapSystemComponent>("TestMap.csv");
         mapSystem->MakeMap(m_GameObjects);    // マップの読み込み
+<<<<<<< HEAD
+
 
         // プレイヤー
         auto* playerObj = FindGameObjectWithTag("Player");
@@ -45,6 +49,8 @@ void SceneProto::Init()
         auto* enemyObj = FindGameObjectWithTag("Enemy");
         auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
         enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
+
+
 
         float heightMap = mapSystem->GetMapSizeHeight();
         float widthMap = mapSystem->GetMapSizeWidth();
@@ -67,13 +73,26 @@ void SceneProto::Init()
         // ※m_sunSystem は現状 private なので、public setter または friend でアクセス推奨
         // gameSystem->SetSunSystem(sun); // setter を作ると良い
 
+
+
+
+=======
+
+        // プレイヤー
+        auto* playerObj = FindGameObjectWithTag("Player");
+        auto* playerUnit = playerObj->AddComponent<UnitComponent>();
+        // playerUnit->SetCamp(UnitComponent::UnitCamp::UnitPlayer);
+
+        //エネミー
+        auto* enemyObj = FindGameObjectWithTag("Enemy");
+        auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
+        // enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
+>>>>>>> origin/develop
+
     }  
 
     // Init Camera
     m_Camera.Init();
-    Vector3 newPos = m_Camera.GetPosition();
-    newPos.z = -100;
-    m_Camera.SetPosition(newPos);
 
     // Init Data
     m_nextScene = SCENE_NONE;
@@ -100,6 +119,7 @@ void SceneProto::UnInit()
 
 void SceneProto::Update()
 {
+<<<<<<< HEAD
 
 
     // ============================
@@ -108,20 +128,34 @@ void SceneProto::Update()
     UpdateObjectList();
 
     // カメラ更新
+=======
+    // 1. カメラ更新
+>>>>>>> origin/develop
     m_Camera.Update();
+
 
     // ============================
     // オブジェクト更新
     // ============================
     UpdateObjectList();
 
+<<<<<<< HEAD
     // カメラ更新
     m_Camera.Update();
+
+=======
+>>>>>>> origin/develop
 }
 
 
 
+<<<<<<< HEAD
 
+
+
+
+=======
+>>>>>>> origin/develop
 void SceneProto::Draw()
 {
     // World

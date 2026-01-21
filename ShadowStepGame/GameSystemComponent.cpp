@@ -92,7 +92,7 @@ void GameSystemComponent::UpdateTurnStart()
 {
     // 現在ターンの加算
     m_TurnCount++;
-    
+
     // タイムライン作成
     BuildTimeline();
     m_TimelineIndex = 0;
@@ -251,17 +251,6 @@ void GameSystemComponent::BuildTimeline()
     //     [](const Timeline& a, const Timeline& b) { return a.speed > b.speed; });
     // =======================================
 
-    // =======================================
-    // 仮実装:
-    // 太陽だけを Timeline に追加
-    // nullptr = 太陽
-    // =======================================
-    Timeline sunEntry;
-    // sunEntry.unit = nullptr;
-    sunEntry.actorType = TimelineActorType::Sun;
-    sunEntry.speed = 0;
-
-    m_Timeline.push_back(sunEntry);
 }
 
 // Indexが範囲内なら返す
@@ -282,7 +271,7 @@ void GameSystemComponent::NextTimeline()
     m_TimelineIndex++;
 
     // UpdateShadow()←ShadowSystem
-    // 光源情報を元に全てのオブジェクトの影を更新する。
+    // 光源位置を元に全てのオブジェクトの影を更新する。
     // ↑を元に↓をやる
     // UpdateMap()←MapSystem
     // ユニットの位置、オブジェクトの位置、影の位置を取ってきて表示する

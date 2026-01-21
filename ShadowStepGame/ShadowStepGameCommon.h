@@ -1,3 +1,6 @@
+//=======================================
+// ShadowStepGameCommon.h
+//=======================================
 #pragma once
 
 struct CellPosision

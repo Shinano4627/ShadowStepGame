@@ -6,7 +6,6 @@
 #include "SceneManager.h"
 #include "IOManager.h"
 #include <iostream>
-#include <DirectXMath.h>
 
 // Components
 #include "SimplePlaneRendererComponent.h"
@@ -33,19 +32,10 @@ void SceneProto::Init()
     // 追加コンポーネント
     {
         // マップシステム
-        auto* mapSystem = FindGameObjectWithTag("System")->AddComponent<MapSystemComponent>("TestMap.csv");
+        auto* mapSystem = FindGameObjectWithTag("MapSystem")->AddComponent<MapSystemComponent>("TestMap.csv");
         mapSystem->MakeMap(m_GameObjects);    // マップの読み込み
 
 
-        // プレイヤー
-        auto* playerObj = FindGameObjectWithTag("Player");
-        auto* playerUnit = playerObj->AddComponent<UnitComponent>();
-        playerUnit->SetCamp(UnitComponent::UnitCamp::UnitPlayer);
-
-        //エネミー
-        auto* enemyObj = FindGameObjectWithTag("Enemy");
-        auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
-        enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
 
 
 
@@ -74,13 +64,22 @@ void SceneProto::Init()
 
 
 
+
+        // プレイヤー
+        auto* playerObj = FindGameObjectWithTag("Player");
+        auto* playerUnit = playerObj->AddComponent<UnitComponent>();
+        // playerUnit->SetCamp(UnitComponent::UnitCamp::UnitPlayer);
+
+        //エネミー
+        auto* enemyObj = FindGameObjectWithTag("Enemy");
+        auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
+        // enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
+
+
     }  
 
     // Init Camera
     m_Camera.Init();
-    Vector3 newPos = m_Camera.GetPosition();
-    newPos.z = -100;
-    m_Camera.SetPosition(newPos);
 
     // Init Data
     m_nextScene = SCENE_NONE;
@@ -107,30 +106,15 @@ void SceneProto::UnInit()
 
 void SceneProto::Update()
 {
-
-
     // ============================
     // オブジェクト更新
     // ============================
     UpdateObjectList();
 
-    // カメラ更新
-    m_Camera.Update();
-
-
-    // ============================
-    // オブジェクト更新
-    // ============================
-    UpdateObjectList();
 
     // カメラ更新
     m_Camera.Update();
-
 }
-
-
-
-
 
 
 

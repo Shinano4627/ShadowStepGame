@@ -1,4 +1,4 @@
-// ===================================================================
+﻿// ===================================================================
 // SunManageComponent.h
 // ステージ上の太陽の動きを制御するコンポーネント
 // ===================================================================
@@ -12,7 +12,7 @@ struct SunData
 {
     float distance = 0;            // 移動に使用する幅（ターン数にも使用）
     int startX = 0;
-    int startZ = 0; 
+    int startZ = 0;
     int axis = 0;               // 0: X軸移動, 1: Z軸移動
     int direction = 1;          // 1: 正方向, -1: 負方向
     float otherAxisPos = 0;     // 固定軸の座標
@@ -26,8 +26,8 @@ private:
     int m_CurIdx = 0;
     int m_CurPosX = 0;          // マップ升目上のX座標（左上が0）
     int m_CurPosZ = 0;          // マップ升目上のZ座標（左上が0）
-    float m_MapSizeWidth = 0;
-    float m_MapSizeHeight = 0;
+    int m_MapSizeWidth = 0;
+    int m_MapSizeHeight = 0;
     int m_MapWidth = 0;
     int m_MapHeight = 0;
     int m_TurnProgress = 0;     // 経過ターン数
@@ -83,7 +83,7 @@ public:
             newdata.otherAxisPos = CenterMapZ;
             newdata.color = DirectX::SimpleMath::Color(0.f, 1.f, 1.f, 1.f);
             newdata.startX = 0;
-            newdata.startZ = m_MapHeight/2;
+            newdata.startZ = m_MapHeight / 2;
             m_SunList.push_back(newdata);
         }
 
@@ -96,7 +96,7 @@ public:
             newdata.direction = -1;     // 負方向（x → -x）
             newdata.otherAxisPos = CenterMapZ;
             newdata.color = DirectX::SimpleMath::Color(0.f, 1.f, 0.f, 1.f);
-            newdata.startX = m_MapWidth -1;
+            newdata.startX = m_MapWidth - 1;
             newdata.startZ = m_MapHeight / 2;
             m_SunList.push_back(newdata);
         }
@@ -146,7 +146,7 @@ public:
         {
             startPos = distance / 2;
         }
-        
+
 
         // 現在位置
         float axisPos = startPos + movePerTurn * turnProgress;
@@ -156,7 +156,7 @@ public:
         if (clampedPos < -distance) clampedPos = -distance;
         if (clampedPos > distance) clampedPos = distance;
 
-        float heightY = distance/2 * (1.f - (clampedPos * clampedPos) / (distance/2 * distance/2));
+        float heightY = distance / 2 * (1.f - (clampedPos * clampedPos) / (distance / 2 * distance / 2));
         if (heightY < 0.f) heightY = 0.f;
 
         // 位置を設定

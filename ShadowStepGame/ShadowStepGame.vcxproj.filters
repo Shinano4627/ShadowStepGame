@@ -25,9 +25,6 @@
     <Filter Include="ソース ファイル\Scene">
       <UniqueIdentifier>{74df3266-3c60-4f98-8981-e8edc5cbac58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Scene">
-      <UniqueIdentifier>{74df3266-3c60-4f98-8981-e8edc5cbac58}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Component">
       <UniqueIdentifier>{cd102b61-4b71-4128-aa3b-3189934a62ff}</UniqueIdentifier>
     </Filter>
@@ -258,6 +255,24 @@
     <ClInclude Include="UnitSystemComponent.h">
       <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
+    <ClInclude Include="ShadowSystemComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\LoadingScreen.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SunManageComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowStepGameCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSystemComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\AABBCollider.cpp">
@@ -380,7 +395,6 @@
     <ClCompile Include="SceneProto.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <!-- Component / SceneTitle 系 -->
     <ClCompile Include="Framework\SceneTitle.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
@@ -404,6 +418,12 @@
     </ClCompile>
     <ClCompile Include="ShadowSystemComponent.cpp">
       <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitSystemComponent.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\LoadingScreen.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

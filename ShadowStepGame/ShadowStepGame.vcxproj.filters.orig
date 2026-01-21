@@ -234,17 +234,47 @@
     <ClInclude Include="Framework\Texture2D.h">
       <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
-    <ClInclude Include="UnitSystemComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="UnitComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="GameSystemComponent.h">
       <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="OrbitCameraComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowStepGameCommon.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowSystemComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="SunManageComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitSystemComponent.h">
+=======
+    <ClInclude Include="UnitComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowSystemComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\LoadingScreen.h">
+      <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
     <ClInclude Include="SunManageComponent.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="OrbitCameraComponent.h">
+    <ClInclude Include="ShadowStepGameCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSystemComponent.h">
+>>>>>>> origin/develop
       <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
   </ItemGroup>
@@ -369,7 +399,6 @@
     <ClCompile Include="SceneProto.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <!-- Component / SceneTitle 系 -->
     <ClCompile Include="Framework\SceneTitle.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
@@ -385,8 +414,23 @@
     <ClCompile Include="Framework\Texture2D.cpp">
       <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="UnitComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
     <ClCompile Include="GameSystemComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowSystemComponent.cpp">
+=======
+    <ClCompile Include="UnitSystemComponent.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\LoadingScreen.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSystemComponent.cpp">
+>>>>>>> origin/develop
       <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
   </ItemGroup>
