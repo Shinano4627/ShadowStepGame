@@ -1,29 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Objects>
-    <Object ID="1" ObjectName="Floor" ObjectType="SimplePlane" Tag="Floor" FileName="" Texture="" PosX="0" PosY="0" PosZ="10" RotX="0" RotY="0" RotZ="0" SclX="30" SclY="1" SclZ="20" ColR="0.30000001" ColG="0.69999999" ColB="0.30000001" ColA="1"/>
-    <Object ID="2" ObjectName="Player" ObjectType="SimpleCube" Tag="Player" FileName="" Texture="" PosX="0" PosY="1" PosZ="10" RotX="0" RotY="0" RotZ="0" SclX="1" SclY="1" SclZ="1" ColR="1" ColG="1" ColB="1" ColA="1"/>
-        <Object ID="0">
-        <ObjectName Value="Floor"/>
-        <ObjectType Value="SimplePlane"/>
-        <Tag Value="Floor"/>
+    <Object ID="0">
+        <ObjectName Value="BackGround"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="BackGround"/>
         <FileName Value=""/>
-        <Texture Value="asset/texture/floor.jpg"/>
-
-        <Posision X="0" Y="0" Z="10"/>
+        <Texture Value="asset/texture/Game_BG.png"/>
+        <Posision X="0" Y="0" Z="0"/>
         <Rotation X="0" Y="0" Z="0"/>
-        <Scale X="30" Y="1" Z="20"/>
-        <Color R="0.3" G="0.7" B="0.3" A="1"/>
-    </Object>
-    <Object ID="1">
-        <ObjectName Value="Player"/>
-        <ObjectType Value="SimpleCube"/>
-        <Tag Value="Player"/>
-        <FileName Value=""/>
-        <Texture Value="asset/texture/default.png"/>
-
-        <Posision X="0" Y="1" Z="10"/>
-        <Rotation X="0" Y="0" Z="0"/>
-        <Scale X="1" Y="1" Z="1"/>
+        <Scale X="1280" Y="720" Z="0"/>
         <Color R="1" G="1" B="1" A="1"/>
     </Object>
 </Objects>

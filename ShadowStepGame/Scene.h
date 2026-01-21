@@ -30,7 +30,7 @@ class Scene
 private:
 	std::unordered_map<SCENE, std::unique_ptr<SceneBase>> m_sceneTable;
 	std::vector<std::string> m_sceneNameList;
-	SCENE m_startScene = SCENE_PROTO;	// First scene to be executed
+	SCENE m_startScene = SCENE_TITLE;	// First scene to be executed
 
 public:
 	Scene()

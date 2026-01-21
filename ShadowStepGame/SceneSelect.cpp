@@ -19,7 +19,13 @@ void SceneSelect::Init()
     // Delete ObjectList
     DeleteObjectList();
 
-    // Make ObjectList
+    // オブジェクトリスト作成
+    MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_SELECT).c_str());
+
+    // 追加コンポーネント
+    {
+        std::cout << "[SceneSelect] TitleCube created" << std::endl;
+    }
 
     // Init Camera
     m_Camera.Init();
