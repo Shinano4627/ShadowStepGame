@@ -173,7 +173,6 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="Framework\IndexBuffer.h" />
     <ClInclude Include="Framework\input.h" />
     <ClInclude Include="Framework\IOManager.h" />
-    <ClInclude Include="Framework\LoadingScreen.h" />
     <ClInclude Include="Framework\main.h" />
     <ClInclude Include="Framework\Material.h" />
     <ClInclude Include="Framework\Mesh.h" />
@@ -212,11 +211,11 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="Framework\utility.h" />
     <ClInclude Include="Framework\VertexBuffer.h" />
     <ClInclude Include="Framework\XmlRW.h" />
-    <ClInclude Include="UnitComponent.h" />
+    <ClInclude Include="GameSystemComponent.h" />
+    <ClInclude Include="MapSystemComponent.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneProto.h" />
-    <ClInclude Include="MapSystemComponent.h" />
-    <ClInclude Include="GameSystemComponent.h" />
+    <ClInclude Include="UnitCommon.h" />
     <ClInclude Include="UnitComponent.h" />
     <ClInclude Include="ShadowStepGameCommon.h" />
     <ClInclude Include="ShadowSystemComponent.h" />
@@ -242,7 +241,6 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClCompile Include="Framework\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Framework\input.cpp" />
     <ClCompile Include="Framework\IOManager.cpp" />
-    <ClCompile Include="Framework\LoadingScreen.cpp" />
     <ClCompile Include="Framework\main.cpp" />
     <ClCompile Include="Framework\PhysicsManager.cpp" />
     <ClCompile Include="Framework\Renderer.cpp" />
@@ -268,9 +266,11 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClCompile Include="Framework\Timer.cpp" />
     <ClCompile Include="Framework\utility.cpp" />
     <ClCompile Include="Framework\XmlRW.cpp" />
-    <ClCompile Include="UnitComponent.cpp" />
+    <ClCompile Include="GameSystemComponent.cpp" />
     <ClCompile Include="MapSystemComponent.cpp" />
     <ClCompile Include="SceneProto.cpp" />
+    <ClCompile Include="UnitSystemComponent.cpp" />
+    <ClCompile Include="ShadowSystemComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader\common.hlsl">
