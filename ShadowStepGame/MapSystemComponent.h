@@ -7,6 +7,7 @@
 #include "GameObject.h"
 #include "IOManager.h"
 #include "Game.h"
+#include "UnitCommon.h"
 
 class MapSystemComponent : public Component
 {
@@ -19,6 +20,16 @@ private:
     float m_SizePiece = 5.f;
     float m_DrawStartPosX = 0.f;
     float m_DrawStartPosZ = 0.f;
+
+    enum class EMapTile
+    {
+        Empty = 0,  // 何もない
+        Wall = 1,   // 壁
+        Player = 2, // プレイヤー
+        Enemy = 3,  // 敵
+        Tree = 4,   // 樹
+        Shadow = 5, // 影
+    };
 
 public:
     // ===================================================================
@@ -50,11 +61,21 @@ public:
         if (!m_pOwner) return;
     }
 
+    // ===================================================================
+    // GameSystemで行うMap更新処理
+    // UnitData,ShadowData,地形MapDataを元にMapDataを更新する
+    // ===================================================================
+    void UpdateMap(const std::vector<UnitStatus*>& units,
+        const int* const* shadowMap);
+
     void MakeMap(std::vector<std::unique_ptr<GameObject>>& objectList);      // CSVデータ読み込みとマップオブジェクトの作成
 
     // ===================================================================
     // 設定
     // ===================================================================
-    //void SetMoveSpeed(float speed) { m_MoveSpeed = speed; }
-    //float GetMoveSpeed() const { return m_MoveSpeed; }
+    float GetMapSizeHeight() const { return (float)m_MapHeight * m_SizePiece; }
+    float GetMapSizeWidth() const { return (float)m_MapWidth * m_SizePiece; }
+    int GetMapHeight() const { return m_MapHeight; }
+    int GetMapWidth() const { return m_MapWidth; }
+    const int* const* GetRawMapData() const;
 };
