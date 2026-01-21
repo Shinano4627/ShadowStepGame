@@ -115,8 +115,8 @@ void Texture2D::Draw(Camera* cam)
     }
 
     // UVÝ’è
-    float u = m_NumU - 1;
-    float v = m_NumV - 1;
+    float u = m_NumU - 1.0f;
+    float v = m_NumV - 1.0f;
     float uw = 1.0f / m_SplitX;
     float vh = 1.0f / m_SplitY;
     Renderer::SetUV(u * uw, v * vh, uw, vh);
@@ -180,6 +180,28 @@ void Texture2D::SetUV(float nu, float nv, float sx, float sy)
     m_NumV = nv;
     m_SplitX = sx;
     m_SplitY = sy;
+}
+
+void Texture2D::UpdateUV(bool updateU, bool updateV)
+{
+    if (updateU)
+    {
+        m_NumU += 1.0f;
+
+        if (m_NumU >= m_SplitX)
+        {
+            m_NumU -= m_SplitX;
+        }
+    }
+
+    if (updateV)
+    {
+        m_NumV += 1.0f;
+        if (m_NumV >= m_SplitY)
+        {
+            m_NumV -= m_SplitY;
+        }
+    }
 }
 
 // ===================================================================

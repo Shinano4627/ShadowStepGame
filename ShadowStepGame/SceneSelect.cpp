@@ -8,6 +8,7 @@
 #include <iostream>
 
 // Components
+#include "Texture2D.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -24,6 +25,25 @@ void SceneSelect::Init()
 
     // 追加コンポーネント
     {
+        GameObject* button = FindGameObjectWithTag("Button");
+        // UVの設定
+        button->GetMeshComponent<Texture2D>()->SetUV(1, 1, 2, 1);
+
+        // 不要なボタンを非アクティブに
+
+        // アクティブなボタンを整列して配置
+        std::vector<GameObject*> buttonMesseges = FindGameObjectsWithTag("ButtonMessage");
+        int count = std::count_if(
+            buttonMesseges.begin(), 
+            buttonMesseges.end(),
+            [](GameObject* message)
+            {
+                return message->IsActive() == true;
+            });
+        float y = 0.f;
+        const float padding = 10.f;
+
+
         std::cout << "[SceneSelect] TitleCube created" << std::endl;
     }
 

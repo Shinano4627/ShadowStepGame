@@ -72,6 +72,7 @@ public:
 	// UVÀ•Wİ’è
 	//=======================================
 	void SetUV(float nu, float nv, float sx, float sy);
+	void UpdateUV(bool updateU, bool updateV);
 
 	//=======================================
 	// Fİ’è
