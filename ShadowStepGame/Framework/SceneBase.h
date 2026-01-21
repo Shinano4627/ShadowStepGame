@@ -32,6 +32,7 @@ protected:
 
 	// ƒJƒƒ‰
 	Camera  m_Camera;
+	Camera  m_UiCamera;
 	
 	// GameObject ƒŠƒXƒg
 	std::vector<std::unique_ptr<GameObject>> m_GameObjects;

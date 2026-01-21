@@ -58,6 +58,14 @@ void SceneSelect::Update()
     // Update Camera
     m_Camera.Update();
 
+    // Enterキーで次のシーン（仮実装）
+    if (IO_MANAGER.GetKeyDown(TYPE_OK) || IO_MANAGER.GetKeyDownKeyBord(VK_RETURN))
+    {
+        std::cout << "[SceneSelect] ENTER pressed - Starting Game" << std::endl;
+        m_nextScene = SCENE_GAME;
+        return;
+    }
+
     // Update GameObjectList
     UpdateObjectList();
 }
