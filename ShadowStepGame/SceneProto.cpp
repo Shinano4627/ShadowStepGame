@@ -35,10 +35,6 @@ void SceneProto::Init()
         auto* mapSystem = FindGameObjectWithTag("MapSystem")->AddComponent<MapSystemComponent>("TestMap.csv");
         mapSystem->MakeMap(m_GameObjects);    // ƒ}ƒbƒv‚Ì“Ç‚Ýž‚Ý
 
-
-
-
-
         float heightMap = mapSystem->GetMapSizeHeight();
         float widthMap = mapSystem->GetMapSizeWidth();
 
