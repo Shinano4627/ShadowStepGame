@@ -7,22 +7,26 @@
 
 // 他システム
 #include "MapSystemComponent.h"
-// #include "UnitSystemComponent.h"
+#include "UnitSystemComponent.h"
 #include "SunManageComponent.h"
+#include "ShadowSystemComponent.h"
 
 void GameSystemComponent::Init()
 {
     // 同じ GameObject にある他の SystemComponent を取得
     m_mapSystem = m_pOwner->GetComponent<MapSystemComponent>();
-    // m_unitSystem = m_pOwner->GetComponent<UnitSystemComponent>();
+    m_unitSystem = m_pOwner->GetComponent<UnitSystemComponent>();
     m_sunSystem = m_pOwner->GetComponent<SunManageComponent>();
-    // m_shadowSystem = m_pOwner->GetComponet<ShadowComponent>();
+    int map_w = m_mapSystem->GetMapSizeWidth();
+    int map_h = m_mapSystem->GetMapSizeHeight();
+    m_shadowSystem = m_pOwner->GetComponent<ShadowSystemComponent>();
+    m_shadowSystem->SetUp(map_w,map_h);
 
     // 安全チェック
     if (!m_mapSystem)  std::cout << "[GameSystem] MapSystemComponent が見つかりません！\n";
-    // if (!m_unitSystem) std::cout << "[GameSystem] UnitSystemComponent が見つかりません！\n";
+    if (!m_unitSystem) std::cout << "[GameSystem] UnitSystemComponent が見つかりません！\n";
     if (!m_sunSystem)  std::cout << "[GameSystem] SunManageComponent が見つかりません！\n";
-    // if (!m_shadowSystem) std::cout << "[GameSystem] ShadowSystemComponent が見つかりません！\n";
+    if (!m_shadowSystem) std::cout << "[GameSystem] ShadowSystemComponent が見つかりません！\n";
 
     // 状態データ初期化
     m_TurnCount = 0;
@@ -108,10 +112,10 @@ void GameSystemComponent::UpdateTurnStart()
 void GameSystemComponent::UpdateUnitSelect()
 {
     // 現在のタイムラインを取得
-    Timeline* current = GetCurrentTimeline();
+    Timeline* cur = GetCurrentTimeline();
 
     // タイムラインがなければターン終了
-    if (!current)
+    if (!cur)
     {
         ChangeState(BattleState::TurnEnd);
         return;
@@ -120,9 +124,8 @@ void GameSystemComponent::UpdateUnitSelect()
     // ============================
     // 太陽のターンかどうか
     // ============================
-    if (current->actorType == TimelineActorType::Sun)
+    if (cur->actorType == TimelineActorType::Sun)
     {
-        // TODO: SunMove 処理は SunManageComponent が担当予定
         ChangeState(BattleState::SunMove);
         return;
     }
@@ -130,35 +133,28 @@ void GameSystemComponent::UpdateUnitSelect()
     // ============================
     // ユニットのターン
     // ============================
-    Unit* unit = current->unit;
+    auto* unit = cur->unit;
 
-    // TODO: Unit クラスの IsAlive() メソッドで死亡チェックを行う予定
-    if (!unit /* || !unit->IsAlive() */)
+    // ユニットがいるかのチェック
+    if (!unit || unit->isDown == true)
     {
-        // 現状は死亡判定未実装のため、とりあえず次のタイムラインへ
         NextTimeline();
         return;
     }
 
-    // TODO: m_CurrentUnit にセットして UnitActionSelect や UnitActing で使用予定
-    // m_CurrentUnit = unit;
+    m_CurrentUnit = unit;
 
     // ============================
     // プレイヤー or 敵で分岐
     // ============================
-    // TODO: Unit クラスに UnitType を持たせる予定（Player / Enemy）
-    // TODO: 敵AIの行動判定は今後 Enemy AI システムで行う予定
-    /*if (unit->GetUnitType() == UnitType::Player)
+    if (unit->type == UnitType::Player)
     {
         ChangeState(BattleState::UnitActionSelect); // プレイヤー入力待ち
     }
     else
     {
         ChangeState(BattleState::UnitActing); // 敵AI行動
-    }*/
-
-    // 現状未実装のため、とりあえずプレイヤー入力待ちにしておく
-    ChangeState(BattleState::UnitActionSelect);
+    }
 }
 
 //=======================================
@@ -187,6 +183,7 @@ void GameSystemComponent::UpdateUnitActing()
 //=======================================
 void GameSystemComponent::UpdateUnitEnd()
 {
+    m_CurrentUnit = nullptr;
     // タイムラインを確認し全てのユニット操作完了か調べる
     NextTimeline();
 }
@@ -202,13 +199,28 @@ void GameSystemComponent::UpdateTurnEnd()
 
 void GameSystemComponent::UpdateSunMove()
 {
-    if (m_sunSystem)
-    {
-        // 太陽を1ターン進める
-        m_sunSystem->AdvanceTurn(); // 自動でターン進行に応じて太陽を動かす
-        // UpdateMap()
-        // UpdateShadow()
-    }
+    // 太陽進行
+    m_sunSystem->AdvanceTurn();
+
+    // 影計算
+    ShadowParam param =
+        m_shadowSystem->CalcShadowParm(
+            m_sunSystem->GetCurPosX(),
+            m_sunSystem->GetCurPosZ(),
+            m_mapSystem->GetMapWidth(),
+            m_mapSystem->GetMapSizeHeight()
+        );
+
+    m_shadowSystem->UpdateShadowMap(
+        m_mapSystem->GetRawMapData(),
+        param
+    );
+
+    // マップ更新
+    m_mapSystem->UpdateMap(
+        m_unitSystem->GetAllUnits(),
+        m_shadowSystem->GetShadowMap()
+    );
 
     // 次は勝敗判定へ
     ChangeState(BattleState::Judge);
@@ -216,13 +228,22 @@ void GameSystemComponent::UpdateSunMove()
 
 void GameSystemComponent::UpdateJudge()
 {
+    // 勝敗確定
     if (IsEnemyAllDead() || IsPlayerAllDead())
     {
         ChangeState(BattleState::End);
     }
-    else
+    
+    // 未決着
+    if (m_beforeState == BattleState::TurnEnd)
     {
         ChangeState(BattleState::TurnStart);
+    }
+    else
+    {
+        // UnitEnd から来た
+        NextTimeline();
+        ChangeState(BattleState::UnitSelect);
     }
 }
 
@@ -230,26 +251,31 @@ void GameSystemComponent::BuildTimeline()
 {
     m_Timeline.clear();
 
-    // =======================================
-    // TODO:
-    // UnitSystemComponent から以下を取得する
-    // ・生存している全ユニット
-    // ・各ユニットの speed 値
-    //
-    // 例:
-    // auto units = m_unitSystem->GetAliveUnits();
-    // for (auto* unit : units)
-    // {
-    //     Timeline entry;
-    //     entry.unit = unit;
-    //     entry.actorType = TimelineActorType::Unit;
-    //     entry.speed = unit->GetSpeed();
-    //     m_Timeline.push_back(entry);
-    // }
-    // speed 降順にソート
-    // std::sort(m_Timeline.begin(), m_Timeline.end(),
-    //     [](const Timeline& a, const Timeline& b) { return a.speed > b.speed; });
-    // =======================================
+    // ユニット
+    auto units = m_unitSystem->GetUnitsSortedBySpeed();
+    for (auto* u : units)
+    {
+        Timeline t;
+        t.unit = u;
+        switch (u->type)
+        {
+        case UnitType::Enemy:
+            t.actorType = TimelineActorType::Enemy;
+            break;
+        case UnitType::Player:
+            t.actorType = TimelineActorType::Player;
+            break;
+        }
+        t.speed = u->speed;
+        m_Timeline.push_back(t);
+    }
+
+    // 太陽
+    Timeline sun;
+    sun.unit = nullptr;
+    sun.actorType = TimelineActorType::Sun;
+    sun.speed = -1;
+    m_Timeline.push_back(sun);
 
 }
 
@@ -287,35 +313,17 @@ void GameSystemComponent::NextTimeline()
     else
     {
         // まだ行動待ちユニットが残っている
-        ChangeState(BattleState::UnitSelect);
+        ChangeState(BattleState::Judge);
     }
 }
 
 // 勝敗判定
 bool GameSystemComponent::IsPlayerAllDead() const
 {
-    // =======================================
-    // TODO:
-    // UnitSystemComponent に問い合わせて
-    // ・プレイヤーユニットが全滅しているか判定
-    //
-    // 例:
-    // return m_unitSystem->IsPlayerAllDead();
-    // =======================================
-
-    return false;
+    return m_unitSystem->IsPlayerAllDead();
 }
 
 bool GameSystemComponent::IsEnemyAllDead() const
 {
-    // =======================================
-    // TODO:
-    // UnitSystemComponent に問い合わせて
-    // ・敵ユニットが全滅しているか判定
-    //
-    // 例:
-    // return m_unitSystem->IsEnemyAllDead();
-    // =======================================
-
-    return false;
+    return m_unitSystem->IsEnemyAllDead();
 }

@@ -9,11 +9,13 @@
 //=======================================
 #pragma once
 #include "Component.h"
+#include "UnitCommon.h"
 
 // 各システムの前方宣言
 class MapSystemComponent;
 class UnitSystemComponent;
 class SunManageComponent;
+class ShadowSystemComponent;
 class Unit;
 
 class GameSystemComponent : public Component
@@ -37,13 +39,14 @@ public:
 	// タイムライン
 	enum class TimelineActorType
 	{
-		Unit,
+		Player,
+		Enemy,
 		Sun
 	};
 
 	struct Timeline
 	{
-		Unit* unit;
+		UnitStatus* unit = nullptr;
 		TimelineActorType actorType;
 		int speed;	// 行動順決定用
 	};
@@ -116,13 +119,13 @@ private:
 	MapSystemComponent* m_mapSystem = nullptr;
 
 	// Tag "UnitSystem" から取得
-	// UnitSystemComponent* m_unitSystem = nullptr;
+	UnitSystemComponent* m_unitSystem = nullptr;
 
 	// Tag "SunSystem" から取得
 	SunManageComponent* m_sunSystem = nullptr;
 
 	// Tag "ShadowSystem" から取得
-	// ShadowSystemComponent* m_shadowSystem = nullptr;
+	ShadowSystemComponent* m_shadowSystem = nullptr;
 
 
 	//=======================================
@@ -138,7 +141,7 @@ private:
 	std::vector<Timeline> m_Timeline;
 	int m_TimelineIndex;
 
-	// Unit* m_CurrentUnit;
+	UnitStatus* m_CurrentUnit = nullptr;
 
 
 };

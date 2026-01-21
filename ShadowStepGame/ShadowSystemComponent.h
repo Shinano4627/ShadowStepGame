@@ -7,7 +7,6 @@
 #include "GameObject.h"
 #include "IOManager.h"
 #include "Game.h"
-#include "ShadowStepGameCommon.h"
 #include <algorithm>
 
 struct CellPosision
@@ -36,12 +35,7 @@ public:
     //=======================================
     // コンストラクタ
     //=======================================
-    ShadowSystemComponent(int mapWidth, int mapHeight)
-        : m_MapWidth(mapWidth)
-        , m_MapHeight(mapHeight)
-    {
-        MakeShadowMap();
-    }
+    ShadowSystemComponent() {}
 
     //=======================================
     // デストラクタ
@@ -53,6 +47,17 @@ public:
             delete[] m_ShadowMapData[z];
         }
         delete[] m_ShadowMapData;
+    }
+
+    //=======================================
+    // 初期化
+    //=======================================
+    void Init(){}
+    void SetUp(int mapWidth, int mapHeight)
+    {
+        m_MapWidth = mapWidth;
+        m_MapHeight = mapHeight;
+        MakeShadowMap();
     }
 
     //=======================================
@@ -194,7 +199,8 @@ public:
     //=======================================
     // 取得
     //=======================================
-    const int** GetShdowMap() { return m_ShadowMapData;};
+    const int* const* GetShadowMap() const
+    { return m_ShadowMapData;};
 
 private:
     //=======================================

@@ -11,6 +11,11 @@
 #include "SimplePlaneRendererComponent.h"
 #include "MapSystemComponent.h"
 #include "UnitComponent.h"
+#include "OrbitCameraComponent.h"
+#include "GameSystemComponent.h"
+#include "SunManageComponent.h"
+#include "ShadowSystemComponent.h"
+#include "UnitSystemComponent.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -29,8 +34,30 @@ void SceneProto::Init()
     // 追加コンポーネント
     {
         // マップシステム
-        auto* mapSystem = FindGameObjectWithTag("MapSystem")->AddComponent<MapSystemComponent>("TestMap.csv");
+        auto* mapSystem = FindGameObjectWithTag("System")->AddComponent<MapSystemComponent>("TestMap.csv");
         mapSystem->MakeMap(m_GameObjects);    // マップの読み込み
+        float heightMap = mapSystem->GetMapSizeHeight();
+        float widthMap = mapSystem->GetMapSizeWidth();
+
+        // 太陽
+        auto* sun = FindGameObjectWithTag("System")->AddComponent<SunManageComponent>(
+            widthMap, heightMap, mapSystem->GetMapHeight(), mapSystem->GetMapWidth());
+        // sun->Init();
+
+        // シャドウシステム
+        auto* shadowSystem = FindGameObjectWithTag("System")->AddComponent<ShadowSystemComponent>();
+
+        // ユニットシステム
+        auto* unitSystem = FindGameObjectWithTag("System")->AddComponent<UnitSystemComponent>();
+
+        // ゲームシステム
+        auto* gameSystem = FindGameObjectWithTag("System")->AddComponent<GameSystemComponent>();
+        gameSystem->Init();
+
+        // カメラ
+        auto* orbitCamera = FindGameObjectWithTag("System")->AddComponent<OrbitCameraComponent>(&m_Camera);
+        orbitCamera->SetGameSystem(gameSystem);
+        orbitCamera->SetRotationSpeed(0.02f);
 
         // プレイヤー
         auto* playerObj = FindGameObjectWithTag("Player");

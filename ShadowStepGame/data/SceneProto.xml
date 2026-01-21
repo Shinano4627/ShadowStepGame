@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Objects>
     <Object ID="1">
-        <ObjectName Value="MapSystem"/>
+        <ObjectName Value="System"/>
         <ObjectType Value=""/>
-        <Tag Value="MapSystem"/>
+        <Tag Value="System"/>
         <FileName Value=""/>
         <Texture Value=""/>
 
