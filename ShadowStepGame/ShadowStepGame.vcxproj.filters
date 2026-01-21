@@ -237,16 +237,7 @@
     <ClInclude Include="UnitSystemComponent.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameSystemComponent.h">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="SunManageComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="UnitComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ShadowStepGameCommon.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="ShadowSystemComponent.h">
@@ -254,6 +245,18 @@
     </ClInclude>
     <ClInclude Include="UnitCommon.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\LoadingScreen.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SunManageComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowStepGameCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSystemComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -392,14 +395,14 @@
     <ClCompile Include="Framework\Texture2D.cpp">
       <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
-    <ClCompile Include="GameSystemComponent.cpp">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClCompile>
     <ClCompile Include="UnitSystemComponent.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="ShadowSystemComponent.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Framework\LoadingScreen.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSystemComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

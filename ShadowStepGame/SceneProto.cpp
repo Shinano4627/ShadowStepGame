@@ -35,12 +35,12 @@ void SceneProto::Init()
         // プレイヤー
         auto* playerObj = FindGameObjectWithTag("Player");
         auto* playerUnit = playerObj->AddComponent<UnitComponent>();
-        playerUnit->SetCamp(UnitComponent::UnitCamp::UnitPlayer);
+        // playerUnit->SetCamp(UnitComponent::UnitCamp::UnitPlayer);
 
         //エネミー
         auto* enemyObj = FindGameObjectWithTag("Enemy");
         auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
-        enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
+        // enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
 
     }  
 
