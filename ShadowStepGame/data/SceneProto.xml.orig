@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Objects>
+    <Object ID="1">
+        <ObjectName Value="System"/>
+        <ObjectType Value="SimpleCube"/>
+        <Tag Value="System"/>
+<<<<<<< HEAD
+        <FileName Value=""/>
+        <Texture Value=""/>
+
+        <Posision X="0" Y="-1" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="2" Y="2" Z="2"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+     <Object ID="2">
+        <ObjectName Value="Camera"/>
+        <ObjectType Value=""/>
+        <Tag Value="Camera"/>
+        <FileName Value=""/>
+        <Texture Value=""/>
+
+        <Posision X="0" Y="-1" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="2" Y="2" Z="2"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+
+    <Object ID="2">
+        <ObjectName Value="Player"/>
+        <ObjectType Value="SimpleCube"/>
+        <Tag Value="Player"/>
+=======
+>>>>>>> 183e7b471080d83d8f03787e8d6c3ed33b2fc3f7
+        <FileName Value=""/>
+        <Texture Value=""/>
+
+        <Posision X="0" Y="-1" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+<<<<<<< HEAD
+        <Scale X="1" Y="1" Z="1"/>
+        <Color R="1" G="0" B="0" A="1"/>
+    </Object>
+
+    <Object ID="3">
+        <ObjectName Value="Enemy"/>
+        <ObjectType Value="SimpleCube"/>
+        <Tag Value="Enemy"/>
+        <FileName Value=""/>
+        <Texture Value=""/>
+
+        <Posision X="5" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="1" Y="1" Z="1"/>
+        <Color R="0" G="0" B="1" A="1"/>
+    </Object>
+
+    <Object ID="4">
+        <ObjectName Value="TurnManager"/>
+        <ObjectType Value=""/>
+        <Tag Value="TurnManager"/>
+        <FileName Value=""/>
+        <Texture Value=""/>
+
+        <Posision X="5" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="1" Y="1" Z="1"/>
+        <Color R="0" G="0" B="1" A="1"/>
+=======
+        <Scale X="2" Y="2" Z="2"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+     <Object ID="2">
+        <ObjectName Value="Camera"/>
+        <ObjectType Value=""/>
+        <Tag Value="Camera"/>
+        <FileName Value=""/>
+        <Texture Value=""/>
+
+        <Posision X="0" Y="-1" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="2" Y="2" Z="2"/>
+        <Color R="1" G="1" B="1" A="1"/>
+>>>>>>> 183e7b471080d83d8f03787e8d6c3ed33b2fc3f7
+    </Object>
+</Objects>
