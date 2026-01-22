@@ -11,6 +11,11 @@
 #include "SimplePlaneRendererComponent.h"
 #include "MapSystemComponent.h"
 #include "UnitComponent.h"
+#include "OrbitCameraComponent.h"
+#include "GameSystemComponent.h"
+#include "SunManageComponent.h"
+#include "ShadowSystemComponent.h"
+#include "UnitSystemComponent.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -29,18 +34,39 @@ void SceneProto::Init()
     // 追加コンポーネント
     {
         // マップシステム
-        auto* mapSystem = FindGameObjectWithTag("MapSystem")->AddComponent<MapSystemComponent>("TestMap.csv");
+        auto* mapSystem = FindGameObjectWithTag("System")->AddComponent<MapSystemComponent>("TestMap.csv");
         mapSystem->MakeMap(m_GameObjects);    // マップの読み込み
+        int heightMap = mapSystem->GetMapSizeHeight();
+        int widthMap = mapSystem->GetMapSizeWidth();
+
+        // 太陽
+        auto* sun = FindGameObjectWithTag("System")->AddComponent<SunManageComponent>(
+            widthMap, heightMap, mapSystem->GetMapHeight(), mapSystem->GetMapWidth());
+
+        // シャドウシステム
+        auto* shadowSystem = FindGameObjectWithTag("System")->AddComponent<ShadowSystemComponent>();
+        
+
+        // ユニットシステム
+        auto* unitSystem = FindGameObjectWithTag("System")->AddComponent<UnitSystemComponent>();
+
+        // ゲームシステム
+        auto* gameSystem = FindGameObjectWithTag("System")->AddComponent<GameSystemComponent>();
+
+        // カメラ
+        auto* orbitCamera = FindGameObjectWithTag("System")->AddComponent<OrbitCameraComponent>(&m_Camera);
+        orbitCamera->SetGameSystem(gameSystem);
+        orbitCamera->SetRotationSpeed(0.02f);
 
         // プレイヤー
         auto* playerObj = FindGameObjectWithTag("Player");
         auto* playerUnit = playerObj->AddComponent<UnitComponent>();
-        playerUnit->SetCamp(UnitComponent::UnitCamp::UnitPlayer);
+        // playerUnit->SetCamp(UnitComponent::UnitCamp::UnitPlayer);
 
         //エネミー
         auto* enemyObj = FindGameObjectWithTag("Enemy");
         auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
-        enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
+        // enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
 
     }  
 
