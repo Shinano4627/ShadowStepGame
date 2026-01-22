@@ -142,8 +142,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy $(SolutionDir)ShadowStepGame\data $(OutDir)data *.xml /s /e /COPY:DT
-robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</Command>
+      <Command>robocopy $(SolutionDir)ShadowStepGame\data  $(OutDir)data  *.xml /s /e /COPY:DT || exit /b 0
+robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT || exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
