@@ -45,6 +45,15 @@ void UnitComponent::Update()
 		UpdateMoveSelecting();
 		return;
 	}
+	// ===================================================================
+	// 攻撃選択中
+	// ===================================================================
+	if (m_isAttacking)
+	{
+		UpdateAttacking();
+		return;
+	}
+
 
 	// ===================================================================
     // 通常状態
@@ -60,6 +69,13 @@ void UnitComponent::Update()
 	if (m_input.GetKeyTrigger(VK_P))
 	{
 		BeginPlace();
+		return;
+	}
+
+	//--Aキーで攻撃--//
+	if (m_input.GetKeyTrigger(VK_A))
+	{
+		BeginAttack();
 		return;
 	}
 }
@@ -233,6 +249,71 @@ void UnitComponent::Attack(UnitComponent* target)
 		<< std::endl;
 #endif
 }
+
+void UnitComponent::BeginAttack()
+{
+	if (!CanAct()) return;
+
+	m_isAttacking = true;
+
+	//初期候補は自分の右隣(隣接マスに敵がいればそこにせってい)
+	// システム側で敵識別？
+	//m_attackTarget=GetEnemyAtPos({m_gridPos.posX+1,m_gridPos.posZ});
+
+#ifdef _DEBUG
+	std::cout << "[AttackMode Begin]" << std::endl;
+#endif
+}
+//攻撃モード更新
+void UnitComponent::UpdateAttacking()
+{
+	if (m_input.GetKeyTrigger(VK_C))
+	{
+		m_isAttacking = false;
+#ifdef _DEBUG
+		std::cout << "[AttackMode Cancelled]" << std::endl;
+#endif
+		return;
+	}
+
+	//矢印キーで隣接マスの敵にカーソル移動
+	MapPosition candidatePos = m_gridPos;
+
+	if (m_input.GetKeyTrigger(VK_UP))    candidatePos.posZ += 1;
+	else if (m_input.GetKeyTrigger(VK_DOWN)) candidatePos.posZ -= 1;
+	else if (m_input.GetKeyTrigger(VK_LEFT)) candidatePos.posX -= 1;
+	else if (m_input.GetKeyTrigger(VK_RIGHT)) candidatePos.posX += 1;
+
+	//UnitComponent* target = GetEnemyAtPos(candidatePos);
+	/*if (target != nullptr)
+		m_attackTarget = target;*/
+
+#ifdef _DEBUG
+	if (m_attackTarget)
+		std::cout << "[Attack Target] (" << m_attackTarget->GetGridPos().posX
+		<< "," << m_attackTarget->GetGridPos().posZ << ")" << std::endl;
+#endif
+
+	//スペースで攻撃確定
+	if (m_input.GetKeyTrigger(VK_SPACE) && m_attackTarget != nullptr)
+	{
+		Attack(m_attackTarget);
+		m_isAttacking = false;
+	}
+}
+
+//敵取得簡易関数
+//UnitComponent* UnitComponent::GetEnemyAtPos(const MapPosition& pos)
+//{
+//	for (UnitComponent* enemy : g_EnemyList) // 例えば敵のリストを管理しているとする
+//	{
+//		if (!enemy->IsAlive()) continue;
+//		if (enemy->GetGridPos().posX == pos.posX && enemy->GetGridPos().posZ == pos.posZ)
+//			return enemy;
+//	}
+//	return nullptr;
+//}
+
 // ===================================================================
 // 被ダメ
 // ===================================================================
@@ -275,21 +356,7 @@ void UnitComponent::Down()
 // ===================================================================
 // 配置
 // ===================================================================
-void UnitComponent::Place(const MapPosition& target)
-{
-	if (!CanAct())
-		return;
 
-	m_hasActed = true;
-
-#ifdef _DEBUG
-	std::cout
-		<< "[Place] pos = ("
-		<< target.posX << ","
-		<< target.posZ << ")"
-		<< std::endl;
-#endif
-}
 
 void UnitComponent::BeginPlace()
 {

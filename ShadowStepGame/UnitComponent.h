@@ -70,6 +70,9 @@ private:
 
     bool m_isPlacing = false;   //配置モード中か
     MapPosition m_placeTarget;      //配置候補マス
+
+    bool m_isAttacking = false;
+    UnitComponent* m_attackTarget = nullptr;
 public:
  
     // ===================================================================
@@ -99,6 +102,8 @@ public:
     void Kill();                                 //死亡(影を踏まれる)
 
     void Attack(UnitComponent* target);          //攻撃
+    void BeginAttack();                          //攻撃開始
+    void UpdateAttacking();                      //攻撃選択中
     void TakeDamage(int damage);                 //被ダメ
     void Down();                                 //ダウン状態
 
