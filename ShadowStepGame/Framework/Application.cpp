@@ -7,6 +7,7 @@
 #include "Application.h"
 #include "Game.h"
 #include "imgui/imgui_impl_win32.h"
+#include "Mouse.h"
 
 const auto ClassName = TEXT("2025 framework ひな型");     //ウィンドウクラス名
 const auto WindowName = TEXT("2025 framework ひな型");    //ウィンドウ名
@@ -218,6 +219,9 @@ LRESULT CALLBACK Application::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
     if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
         return true;
 #endif // _DEBUG
+
+    // マウスメッセージ処理
+    DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
 
     static bool isFullscreen = false;
     static bool isMessageBoxShowed = false;

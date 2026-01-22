@@ -1,8 +1,9 @@
-// ===================================================================
+﻿// ===================================================================
 // LoadingScreen.cpp ローディング画面クラスの実装
 // ===================================================================
 
 #include "LoadingScreen.h"
+#include "XmlRW.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -28,6 +29,45 @@ void LoadingScreen::Init()
 {
 	if (m_Initialized) return;
 
+	// ===================================================================
+	// SceneCommon.xmlからローディング画面のデータを取得
+	// ===================================================================
+	XmlRW xml;
+	std::vector<ObjectData> objects;
+	int ret = xml.GetObjectData("SceneCommon", objects);
+
+	std::string bgTexturePath = "";  
+	std::string animTexturePath = "";         
+
+	if (ret == 0)
+	{
+		for (const auto& obj : objects)
+		{
+			// 背景データ
+			if (obj.objectName == "LoadingBackGround")
+			{
+				if (!obj.texture.empty())
+				{
+					bgTexturePath = obj.texture;
+				}
+			}
+			// アニメーションデータ
+			else if (obj.objectName == "LoadingAnimation")
+			{
+				if (!obj.texture.empty())
+				{
+					animTexturePath = obj.texture;
+				}
+				// 位置を設定
+				m_AnimPosX = obj.pos[0];
+				m_AnimPosY = obj.pos[1];
+				// サイズを設定
+				m_AnimWidth = obj.scl[0];
+				m_AnimHeight = obj.scl[1];
+			}
+		}
+	}
+
 	// シェーダー作成
 	m_Shader = std::make_shared<Shader>();
 	m_Shader->Create("shader/unlitTextureVS.hlsl", "shader/unlitTexturePS.hlsl");
@@ -40,8 +80,8 @@ void LoadingScreen::Init()
 	m_Material->Create(mtrl);
 
 	// テクスチャ読み込み
-	m_BackgroundTexture = M_RESOURCE.LoadTexture("asset/texture/BackGround/Loding_BG.png");
-	m_AnimTexture = M_RESOURCE.LoadTexture("asset/texture/Loding_Anim.png");
+	m_BackgroundTexture = M_RESOURCE.LoadTexture(bgTexturePath.c_str());
+	m_AnimTexture = M_RESOURCE.LoadTexture(animTexturePath.c_str());
 
 	// 背景の頂点設定
 	SetupBackgroundVertices();
