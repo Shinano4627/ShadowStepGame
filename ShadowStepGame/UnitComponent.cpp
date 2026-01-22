@@ -2,7 +2,11 @@
 #include "IOManager.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include "GameSystemComponent.h"
+#include "UnitSystemComponent.h"
 #include <iostream>
+
+
 // ===================================================================
 // コンストラクタ
 // ===================================================================
@@ -28,35 +32,34 @@ void UnitComponent::Update()
 {
 	m_input.Update();
 
-	//デバッグ用：エンターキーでターンリセット
+	// ===================================================================
+    // デバッグ：ターンリセット
+    // ===================================================================
 	if (m_input.GetKeyTrigger(VK_RETURN))
 	{
 		ResetTurn();
 		return;
 	}
 
+	//行動不可なら何もしない
 	if (!CanAct())
 		return;
 
 	// ===================================================================
-	// 配置モード中
+	// 状態別処理
 	// ===================================================================
 	if (m_isPlacing)
 	{
 		UpdatePlacing();
 		return;
 	}
-	// ===================================================================
-	// 移動選択中
-	// ===================================================================
+
 	if (m_isMoveSelecting)
 	{
 		UpdateMoveSelecting();
 		return;
 	}
-	// ===================================================================
-	// 攻撃選択中
-	// ===================================================================
+
 	if (m_isAttacking)
 	{
 		UpdateAttacking();
@@ -65,7 +68,7 @@ void UnitComponent::Update()
 
 
 	// ===================================================================
-    // 通常状態
+    // 通常状態(コマンド入力待ち)
     // ===================================================================
 	//--Mキーで移動--//
 	if (m_input.GetKeyTrigger(VK_M))
@@ -98,44 +101,9 @@ bool UnitComponent::CanAct() const
 	return !m_hasActed && IsAlive() && !m_isDown;
 }
 
+
 // ===================================================================
-// 移動
-// ===================================================================
-void UnitComponent::Move(const MapPosition& target)
-{
-	//行動済みなら何もしない
-	if (!CanAct())
-		return;
-
-	std::cout
-		<< "[Move Before]("
-		<< m_gridPos.posX << ","
-		<< m_gridPos.posZ << ")"
-		<< std::endl;
-
-	//座標更新
-	m_gridPos = target;
-
-	Vector3 worldPos = GridToWorld(m_gridPos);
-	GetOwner()->GetTransform().SetPosition(worldPos);
-
-	GetOwner()->GetTransform().SetRotation(Vector3(0.0f, 0.0f, 0.0f));
-
-	m_hasActed = true;
-
-	//行動済みにする
-	m_hasActed = true;
-
-#ifdef _DEBUG
-	std::cout
-		<< "[Move after] ("
-		<< target.posX << ","
-		<< target.posZ << ")"
-		<< std::endl;
-#endif
-}
-// ===================================================================
-// 移動選択開始
+// 移動処理
 // ===================================================================
 void UnitComponent::BeginMove()
 {
@@ -143,6 +111,7 @@ void UnitComponent::BeginMove()
 		return;
 
 	m_isMoveSelecting = true;
+	m_moveTarget = m_gridPos;
 
 #ifdef _DEBUG
 	std::cout << "[BeginMove]" << std::endl;
@@ -165,6 +134,7 @@ void UnitComponent::UpdateMoveSelecting()
 	if (m_moveTarget.posX == 0 && m_moveTarget.posZ == 0)
 		m_moveTarget = m_gridPos;
 
+	//カーソル移動(矢印キー)
 	if (m_input.GetKeyTrigger(VK_UP))
 	{
 		m_moveTarget.posZ += 1;
@@ -205,6 +175,38 @@ void UnitComponent::UpdateMoveSelecting()
 #endif
 		}
 	}
+}
+void UnitComponent::Move(const MapPosition& target)
+{
+	//行動済みなら何もしない
+	if (!CanAct())
+		return;
+
+	std::cout
+		<< "[Move Before]("
+		<< m_gridPos.posX << ","
+		<< m_gridPos.posZ << ")"
+		<< std::endl;
+
+	//座標更新
+	m_gridPos = target;
+
+	//グリッド→ワールド変換
+	Vector3 worldPos = GridToWorld(m_gridPos);
+	GetOwner()->GetTransform().SetPosition(worldPos);
+
+	GetOwner()->GetTransform().SetRotation(Vector3(0.0f, 0.0f, 0.0f));
+
+	//行動済みにする
+	m_hasActed = true;
+
+#ifdef _DEBUG
+	std::cout
+		<< "[Move after] ("
+		<< target.posX << ","
+		<< target.posZ << ")"
+		<< std::endl;
+#endif
 }
 // ===================================================================
 // 影移動
@@ -273,8 +275,8 @@ void UnitComponent::BeginAttack()
 	m_isAttacking = true;
 
 	//初期候補は自分の右隣(隣接マスに敵がいればそこにせってい)
-	// システム側で敵識別？
-	//m_attackTarget=GetEnemyAtPos({m_gridPos.posX+1,m_gridPos.posZ});
+	//TODO:
+	//敵ユニット管理クラスから隣接マスの敵を取得
 
 #ifdef _DEBUG
 	std::cout << "[AttackMode Begin]" << std::endl;

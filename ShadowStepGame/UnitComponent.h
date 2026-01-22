@@ -1,6 +1,8 @@
 #pragma once
 #include "Component.h"
 #include "UnitCommon.h"
+#include "GameSystemComponent.h"
+#include "UnitSystemComponent.h"
 #include "input.h"
 #include <vector>
 // ===================================================================
@@ -11,6 +13,7 @@
 class UnitComponent :public Component
 {
 public:
+    //--型定義--//
     //陣営
     enum class UnitCamp
     {
@@ -57,6 +60,7 @@ public:
 private:
     Input m_input;
 
+
     UnitStatus m_status;
     MapPosition m_gridPos;  //現在の座標
 
@@ -73,6 +77,7 @@ private:
 
     bool m_isAttacking = false;
     UnitComponent* m_attackTarget = nullptr;
+
 public:
  
     // ===================================================================
@@ -94,32 +99,42 @@ public:
     // ===================================================================
     // 行動
     // ===================================================================
-    void Move(const MapPosition& target);        //移動
     void BeginMove();                            //移動選択開始
-    void UpdateMoveSelecting();                  //移動選択中
-    void ShadowMove(const MapPosition& target);  //影移動
-
-    void Kill();                                 //死亡(影を踏まれる)
-
-    void Attack(UnitComponent* target);          //攻撃
     void BeginAttack();                          //攻撃開始
-    void UpdateAttacking();                      //攻撃選択中
+    void BeginPlace();                           //配置選択
+
+    void Move(const MapPosition& target);        //移動
+    void Attack(UnitComponent* target);          //攻撃
+
+    void ShadowMove(const MapPosition& target);  //影移動
+    void Kill();                                 //死亡(影を踏まれる)
     void TakeDamage(int damage);                 //被ダメ
     void Down();                                 //ダウン状態
 
-    void BeginPlace();                           //配置選択
-    void UpdatePlacing();                        //配置モード
     void TryPlaceObstacle();                     //配置確定用関数
     void PlaceObstacle();                        //オブジェクト生成
 
     void BreakWall(const MapPosition& target);   //壁破壊   
 
+    // ===================================================================
+    // 状態
+    // ===================================================================
     bool CanAct() const;    //行動可否
-    void ResetTurn();       //ターンリセット(デバッグ用)
     bool IsAlive() const;   //生存判定
     bool IsDown() const;    //ダウン判定
+    void ResetTurn();       //ターンリセット(デバッグ用)
 
+    // ===================================================================
+    // 座標
+    // ===================================================================
     Vector3 GridToWorld(const MapPosition& grid) const;   //座標返還
+
+    
+    
+
+    
+
+    
 
     // ===================================================================
     // Getter / Setter
@@ -132,4 +147,14 @@ public:
     const MapPosition& GetGridPos() const { return m_gridPos; }
     void SetGridPos(const MapPosition& pos) { m_gridPos = pos; }
 
+    void SetUnitId(int id) { m_status.id = id; }
+    int GetUnitId()const { return m_status.id; }
+
+ private:
+    // ===================================================================
+    // 内部更新
+    // ===================================================================
+    void UpdateMoveSelecting();                  //移動選択中
+    void UpdateAttacking();                      //攻撃選択中
+    void UpdatePlacing();                        //配置モード
 };

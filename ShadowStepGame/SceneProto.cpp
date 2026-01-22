@@ -77,7 +77,6 @@ void SceneProto::Init()
         //auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
         //enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
 
-
     }  
 
     // Init Camera
