@@ -40,7 +40,7 @@ void LoadingScreen::Init()
 	m_Material->Create(mtrl);
 
 	// テクスチャ読み込み
-	m_BackgroundTexture = M_RESOURCE.LoadTexture("asset/texture/Loding_BG.png");
+	m_BackgroundTexture = M_RESOURCE.LoadTexture("asset/texture/BackGround/Loding_BG.png");
 	m_AnimTexture = M_RESOURCE.LoadTexture("asset/texture/Loding_Anim.png");
 
 	// 背景の頂点設定
