@@ -107,7 +107,6 @@ public:
     void TakeDamage(int damage);                 //被ダメ
     void Down();                                 //ダウン状態
 
-    void Place(const MapPosition& target);       //配置
     void BeginPlace();                           //配置選択
     void UpdatePlacing();                        //配置モード
     void TryPlaceObstacle();                     //配置確定用関数
@@ -116,8 +115,11 @@ public:
     void BreakWall(const MapPosition& target);   //壁破壊   
 
     bool CanAct() const;    //行動可否
+    void ResetTurn();       //ターンリセット(デバッグ用)
     bool IsAlive() const;   //生存判定
     bool IsDown() const;    //ダウン判定
+
+    Vector3 GridToWorld(const MapPosition& grid) const;   //座標返還
 
     // ===================================================================
     // Getter / Setter

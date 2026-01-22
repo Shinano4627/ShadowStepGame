@@ -17,8 +17,8 @@ void GameSystemComponent::Init()
     m_mapSystem = m_pOwner->GetComponent<MapSystemComponent>();
     m_unitSystem = m_pOwner->GetComponent<UnitSystemComponent>();
     m_sunSystem = m_pOwner->GetComponent<SunManageComponent>();
-    int map_w = m_mapSystem->GetMapSizeWidth();
-    int map_h = m_mapSystem->GetMapSizeHeight();
+    int map_w = m_mapSystem->GetMapWidth();
+    int map_h = m_mapSystem->GetMapHeight();
     m_shadowSystem = m_pOwner->GetComponent<ShadowSystemComponent>();
     m_shadowSystem->SetUp(map_w,map_h);
 
@@ -48,11 +48,12 @@ void GameSystemComponent::Update()
 
 void GameSystemComponent::ChangeState(BattleState next)
 {
-    std::cout << "[GameSystem] State: "
-        << static_cast<int>(m_State)
-        << " -> "
-        << static_cast<int>(next)
+    std::cout
+        << "[GameSystem] Turn " << m_TurnCount
+        << " : " << BattleStateToString(m_State)
+        << " -> " << BattleStateToString(next)
         << std::endl;
+
     // 今のStateを保存
     m_beforeState = m_State;
     // 次のStateへ変更
@@ -74,7 +75,7 @@ void GameSystemComponent::UpdateState()
     case BattleState::TurnEnd:       UpdateTurnEnd(); break;
     case BattleState::SunMove:       UpdateSunMove(); break;
     case BattleState::Judge:         UpdateJudge(); break;
-    case BattleState::End:           break;
+    case BattleState::End:           UpdateEnd(); break;
     }
 }
 
@@ -228,6 +229,7 @@ void GameSystemComponent::UpdateSunMove()
 
 void GameSystemComponent::UpdateJudge()
 {
+
     // 勝敗確定
     if (IsEnemyAllDead() || IsPlayerAllDead())
     {
@@ -245,6 +247,11 @@ void GameSystemComponent::UpdateJudge()
         NextTimeline();
         ChangeState(BattleState::UnitSelect);
     }
+}
+
+void GameSystemComponent::UpdateEnd()
+{
+
 }
 
 void GameSystemComponent::BuildTimeline()
@@ -294,17 +301,36 @@ GameSystemComponent::GetCurrentTimeline()
 // Indexを進める→TurnEnd
 void GameSystemComponent::NextTimeline()
 {
+    //=======================================
+    // Map/Shadow更新
+    //=======================================
+    // 影計算
+    ShadowParam param =
+        m_shadowSystem->CalcShadowParm(
+            m_sunSystem->GetCurPosX(),
+            m_sunSystem->GetCurPosZ(),
+            m_mapSystem->GetMapWidth(),
+            m_mapSystem->GetMapSizeHeight()
+        );
+    // 影マップ更新
+    m_shadowSystem->UpdateShadowMap(
+        m_mapSystem->GetRawMapData(),
+        param
+    );
+    // マップ更新
+    m_mapSystem->UpdateMap(
+        m_unitSystem->GetAllUnits(),
+        m_shadowSystem->GetShadowMap()
+    );
+
+    //=======================================
+    // タイムラインを進める
+    //=======================================
     m_TimelineIndex++;
 
-    // UpdateShadow()←ShadowSystem
-    // 光源位置を元に全てのオブジェクトの影を更新する。
-    // ↑を元に↓をやる
-    // UpdateMap()←MapSystem
-    // ユニットの位置、オブジェクトの位置、影の位置を取ってきて表示する
-    // UnitSystemの情報とShadowSystemの情報を元にMapを更新する。
-
-    // Map情報の更新はGameSystemで行う。
-
+    //=======================================
+    // ターン終了 or 継続判定
+    //=======================================
     if (m_TimelineIndex >= static_cast<int>(m_Timeline.size()))
     {
         // 全員行動終了
@@ -326,4 +352,22 @@ bool GameSystemComponent::IsPlayerAllDead() const
 bool GameSystemComponent::IsEnemyAllDead() const
 {
     return m_unitSystem->IsEnemyAllDead();
+}
+
+const char* GameSystemComponent::BattleStateToString(BattleState state)
+{
+    switch (state)
+    {
+    case BattleState::Init:              return "Init";
+    case BattleState::TurnStart:         return "TurnStart";
+    case BattleState::UnitSelect:        return "UnitSelect";
+    case BattleState::UnitActionSelect:  return "UnitActionSelect";
+    case BattleState::UnitActing:        return "UnitActing";
+    case BattleState::UnitEnd:           return "UnitEnd";
+    case BattleState::SunMove:           return "SunMove";
+    case BattleState::TurnEnd:           return "TurnEnd";
+    case BattleState::Judge:             return "Judge";
+    case BattleState::End:               return "End";
+    default:                             return "Unknown";
+    }
 }

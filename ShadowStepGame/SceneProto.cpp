@@ -36,23 +36,22 @@ void SceneProto::Init()
         // マップシステム
         auto* mapSystem = FindGameObjectWithTag("System")->AddComponent<MapSystemComponent>("TestMap.csv");
         mapSystem->MakeMap(m_GameObjects);    // マップの読み込み
-        float heightMap = mapSystem->GetMapSizeHeight();
-        float widthMap = mapSystem->GetMapSizeWidth();
+        int heightMap = mapSystem->GetMapSizeHeight();
+        int widthMap = mapSystem->GetMapSizeWidth();
 
         // 太陽
         auto* sun = FindGameObjectWithTag("System")->AddComponent<SunManageComponent>(
             widthMap, heightMap, mapSystem->GetMapHeight(), mapSystem->GetMapWidth());
-        // sun->Init();
 
         // シャドウシステム
         auto* shadowSystem = FindGameObjectWithTag("System")->AddComponent<ShadowSystemComponent>();
+        
 
         // ユニットシステム
         auto* unitSystem = FindGameObjectWithTag("System")->AddComponent<UnitSystemComponent>();
 
         // ゲームシステム
         auto* gameSystem = FindGameObjectWithTag("System")->AddComponent<GameSystemComponent>();
-        gameSystem->Init();
 
         // カメラ
         auto* orbitCamera = FindGameObjectWithTag("System")->AddComponent<OrbitCameraComponent>(&m_Camera);
@@ -71,12 +70,12 @@ void SceneProto::Init()
         // プレイヤー
         auto* playerObj = FindGameObjectWithTag("Player");
         auto* playerUnit = playerObj->AddComponent<UnitComponent>();
-        // playerUnit->SetCamp(UnitComponent::UnitCamp::UnitPlayer);
+        playerUnit->SetCamp(UnitComponent::UnitCamp::UnitPlayer);
 
-        //エネミー
-        auto* enemyObj = FindGameObjectWithTag("Enemy");
-        auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
-        // enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
+        ////エネミー
+        //auto* enemyObj = FindGameObjectWithTag("Enemy");
+        //auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
+        //enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
 
 
     }  

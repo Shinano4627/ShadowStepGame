@@ -1,5 +1,7 @@
 #include "UnitComponent.h"
 #include "IOManager.h"
+#include "GameObject.h"
+#include "Transform.h"
 #include <iostream>
 // ===================================================================
 // コンストラクタ
@@ -25,6 +27,13 @@ UnitComponent::~UnitComponent()
 void UnitComponent::Update()
 {
 	m_input.Update();
+
+	//デバッグ用：エンターキーでターンリセット
+	if (m_input.GetKeyTrigger(VK_RETURN))
+	{
+		ResetTurn();
+		return;
+	}
 
 	if (!CanAct())
 		return;
@@ -106,6 +115,13 @@ void UnitComponent::Move(const MapPosition& target)
 
 	//座標更新
 	m_gridPos = target;
+
+	Vector3 worldPos = GridToWorld(m_gridPos);
+	GetOwner()->GetTransform().SetPosition(worldPos);
+
+	GetOwner()->GetTransform().SetRotation(Vector3(0.0f, 0.0f, 0.0f));
+
+	m_hasActed = true;
 
 	//行動済みにする
 	m_hasActed = true;
@@ -496,4 +512,34 @@ bool UnitComponent::IsAlive() const
 bool UnitComponent::IsDown()const
 {
 	return m_isDown;
+}
+
+
+// ===================================================================
+// ターンリセット(デバッグ用)
+// ===================================================================
+void UnitComponent::ResetTurn()
+{
+	m_hasActed = false;
+
+	m_isMoveSelecting = false;
+	m_isPlacing = false;
+	m_isAttacking = false;
+
+#ifdef _DEBUG
+	std::cout<< "[Turn Reset]" << std::endl;
+#endif
+}
+
+Vector3 UnitComponent::GridToWorld(const MapPosition& grid) const
+{
+	const float CELL_SIZE = 1.0f;
+
+	return Vector3(
+		grid.posX * CELL_SIZE,
+		0.0f,
+		grid.posZ * CELL_SIZE
+	);
+
+
 }

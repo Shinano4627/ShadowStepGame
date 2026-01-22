@@ -48,6 +48,7 @@ void SceneResult::Init()
 
     // カメラ初期化
     m_Camera.Init();
+    m_UiCamera.Init();
 
     m_nextScene = SCENE_NONE;
 
@@ -79,6 +80,7 @@ void SceneResult::UnInit()
 
     // カメラ終了処理
     m_Camera.Uninit();
+    m_UiCamera.Init();
 
     m_isInitialized = false;
 }
@@ -90,6 +92,7 @@ void SceneResult::Update()
 
     // カメラ更新
     m_Camera.Update();
+    m_UiCamera.Update();
 
     // Enterキーでタイトルへ
     if (IO_MANAGER.GetKeyDown(TYPE_OK) || IO_MANAGER.GetKeyDownKeyBord(VK_RETURN))
@@ -132,8 +135,8 @@ void SceneResult::Draw()
     // 3D描画
     Draw(&m_Camera);
 
-    // UI層のみ描画（カメラ不使用）
-    DrawLayer(nullptr, RenderLayer::UI);
+    // UI層のみ描画
+    DrawLayer(&m_UiCamera, RenderLayer::UI);
 }
 
 void SceneResult::Draw(Camera* camera)

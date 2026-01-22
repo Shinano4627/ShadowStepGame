@@ -25,20 +25,20 @@ public:
         // -----------------------------
         Vector3 target(0, 0, 0); // デフォルト
 
-        if (m_GameSystem)
-        {
-            auto state = m_GameSystem->GetBattleState();
-            if (state == GameSystemComponent::BattleState::UnitActionSelect ||
-                state == GameSystemComponent::BattleState::UnitActing ||
-                state == GameSystemComponent::BattleState::UnitEnd ||
-                state == GameSystemComponent::BattleState::UnitSelect)
-            {
-                // TODO: Unit 実装後に currentUnit の位置を取得
-                target = Vector3(20, 20, 20);
-                // auto* currentUnit = m_GameSystem->GetCurrentTimeline()->unit;
-                // if (currentUnit) target = currentUnit->GetPosition();
-            }
-        }
+        //if (m_GameSystem)
+        //{
+        //    auto state = m_GameSystem->GetBattleState();
+        //    if (state == GameSystemComponent::BattleState::UnitActionSelect ||
+        //        state == GameSystemComponent::BattleState::UnitActing ||
+        //        state == GameSystemComponent::BattleState::UnitEnd ||
+        //        state == GameSystemComponent::BattleState::UnitSelect)
+        //    {
+        //        // TODO: Unit 実装後に currentUnit の位置を取得
+        //        target = Vector3(20, 20, 20);
+        //        // auto* currentUnit = m_GameSystem->GetCurrentTimeline()->unit;
+        //        // if (currentUnit) target = currentUnit->GetPosition();
+        //    }
+        //}
 
         // -----------------------------
         // カメラ位置とオフセット

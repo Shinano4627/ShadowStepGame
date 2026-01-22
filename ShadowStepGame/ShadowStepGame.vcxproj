@@ -142,8 +142,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy $(SolutionDir)ShadowStepGame\data $(OutDir)data *.xml /s /e /COPY:DT
-robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</Command>
+      <Command>robocopy $(SolutionDir)ShadowStepGame\data  $(OutDir)data  *.xml /s /e /COPY:DT || exit /b 0
+robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT || exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -189,11 +189,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="Framework\RigidBody.h" />
     <ClInclude Include="Framework\RotatorComponent.h" />
     <ClInclude Include="Framework\SceneBase.h" />
-    <ClInclude Include="Framework\SceneDebug.h" />
-    <ClInclude Include="Framework\SceneGame.h" />
     <ClInclude Include="Framework\SceneManager.h" />
-    <ClInclude Include="Framework\SceneResult.h" />
-    <ClInclude Include="Framework\SceneTitle.h" />
     <ClInclude Include="Framework\Shader.h" />
     <ClInclude Include="Framework\SimpleCubeRendererComponent.h" />
     <ClInclude Include="Framework\SimplePlaneRendererComponent.h" />
@@ -213,6 +209,11 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClInclude Include="Framework\VertexBuffer.h" />
     <ClInclude Include="Framework\XmlRW.h" />
     <ClInclude Include="UnitComponent.h" />
+    <ClInclude Include="SceneDebug.h" />
+    <ClInclude Include="SceneGame.h" />
+    <ClInclude Include="SceneResult.h" />
+    <ClInclude Include="SceneSelect.h" />
+    <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="GameSystemComponent.h" />
     <ClInclude Include="MapSystemComponent.h" />
     <ClInclude Include="OrbitCameraComponent.h" />
@@ -249,11 +250,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClCompile Include="Framework\ResourceManager.cpp" />
     <ClCompile Include="Framework\RigidBody.cpp" />
     <ClCompile Include="Framework\SceneBase.cpp" />
-    <ClCompile Include="Framework\SceneDebug.cpp" />
-    <ClCompile Include="Framework\SceneGame.cpp" />
     <ClCompile Include="Framework\SceneManager.cpp" />
-    <ClCompile Include="Framework\SceneResult.cpp" />
-    <ClCompile Include="Framework\SceneTitle.cpp" />
     <ClCompile Include="Framework\Shader.cpp" />
     <ClCompile Include="Framework\SimpleCubeRendererComponent.cpp" />
     <ClCompile Include="Framework\SimplePlaneRendererComponent.cpp" />
@@ -269,6 +266,11 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.* /s /e /COPY:DT</C
     <ClCompile Include="Framework\utility.cpp" />
     <ClCompile Include="Framework\XmlRW.cpp" />
     <ClCompile Include="UnitComponent.cpp" />
+    <ClCompile Include="SceneDebug.cpp" />
+    <ClCompile Include="SceneGame.cpp" />
+    <ClCompile Include="SceneResult.cpp" />
+    <ClCompile Include="SceneSelect.cpp" />
+    <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="GameSystemComponent.cpp" />
     <ClCompile Include="MapSystemComponent.cpp" />
     <ClCompile Include="SceneProto.cpp" />

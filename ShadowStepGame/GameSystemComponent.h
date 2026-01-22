@@ -90,6 +90,7 @@ private:
 	void UpdateTurnEnd();
 	void UpdateSunMove();
 	void UpdateJudge();
+	void UpdateEnd();
 
 	//=======================================
 	// タイムライン管理関数
@@ -143,5 +144,9 @@ private:
 
 	UnitStatus* m_CurrentUnit = nullptr;
 
+	//=======================================
+	// デバッグ用
+	//=======================================
+	static const char* BattleStateToString(BattleState state);
 
 };

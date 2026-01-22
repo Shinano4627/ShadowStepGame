@@ -7,7 +7,6 @@
 #include "IOManager.h"
 
 // コンポーネント
-#include "RotatorComponent.h"
 
 #include <iostream>
 
@@ -26,9 +25,6 @@ void SceneTitle::Init()
 
     // 追加コンポーネント
     {
-        // キューブに自動回転コンポーネント
-        auto* rotator = FindGameObjectWithTag("TitleCube")->AddComponent<RotatorComponent>(Vector3(0.5f, 1.0f, 0.3f));
-
         std::cout << "[SceneTitle] TitleCube created" << std::endl;
     }
 
@@ -70,7 +66,7 @@ void SceneTitle::Update()
     if (IO_MANAGER.GetKeyDown(TYPE_OK) || IO_MANAGER.GetKeyDownKeyBord(VK_RETURN))
     {
         std::cout << "[SceneTitle] ENTER pressed - Starting Game" << std::endl;
-        m_nextScene = SCENE_GAME;
+        m_nextScene = SCENE_SELECT;
         return;
     }
 
@@ -84,7 +80,7 @@ void SceneTitle::Draw()
     Draw(&m_Camera);
 
     // UI層のみ描画（カメラ不使用）
-    DrawLayer(nullptr, RenderLayer::UI);
+    DrawLayer(&m_Camera, RenderLayer::UI);
 }
 
 void SceneTitle::Draw(Camera* camera)
