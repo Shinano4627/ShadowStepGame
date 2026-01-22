@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "UnitCommon.h"
+#include "input.h"
 #include <vector>
 // ===================================================================
 // ユニットコンポネント
@@ -29,7 +30,6 @@ public:
     //種類
     enum UnitModel
     {
-        UnitNormal,       //通常
         UnitAttacker,     //攻撃
         UnitPlacementer,  //配置
         UnitGiant,        //巨人
@@ -55,6 +55,8 @@ public:
         UnitModel model;    //種類
     };
 private:
+    Input m_input;
+
     UnitStatus m_status;
     MapPosition m_gridPos;  //現在の座標
 
@@ -63,6 +65,11 @@ private:
 
     bool m_hasActed = false;   //行動済みか
 
+    bool m_isMoveSelecting = false; //移動選択中か
+    MapPosition m_moveTarget;       //移動モード用候補マス
+
+    bool m_isPlacing = false;   //配置モード中か
+    MapPosition m_placeTarget;      //配置候補マス
 public:
  
     // ===================================================================
@@ -85,6 +92,8 @@ public:
     // 行動
     // ===================================================================
     void Move(const MapPosition& target);        //移動
+    void BeginMove();                            //移動選択開始
+    void UpdateMoveSelecting();                  //移動選択中
     void ShadowMove(const MapPosition& target);  //影移動
 
     void Kill();                                 //死亡(影を踏まれる)
@@ -94,6 +103,10 @@ public:
     void Down();                                 //ダウン状態
 
     void Place(const MapPosition& target);       //配置
+    void BeginPlace();                           //配置選択
+    void UpdatePlacing();                        //配置モード
+    void TryPlaceObstacle();                     //配置確定用関数
+    void PlaceObstacle();                        //オブジェクト生成
 
     void BreakWall(const MapPosition& target);   //壁破壊   
 
