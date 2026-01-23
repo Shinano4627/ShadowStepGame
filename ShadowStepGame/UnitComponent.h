@@ -6,14 +6,16 @@
 #include "input.h"
 #include <vector>
 // ===================================================================
-// ユニットコンポネント
-// ユニット一体分の状態・ターン管理
+// UnitComponent
+// ユニット1体分の状態・行動管理
 // ===================================================================
 
 class UnitComponent :public Component
 {
 public:
-    //--型定義--//
+    // ===================================================================
+    //型定義
+    // ===================================================================
     //陣営
     enum class UnitCamp
     {
@@ -38,7 +40,7 @@ public:
         UnitGiant,        //巨人
     };
 
-    //マップ座標
+    //マップ上のグリッド座標
     struct MapPosition
     {
         int posX;
@@ -52,9 +54,7 @@ public:
         MapPosition pos;    //マップ上の位置
         int hp = 5;         //HP
         int speed = 5;      //素早さ
-        //std::vector<MapPosition> shadowPosList; //影範囲
         UnitCamp camp;      //陣営
-        //UnitState state;    //状態
         UnitModel model;    //種類
     };
 private:
@@ -69,14 +69,22 @@ private:
 
     bool m_hasActed = false;   //行動済みか
 
+    //--移動--//
     bool m_isMoveSelecting = false; //移動選択中か
     MapPosition m_moveTarget;       //移動モード用候補マス
 
+    //--配置--//
     bool m_isPlacing = false;   //配置モード中か
     MapPosition m_placeTarget;      //配置候補マス
 
+    //--攻撃--//
     bool m_isAttacking = false;
+    MapPosition m_attackCursorPos;
     UnitComponent* m_attackTarget = nullptr;
+
+    static std::vector<UnitComponent*> s_allUnits;  //ユニット管理(デバッグ用簡易) 
+
+    UnitComponent* FindEnemyAt(const MapPosition& pos);
 
 public:
  
@@ -97,12 +105,15 @@ public:
 
 
     // ===================================================================
-    // 行動
+    // 行動開始
     // ===================================================================
     void BeginMove();                            //移動選択開始
     void BeginAttack();                          //攻撃開始
     void BeginPlace();                           //配置選択
 
+    // ===================================================================
+    // 行動処理
+    // ===================================================================
     void Move(const MapPosition& target);        //移動
     void Attack(UnitComponent* target);          //攻撃
 
@@ -123,6 +134,8 @@ public:
     bool IsAlive() const;   //生存判定
     bool IsDown() const;    //ダウン判定
     void ResetTurn();       //ターンリセット(デバッグ用)
+
+    bool IsOccupied(const MapPosition& pos)const;
 
     // ===================================================================
     // 座標

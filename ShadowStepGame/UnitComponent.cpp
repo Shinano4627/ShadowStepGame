@@ -6,23 +6,30 @@
 #include "UnitSystemComponent.h"
 #include <iostream>
 
+std::vector<UnitComponent*> UnitComponent::s_allUnits;
 
 // ===================================================================
 // コンストラクタ
 // ===================================================================
 UnitComponent::UnitComponent()
 {
-	//初期化
+	//初期ステータス
 	m_status.camp = UnitCamp::UnitPlayer;
 	m_status.model = UnitModel::UnitAttacker;
 	m_status.hp = 5;
+
+	//ユニット管理リスト登録
+	s_allUnits.push_back(this);
 }
 // ===================================================================
 // デストラクタ
 // ===================================================================
 UnitComponent::~UnitComponent()
 {
-
+	s_allUnits.erase(
+		std::remove(s_allUnits.begin(), s_allUnits.end(), this),
+		s_allUnits.end()
+		);
 }
 
 // ===================================================================
@@ -30,6 +37,11 @@ UnitComponent::~UnitComponent()
 // ===================================================================
 void UnitComponent::Update()
 {
+	//プレイヤーのみ入力受付
+	if (m_status.camp != UnitCamp::UnitPlayer)
+	{
+		return;
+	}
 	m_input.Update();
 
 	// ===================================================================
@@ -84,8 +96,8 @@ void UnitComponent::Update()
 		return;
 	}
 
-	//--Aキーで攻撃--//
-	if (m_input.GetKeyTrigger(VK_A))
+	//--Kキーで攻撃--//
+	if (m_input.GetKeyTrigger(VK_K))
 	{
 		BeginAttack();
 		return;
@@ -130,35 +142,52 @@ void UnitComponent::UpdateMoveSelecting()
 		return;
 	}
 
-	//移動候補が未初期化なら自分の位置に設定
-	if (m_moveTarget.posX == 0 && m_moveTarget.posZ == 0)
-		m_moveTarget = m_gridPos;
+	bool moved = false;
 
 	//カーソル移動(矢印キー)
 	if (m_input.GetKeyTrigger(VK_UP))
 	{
 		m_moveTarget.posZ += 1;
+		moved = true;
 	}
 	else if (m_input.GetKeyTrigger(VK_DOWN))
 	{
 		m_moveTarget.posZ -= 1;
+		moved = true;
 	}
 	else if (m_input.GetKeyTrigger(VK_LEFT))
 	{
 		m_moveTarget.posX -= 1;
+		moved = true;
 	}
 	else if (m_input.GetKeyTrigger(VK_RIGHT))
 	{
 		m_moveTarget.posX += 1;
+		moved = true;
 	}
+
+	if (moved)
+	{
 #ifdef _DEBUG
-	std::cout << "[Move Target] ("
-		<< m_moveTarget.posX << "," << m_moveTarget.posZ << ")" << std::endl;
+		std::cout << "[Move Target] ("
+			<< m_moveTarget.posX << "," << m_moveTarget.posZ << ")" << std::endl;
 #endif
+	}
 
 	//スペースで移動確定
 	if (m_input.GetKeyTrigger(VK_SPACE))
 	{
+		// 移動先に誰かいたら移動不可
+		if (IsOccupied(m_moveTarget))
+		{
+#ifdef _DEBUG
+			std::cout << "[Move Failed] Occupied ("
+				<< m_moveTarget.posX << ","
+				<< m_moveTarget.posZ << ")" << std::endl;
+#endif
+			return;
+		}
+
 		int dx = abs(m_moveTarget.posX - m_gridPos.posX);
 		int dz = abs(m_moveTarget.posZ - m_gridPos.posZ);
 
@@ -248,24 +277,21 @@ void UnitComponent::Kill()
 // ===================================================================
 void UnitComponent::Attack(UnitComponent* target)
 {
-	if (!CanAct()) return;
+	if (!CanAct()||!target) return;
 
-	if (target == nullptr)
-		return;
 
 	//仮ダメージ
 	const int damage = 5;
 
-	target->TakeDamage(damage);
-
-	m_hasActed = true;
-
 #ifdef _DEBUG
 	std::cout
-		<< "[Attack] tagetHP = "
-		<< target->GetHP()
+		<< "[Attack] From ID:" << GetUnitId()
+		<< "To ID:" << target->GetUnitId()
 		<< std::endl;
 #endif
+
+	target->TakeDamage(damage);
+	m_hasActed = true;
 }
 
 void UnitComponent::BeginAttack()
@@ -273,18 +299,20 @@ void UnitComponent::BeginAttack()
 	if (!CanAct()) return;
 
 	m_isAttacking = true;
+	m_attackTarget = nullptr;
 
-	//初期候補は自分の右隣(隣接マスに敵がいればそこにせってい)
-	//TODO:
-	//敵ユニット管理クラスから隣接マスの敵を取得
+	m_attackCursorPos = m_gridPos;
 
 #ifdef _DEBUG
-	std::cout << "[AttackMode Begin]" << std::endl;
+	std::cout << "[AttackMode Begin] Cursor("
+		<< m_attackCursorPos.posX << ","
+		<< m_attackCursorPos.posZ << ")" << std::endl;
 #endif
 }
 //攻撃モード更新
 void UnitComponent::UpdateAttacking()
 {
+	//キャンセル
 	if (m_input.GetKeyTrigger(VK_C))
 	{
 		m_isAttacking = false;
@@ -294,23 +322,33 @@ void UnitComponent::UpdateAttacking()
 		return;
 	}
 
-	//矢印キーで隣接マスの敵にカーソル移動
-	MapPosition candidatePos = m_gridPos;
+	bool attacked = false;
 
-	if (m_input.GetKeyTrigger(VK_UP))    candidatePos.posZ += 1;
-	else if (m_input.GetKeyTrigger(VK_DOWN)) candidatePos.posZ -= 1;
-	else if (m_input.GetKeyTrigger(VK_LEFT)) candidatePos.posX -= 1;
-	else if (m_input.GetKeyTrigger(VK_RIGHT)) candidatePos.posX += 1;
+	if (m_input.GetKeyTrigger(VK_UP))    m_attackCursorPos.posZ += 1,attacked = true;
+	else if (m_input.GetKeyTrigger(VK_DOWN)) m_attackCursorPos.posZ -= 1, attacked = true;
+	else if (m_input.GetKeyTrigger(VK_LEFT)) m_attackCursorPos.posX -= 1, attacked = true;
+	else if (m_input.GetKeyTrigger(VK_RIGHT)) m_attackCursorPos.posX += 1, attacked = true;
 
-	//UnitComponent* target = GetEnemyAtPos(candidatePos);
-	/*if (target != nullptr)
-		m_attackTarget = target;*/
-
+	if (attacked) {
+		//敵チェック
+		UnitComponent* enemy = FindEnemyAt(m_attackCursorPos);
+		if (enemy)
+		{
+			m_attackTarget = enemy;
 #ifdef _DEBUG
-	if (m_attackTarget)
-		std::cout << "[Attack Target] (" << m_attackTarget->GetGridPos().posX
-		<< "," << m_attackTarget->GetGridPos().posZ << ")" << std::endl;
+			std::cout << "[Attack Target Found] ("
+				<< m_attackCursorPos.posX << "," << m_attackCursorPos.posZ << ")" << std::endl;
 #endif
+		}
+		else
+		{
+			m_attackTarget = nullptr;
+#ifdef _DEBUG
+			std::cout << "[No Enemy At]("
+				<< m_attackCursorPos.posX << "," << m_attackCursorPos.posZ << ")" << std::endl;
+#endif
+		}
+	}
 
 	//スペースで攻撃確定
 	if (m_input.GetKeyTrigger(VK_SPACE) && m_attackTarget != nullptr)
@@ -320,17 +358,6 @@ void UnitComponent::UpdateAttacking()
 	}
 }
 
-//敵取得簡易関数
-//UnitComponent* UnitComponent::GetEnemyAtPos(const MapPosition& pos)
-//{
-//	for (UnitComponent* enemy : g_EnemyList) // 例えば敵のリストを管理しているとする
-//	{
-//		if (!enemy->IsAlive()) continue;
-//		if (enemy->GetGridPos().posX == pos.posX && enemy->GetGridPos().posZ == pos.posZ)
-//			return enemy;
-//	}
-//	return nullptr;
-//}
 
 // ===================================================================
 // 被ダメ
@@ -405,25 +432,30 @@ void UnitComponent::UpdatePlacing()
 #endif
 		return;
 	}
-	if (m_input.GetKeyTrigger(VK_UP))        m_placeTarget = { m_gridPos.posX,m_gridPos.posZ + 1 };
-	else if (m_input.GetKeyTrigger(VK_DOWN)) m_placeTarget = { m_gridPos.posX,m_gridPos.posZ - 1 };
-	else if (m_input.GetKeyTrigger(VK_LEFT)) m_placeTarget = { m_gridPos.posX-1,m_gridPos.posZ  };
-	else if (m_input.GetKeyTrigger(VK_RIGHT))m_placeTarget = { m_gridPos.posX+1,m_gridPos.posZ  };
 
-	//自分の位置には置けない
-	if (m_placeTarget.posX == m_gridPos.posX && m_placeTarget.posZ == m_gridPos.posZ)
-	{
+	bool placed = false;
+
+	if (m_input.GetKeyTrigger(VK_UP))        m_placeTarget = { m_gridPos.posX,m_gridPos.posZ + 1 }, placed = true;
+	else if (m_input.GetKeyTrigger(VK_DOWN)) m_placeTarget = { m_gridPos.posX,m_gridPos.posZ - 1 },placed = true;
+	else if (m_input.GetKeyTrigger(VK_LEFT)) m_placeTarget = { m_gridPos.posX-1,m_gridPos.posZ  }, placed = true;
+	else if (m_input.GetKeyTrigger(VK_RIGHT))m_placeTarget = { m_gridPos.posX+1,m_gridPos.posZ  }, placed = true;
+
+	if (placed) {
+		//自分の位置には置けない
+		if (m_placeTarget.posX == m_gridPos.posX && m_placeTarget.posZ == m_gridPos.posZ)
+		{
 #ifdef _DEBUG
-		std::cout << "Invalid Place Target] ("
-			<< m_placeTarget.posX << "," << m_placeTarget.posZ << ")" << std::endl;
+			std::cout << "Invalid Place Target] ("
+				<< m_placeTarget.posX << "," << m_placeTarget.posZ << ")" << std::endl;
 #endif
-	}
-	else
-	{
+		}
+		else
+		{
 #ifdef _DEBUG
-		std::cout << "[Place Target]("
-			<< m_placeTarget.posX << "," << m_placeTarget.posZ << ")" << std::endl;
+			std::cout << "[Place Target]("
+				<< m_placeTarget.posX << "," << m_placeTarget.posZ << ")" << std::endl;
 #endif
+		}
 	}
 
 	if (m_input.GetKeyTrigger(VK_SPACE))
@@ -544,4 +576,56 @@ Vector3 UnitComponent::GridToWorld(const MapPosition& grid) const
 	);
 
 
+}
+// ===================================================================
+// 敵ユニット検索(簡易)
+// ===================================================================
+UnitComponent* UnitComponent::FindEnemyAt(const MapPosition& pos)
+{
+#ifdef _DEBUG
+	std::cout << "[FindEnemyAt] Check Pos("
+		<< pos.posX << "," << pos.posZ << ")\n";
+	std::cout << " AllUnits Count:" << s_allUnits.size() << std::endl;
+#endif
+
+	for (UnitComponent* unit : s_allUnits)
+	{
+		if (!unit) continue;
+
+#ifdef _DEBUG
+		std::cout << "  Unit ID:" << unit->GetUnitId()
+			<< " Pos(" << unit->GetGridPos().posX
+			<< "," << unit->GetGridPos().posZ << ")"
+			<< " Camp:" << static_cast<int>(unit->GetCamp())
+			<< std::endl;
+#endif
+
+		if (unit == this) continue;
+		if (!unit->IsAlive()) continue;
+		if (unit->GetCamp() == m_status.camp) continue;
+
+		const auto& uPos = unit->GetGridPos();
+		if (uPos.posX == pos.posX && uPos.posZ == pos.posZ)
+			return unit;
+	}
+	return nullptr;
+}
+
+// ===================================================================
+// 指定グリッドが他ユニットに占有されているか
+// ===================================================================
+bool UnitComponent::IsOccupied(const MapPosition& pos) const
+{
+	for (UnitComponent* unit : s_allUnits)
+	{
+		if (!unit->IsAlive()) continue;
+
+		const auto& uPos = unit->GetGridPos();
+		if (uPos.posX == pos.posX &&
+			uPos.posZ == pos.posZ)
+		{
+			return true;
+		}
+	}
+	return false;
 }

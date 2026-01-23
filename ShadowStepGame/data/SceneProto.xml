@@ -40,4 +40,17 @@
         <Scale X="1" Y="1" Z="1"/>
         <Color R="0" G="0" B="1" A="1"/>
     </Object>
+
+<Object ID="4">
+        <ObjectName Value="Enemy"/>
+        <ObjectType Value="SimpleCube"/>
+        <Tag Value="Enemy"/>
+        <FileName Value=""/>
+        <Texture Value=""/>
+
+        <Posision X="1" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="1" Y="1" Z="1"/>
+        <Color R="0" G="0" B="1" A="1"/>
+    </Object>
 </Objects>
