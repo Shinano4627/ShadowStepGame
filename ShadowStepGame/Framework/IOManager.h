@@ -4,6 +4,7 @@
 
 #include "input.h"
 #include "singleton.h"
+#include "Mouse.h"
 
 enum INPUT_TYPE
 {
@@ -30,6 +31,11 @@ private:
 	
 	Input m_Input;
 
+	// マウス関連
+	DirectX::Mouse m_mouse;
+	long m_mouseDeltaX = 0;
+	long m_mouseDeltaY = 0;
+
 public:
 
 private:	
@@ -53,6 +59,12 @@ public:
 	bool GetKeyDownKeyBord(int _key);
 	bool GetKeyPressKeyBord(int _key);
 	bool GetKeyUpKeyBord(int _key);
+
+	long GetMouseDeltaX() { return m_mouseDeltaX; };
+	long GetMouseDeltaY() { return m_mouseDeltaY; };
+
+	void SetMouseMode(DirectX::Mouse::Mode mode) { m_mouse.SetMode(mode); };
+
 };
 
 #define IO_MANAGER Singleton<IOManager>::GetInstance()

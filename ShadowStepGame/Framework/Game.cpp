@@ -10,6 +10,7 @@
 #include "SoundManager.h"
 #include "IOManager.h"
 #include "PhysicsManager.h"
+#include "CursorManager.h"
 
 //=======================================
 // グローバル変数
@@ -51,6 +52,7 @@ void Game::Init()
 	M_RESOURCE.Init();
 	SOUND_MANAGER.Init();
 	IO_MANAGER.Init();
+	CURSOR_MANAGER.Init();
 
 	// タイマー初期化
 	m_Timer.Reset();
@@ -103,6 +105,7 @@ void Game::Uninit()
 	DATA_MANAGER.UnInit();
 	SCENE_MANAGER.UnInit();
 	PHYSICS_MANAGER.UnInit();
+	CURSOR_MANAGER.UnInit();
 
 	// 描画終了処理
 	Renderer::Uninit();

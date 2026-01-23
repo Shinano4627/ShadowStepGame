@@ -1,10 +1,11 @@
 #include "IOManager.h"
+#include "Application.h"
 
 //#include "controllerSW.h"
 
 IOManager::IOManager()
 {
-	Init();
+	//Init();
 }
 
 void IOManager::Init()
@@ -14,6 +15,11 @@ void IOManager::Init()
 		{TYPE_OK, VK_RETURN},
 		{TYPE_CANCEL, VK_CANCEL},
 	};
+
+	// マウスをウインドウにバインド
+	m_mouse.SetWindow(Application::GetWindow());
+	// 純粋な位置情報を取得する
+	SetMouseMode(DirectX::Mouse::Mode::MODE_RELATIVE);
 
 	//InitController();
 }
@@ -26,6 +32,12 @@ void IOManager::UnInit()
 void IOManager::Update()
 {
 	m_Input.Update();
+
+	// マウスの状態を取得
+	auto mouseState = m_mouse.GetState();
+	// マウスの移動量を取得
+	m_mouseDeltaX = mouseState.x;
+	m_mouseDeltaY = mouseState.y;
 	//UpdateController();
 }
 

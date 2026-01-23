@@ -156,6 +156,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClInclude Include="Framework\CameraRotatorComponent.h" />
     <ClInclude Include="Framework\Collider.h" />
     <ClInclude Include="Framework\Component.h" />
+    <ClInclude Include="Framework\CursorManager.h" />
     <ClInclude Include="Framework\DataManager.h" />
     <ClInclude Include="Framework\DebugUI.h" />
     <ClInclude Include="Framework\download\tinyxml2.h" />
@@ -230,6 +231,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClCompile Include="Framework\AssimpPerse.cpp" />
     <ClCompile Include="Framework\Camera.cpp" />
     <ClCompile Include="Framework\Collider.cpp" />
+    <ClCompile Include="Framework\CursorManager.cpp" />
     <ClCompile Include="Framework\DataManager.cpp" />
     <ClCompile Include="Framework\DebugUI.cpp" />
     <ClCompile Include="Framework\download\tinyxml2.cpp" />

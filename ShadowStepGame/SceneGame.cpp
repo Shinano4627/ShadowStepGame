@@ -13,6 +13,7 @@
 #include <vector>
 #include <string>
 #include "SimplePlaneRendererComponent.h"
+#include "CursorManager.h"
 
 using namespace std;
 
@@ -79,6 +80,9 @@ void SceneGame::Update()
     // ゲーム時間更新
     m_GameTime += Game::GetDeltaTime();
 
+    // ゲーム内カーソルアップデート
+    CURSOR_MANAGER.Update();
+
     // カメラ更新
     m_Camera.Update();
 
@@ -109,6 +113,9 @@ void SceneGame::Draw()
 
     // UI層のみ描画（カメラ不使用）
     DrawLayer(nullptr, RenderLayer::UI);
+
+    // カーソルを最前面に描画
+    CURSOR_MANAGER.Draw();
 }
 
 void SceneGame::Draw(Camera* camera)

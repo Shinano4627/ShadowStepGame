@@ -39,8 +39,10 @@ struct Vertex
 enum class RenderLayer
 {
 	WORLD = 0,      // 3D空間（カメラ依存）
+
 	UI = 100,       // 2D UI（カメラ非依存）
-	UI_Message = 101,       // 2D UI（カメラ非依存）
+	UI_Message = 101,	// 2D UI（カメラ非依存）
+	UI_BackGround = 102,	// 2D UI（カメラ非依存）
 
 	// 将来的な拡張用
 	// PARTICLE = 50,

@@ -177,6 +177,12 @@
     <ClCompile Include="SceneBase.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="LoadingScreen.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="CursorManager.cpp">
+      <Filter>ソース ファイル\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -370,6 +376,12 @@
     </ClInclude>
     <ClInclude Include="SceneBase.h">
       <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingScreen.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="CursorManager.h">
+      <Filter>ソース ファイル\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
