@@ -45,6 +45,12 @@ void SceneGame::Init()
         // ボタン整列処理
         MakeButtons();
 
+        // タイムラインの表示
+        MakeTimeLine();
+
+        // ステータスの表示
+        MakeStatus();
+
         std::cout << "[SceneGame] Player created" << std::endl;
     }
 
@@ -245,4 +251,13 @@ void SceneGame::MakeButtons()
     }
 
     std::cout << "[SceneGame] Buttons arranged in UIAreaButtons" << std::endl;
+}
+
+void SceneGame::MakeTimeLine()
+{
+
+}
+void SceneGame::MakeStatus()
+{
+
 }

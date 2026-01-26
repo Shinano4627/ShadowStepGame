@@ -29,4 +29,6 @@ public:
 private:
     // ボタン整列処理
     void MakeButtons();
+    void MakeTimeLine();
+    void MakeStatus();
 };
