@@ -149,6 +149,7 @@
     <ClCompile Include="DebugUI.cpp" />
     <ClCompile Include="download\tinyxml2.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameObjectList.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -160,6 +161,7 @@
     <ClCompile Include="IOManager.cpp" />
     <ClCompile Include="LoadingScreen.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MeshRendererComponent.cpp" />
     <ClCompile Include="PhysicsManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
@@ -198,6 +200,7 @@
     <ClInclude Include="CursorManager.h" />
     <ClInclude Include="DebugUI.h" />
     <ClInclude Include="EmptyRender.h" />
+    <ClInclude Include="GameObjectList.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_dx11.h" />

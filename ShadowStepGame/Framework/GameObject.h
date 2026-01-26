@@ -1,6 +1,6 @@
-// ===================================================================
+ï»¿// ===================================================================
 // GameObject.h
-// ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ•Û‚·‚éƒQ[ƒ€ƒIƒuƒWƒFƒNƒg‚ÌŠî’êƒNƒ‰ƒX
+// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’ä¿æŒã™ã‚‹ã‚²ãƒ¼ãƒ ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®åŸºåº•ã‚¯ãƒ©ã‚¹
 // ===================================================================
 #pragma once
 #include <vector>
@@ -15,33 +15,33 @@
 #include "Camera.h"
 
 // ===================================================================
-// GameObject ƒNƒ‰ƒX
-// ƒQ[ƒ€“àƒGƒ“ƒeƒBƒeƒB‚ÌŠî’êƒNƒ‰ƒX
+// GameObject ã‚¯ãƒ©ã‚¹
+// ã‚²ãƒ¼ãƒ å†…ã‚¨ãƒ³ãƒ†ã‚£ãƒ†ã‚£ã®åŸºåº•ã‚¯ãƒ©ã‚¹
 // ===================================================================
 class GameObject
 {
 protected:
     // ===================================================================
-    // ƒƒ“ƒo•Ï”
+    // ãƒ¡ãƒ³ãƒå¤‰æ•°
     // ===================================================================
     
-    // p¨î•ñ (Position, Rotation, Scale)
+    // å§¿å‹¢æƒ…å ± (Position, Rotation, Scale)
     Transform m_Transform;
 
-    // ƒRƒ“ƒ|[ƒlƒ“ƒgŠÇ—
-    std::vector<std::unique_ptr<Component>> m_Components;  // ƒRƒ“ƒ|[ƒlƒ“ƒgƒŠƒXƒg
-    std::vector<std::unique_ptr<MeshComponent>> m_MeshComponents;     // 3DƒƒbƒVƒ…ƒRƒ“ƒ|[ƒlƒ“ƒg
-    std::unordered_map<std::type_index, Component*> m_ComponentMap;  // Œ^‚©‚çƒRƒ“ƒ|[ƒlƒ“ƒg‚Ö‚Ì‚‘¬ŒŸõ—p
-    std::unordered_map<std::type_index, MeshComponent*> m_MeshComponentMap;  // Œ^‚©‚çƒRƒ“ƒ|[ƒlƒ“ƒg‚Ö‚Ì‚‘¬ŒŸõ—p
+    // ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆç®¡ç†
+    std::vector<std::unique_ptr<Component>> m_Components;  // ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆãƒªã‚¹ãƒˆ
+    std::vector<std::unique_ptr<MeshComponent>> m_MeshComponents;     // 3Dãƒ¡ãƒƒã‚·ãƒ¥ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
+    std::unordered_map<std::type_index, Component*> m_ComponentMap;  // å‹ã‹ã‚‰ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã¸ã®é«˜é€Ÿæ¤œç´¢ç”¨
+    std::unordered_map<std::type_index, MeshComponent*> m_MeshComponentMap;  // å‹ã‹ã‚‰ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã¸ã®é«˜é€Ÿæ¤œç´¢ç”¨
 
-    bool m_Active;      // GameObject ‚ª—LŒø‚©‚Ç‚¤‚©
-    int m_id = -1;   // IDi©“®İ’èj
-    std::string m_Name = "";    // GameObject –¼
-    std::string m_Tag = "";      // GameObject ‚ğ¯•Ê‚·‚é‚½‚ß‚Ìƒ^ƒO
+    bool m_Active;      // GameObject ãŒæœ‰åŠ¹ã‹ã©ã†ã‹
+    int m_id = -1;   // IDï¼ˆè‡ªå‹•è¨­å®šï¼‰
+    std::string m_Name = "";    // GameObject å
+    std::string m_Tag = "";      // GameObject ã‚’è­˜åˆ¥ã™ã‚‹ãŸã‚ã®ã‚¿ã‚°
 
 public:
     // ===================================================================
-    // ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+    // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     // ===================================================================
     GameObject()
         : m_Active(true)
@@ -55,76 +55,76 @@ public:
     virtual ~GameObject() = default;
 
     // ===================================================================
-    // ƒRƒ“ƒ|[ƒlƒ“ƒgŠÇ—
+    // ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆç®¡ç†
     // ===================================================================
     
-    // ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ’Ç‰Á(ƒeƒ“ƒvƒŒ[ƒg)
-    template<typename T, typename... Args>  // <’Ç‰Á‚·‚éƒRƒ“ƒ|[ƒlƒ“ƒg‚ÌŒ^,ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚Ìˆø”>
-    T* AddComponent(Args&&... args)         // (ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚É“n‚·ˆø”)
+    // ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’è¿½åŠ (ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆ)
+    template<typename T, typename... Args>  // <è¿½åŠ ã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®å‹,ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã®å¼•æ•°>
+    T* AddComponent(Args&&... args)         // (ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã«æ¸¡ã™å¼•æ•°)
     {
-        // T(’Ç‰Á‚µ‚Ä‚¢‚éƒRƒ“ƒ|[ƒlƒ“ƒg‚ÌŒ^)‚ªƒRƒ“ƒ|[ƒlƒ“ƒg‚ğŒp³‚µ‚µ‚Ä‚¢‚é‚©ƒ`ƒFƒbƒN
+        // T(è¿½åŠ ã—ã¦ã„ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®å‹)ãŒã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’ç¶™æ‰¿ã—ã—ã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
         static_assert(std::is_base_of<Component, T>::value,
             "T must be derived from Component");
 
-        // V‚µ‚¢ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğì¬
+        // æ–°ã—ã„ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’ä½œæˆ
         auto component = std::make_unique<T>(std::forward<Args>(args)...);
         T* ptr = component.get();
 
-        // ƒI[ƒi[(this) ‚ğİ’è
+        // ã‚ªãƒ¼ãƒŠãƒ¼(this) ã‚’è¨­å®š
         ptr->SetOwner(this);
 
-        // ƒ}ƒbƒv‚É“o˜^(Œ^‚©‚ç‚‘¬ŒŸõ‚Å‚«‚é‚æ‚¤‚É)
+        // ãƒãƒƒãƒ—ã«ç™»éŒ²(å‹ã‹ã‚‰é«˜é€Ÿæ¤œç´¢ã§ãã‚‹ã‚ˆã†ã«)
         m_ComponentMap[std::type_index(typeid(T))] = ptr;
 
-        // ƒŠƒXƒg‚É’Ç‰Á
+        // ãƒªã‚¹ãƒˆã«è¿½åŠ 
         m_Components.push_back(std::move(component));
 
-        // ‰Šú‰»
+        // åˆæœŸåŒ–
         ptr->Init();
 
         return ptr;
     }
 
-    // ƒƒbƒVƒ…ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ’Ç‰Á
-    template<typename T, typename... Args>  // <’Ç‰Á‚·‚éƒRƒ“ƒ|[ƒlƒ“ƒg‚ÌŒ^,ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚Ìˆø”>
-    T* AddMeshComponent(Args&&... args)         // (ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚É“n‚·ˆø”)
+    // ãƒ¡ãƒƒã‚·ãƒ¥ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’è¿½åŠ 
+    template<typename T, typename... Args>  // <è¿½åŠ ã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®å‹,ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã®å¼•æ•°>
+    T* AddMeshComponent(Args&&... args)         // (ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã«æ¸¡ã™å¼•æ•°)
     {
-        // T(’Ç‰Á‚µ‚Ä‚¢‚éƒRƒ“ƒ|[ƒlƒ“ƒg‚ÌŒ^)‚ªƒRƒ“ƒ|[ƒlƒ“ƒg‚ğŒp³‚µ‚µ‚Ä‚¢‚é‚©ƒ`ƒFƒbƒN
+        // T(è¿½åŠ ã—ã¦ã„ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®å‹)ãŒã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’ç¶™æ‰¿ã—ã—ã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
         static_assert(std::is_base_of<MeshComponent, T>::value,
             "T must be derived from MeshComponent");
 
-        // TODO:‹óƒIƒuƒWƒFƒNƒg‚ª‚ ‚Á‚½‚çíœ‚·‚é
+        // TODO:ç©ºã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒã‚ã£ãŸã‚‰å‰Šé™¤ã™ã‚‹
 
-        // V‚µ‚¢ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğì¬
+        // æ–°ã—ã„ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’ä½œæˆ
         auto component = std::make_unique<T>(std::forward<Args>(args)...);
         T* ptr = component.get();
 
-        // ƒI[ƒi[(this) ‚ğİ’è
+        // ã‚ªãƒ¼ãƒŠãƒ¼(this) ã‚’è¨­å®š
         ptr->SetOwner(this);
 
-        // ƒ}ƒbƒv‚É“o˜^(Œ^‚©‚ç‚‘¬ŒŸõ‚Å‚«‚é‚æ‚¤‚É)
+        // ãƒãƒƒãƒ—ã«ç™»éŒ²(å‹ã‹ã‚‰é«˜é€Ÿæ¤œç´¢ã§ãã‚‹ã‚ˆã†ã«)
         m_MeshComponentMap[std::type_index(typeid(T))] = ptr;
 
-        // ƒŠƒXƒg‚É’Ç‰Á
+        // ãƒªã‚¹ãƒˆã«è¿½åŠ 
         m_MeshComponents.push_back(std::move(component));
 
-        // ‰Šú‰»
+        // åˆæœŸåŒ–
         ptr->Init();
 
         return ptr;
     }
 
     // ===================================================================
-    // ƒRƒ“ƒ|[ƒlƒ“ƒgæ“¾ (ƒeƒ“ƒvƒŒ[ƒg)
+    // ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆå–å¾— (ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆ)
     // ===================================================================
-    template<typename T>    // T=æ“¾‚·‚éƒRƒ“ƒ|[ƒlƒ“ƒg‚ÌŒ^
+    template<typename T>    // T=å–å¾—ã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®å‹
     T* GetComponent()
     {
-        // T‚ªƒRƒ“ƒ|[ƒlƒ“ƒg‚ğŒp³‚µ‚Ä‚¢‚é‚©ƒ`ƒFƒbƒN
+        // TãŒã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’ç¶™æ‰¿ã—ã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
         static_assert(std::is_base_of<Component, T>::value,
             "T must be derived from Component");
 
-        // ƒ}ƒbƒv‚©‚ç‚‘¬ŒŸõ
+        // ãƒãƒƒãƒ—ã‹ã‚‰é«˜é€Ÿæ¤œç´¢
         auto it = m_ComponentMap.find(std::type_index(typeid(T)));
         if (it != m_ComponentMap.end())
         {
@@ -134,14 +134,14 @@ public:
         return nullptr;
     }
 
-    template<typename T>    // T=æ“¾‚·‚éƒRƒ“ƒ|[ƒlƒ“ƒg‚ÌŒ^
+    template<typename T>    // T=å–å¾—ã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®å‹
     T* GetMeshComponent()
     {
-        // T‚ªƒRƒ“ƒ|[ƒlƒ“ƒg‚ğŒp³‚µ‚Ä‚¢‚é‚©ƒ`ƒFƒbƒN
+        // TãŒã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’ç¶™æ‰¿ã—ã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
         static_assert(std::is_base_of<MeshComponent, T>::value,
             "T must be derived from Component");
 
-        // ƒ}ƒbƒv‚©‚ç‚‘¬ŒŸõ
+        // ãƒãƒƒãƒ—ã‹ã‚‰é«˜é€Ÿæ¤œç´¢
         auto it = m_MeshComponentMap.find(std::type_index(typeid(T)));
         if (it != m_MeshComponentMap.end())
         {
@@ -152,16 +152,16 @@ public:
     }
 
     // ===================================================================
-    // ƒRƒ“ƒ|[ƒlƒ“ƒgæ“¾ (const”Å)
+    // ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆå–å¾— (constç‰ˆ)
     // ===================================================================
     template<typename T>
     const T* GetComponent() const
     {
-        // T‚ªƒRƒ“ƒ|[ƒlƒ“ƒg‚ğŒp³‚µ‚Ä‚¢‚é‚©ƒ`ƒFƒbƒN
+        // TãŒã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’ç¶™æ‰¿ã—ã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
         static_assert(std::is_base_of<Component, T>::value,
             "T must be derived from Component");
 
-        // ƒ}ƒbƒv‚©‚ç‚‘¬ŒŸõ
+        // ãƒãƒƒãƒ—ã‹ã‚‰é«˜é€Ÿæ¤œç´¢
         auto it = m_ComponentMap.find(std::type_index(typeid(T)));
         if (it != m_ComponentMap.end())
         {
@@ -174,11 +174,11 @@ public:
     template<typename T>
     const T* GetMeshComponent() const
     {
-        // T‚ªƒRƒ“ƒ|[ƒlƒ“ƒg‚ğŒp³‚µ‚Ä‚¢‚é‚©ƒ`ƒFƒbƒN
+        // TãŒã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’ç¶™æ‰¿ã—ã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
         static_assert(std::is_base_of<MeshComponent, T>::value,
             "T must be derived from Component");
 
-        // ƒ}ƒbƒv‚©‚ç‚‘¬ŒŸõ
+        // ãƒãƒƒãƒ—ã‹ã‚‰é«˜é€Ÿæ¤œç´¢
         auto it = m_MeshComponentMap.find(std::type_index(typeid(T)));
         if (it != m_MeshComponentMap.end())
         {
@@ -189,16 +189,16 @@ public:
     }
 
     // ===================================================================
-    // ƒRƒ“ƒ|[ƒlƒ“ƒgíœ
+    // ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆå‰Šé™¤
     // ===================================================================
     template<typename T>
     void RemoveComponent()
     {
-        // T‚ªƒRƒ“ƒ|[ƒlƒ“ƒg‚ğŒp³‚µ‚Ä‚¢‚é‚©ƒ`ƒFƒbƒN
+        // TãŒã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’ç¶™æ‰¿ã—ã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
         static_assert(std::is_base_of<Component, T>::value,
             "T must be derived from Component");
 
-        // ƒ}ƒbƒv‚©‚çíœ
+        // ãƒãƒƒãƒ—ã‹ã‚‰å‰Šé™¤
         auto typeIndex = std::type_index(typeid(T));
         auto it = m_ComponentMap.find(typeIndex);
         if (it != m_ComponentMap.end())
@@ -206,7 +206,7 @@ public:
             Component* compPtr = it->second;
             m_ComponentMap.erase(it);
 
-            // ƒŠƒXƒg‚©‚çíœ
+            // ãƒªã‚¹ãƒˆã‹ã‚‰å‰Šé™¤
             m_Components.erase(
                 std::remove_if(m_Components.begin(), m_Components.end(),
                     [compPtr](const std::unique_ptr<Component>& comp) {
@@ -220,11 +220,11 @@ public:
     template<typename T>
     void RemoveMeshComponent()
     {
-        // T‚ªƒRƒ“ƒ|[ƒlƒ“ƒg‚ğŒp³‚µ‚Ä‚¢‚é‚©ƒ`ƒFƒbƒN
+        // TãŒã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’ç¶™æ‰¿ã—ã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
         static_assert(std::is_base_of<MeshComponent, T>::value,
             "T must be derived from Component");
 
-        // ƒ}ƒbƒv‚©‚çíœ
+        // ãƒãƒƒãƒ—ã‹ã‚‰å‰Šé™¤
         auto typeIndex = std::type_index(typeid(T));
         auto it = m_MeshComponentMap.find(typeIndex);
         if (it != m_MeshComponentMap.end())
@@ -232,7 +232,7 @@ public:
             MeshComponent* compPtr = it->second;
             m_MeshComponentMap.erase(it);
 
-            // ƒŠƒXƒg‚©‚çíœ
+            // ãƒªã‚¹ãƒˆã‹ã‚‰å‰Šé™¤
             m_MeshComponents.erase(
                 std::remove_if(m_MeshComponents.begin(), m_MeshComponents.end(),
                     [compPtr](const std::unique_ptr<MeshComponent>& comp) {
@@ -244,16 +244,16 @@ public:
     }
 
     // ===================================================================
-    // ƒ‰ƒCƒtƒTƒCƒNƒ‹
+    // ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«
     // ===================================================================
     
-    // XVˆ—
+    // æ›´æ–°å‡¦ç†
     virtual void Update()
     {
-        // GameObject‚ª–³Œø‚Ì‚Í‰½‚à‚µ‚È‚¢
+        // GameObjectãŒç„¡åŠ¹ã®æ™‚ã¯ä½•ã‚‚ã—ãªã„
         if (!m_Active) return;
 
-        // ‘S‚Ä‚Ì—LŒø‚ÈƒRƒ“ƒ|[ƒlƒ“ƒg‚ğXV
+        // å…¨ã¦ã®æœ‰åŠ¹ãªã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’æ›´æ–°
         for (auto& component : m_Components)
         {
             if (component->IsEnabled())
@@ -271,13 +271,13 @@ public:
         }
     }
 
-    // •`‰æˆ—(‘SƒŒƒCƒ„[)
+    // æç”»å‡¦ç†(å…¨ãƒ¬ã‚¤ãƒ¤ãƒ¼)
     virtual void Draw(Camera* camera)
     {
-        // GameObject‚ª–³Œø‚Ì‚Í‰½‚à‚µ‚È‚¢
+        // GameObjectãŒç„¡åŠ¹ã®æ™‚ã¯ä½•ã‚‚ã—ãªã„
         if (!m_Active) return;
 
-        // ‚·‚×‚Ä‚Ì—LŒø‚ÈƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ•`‰æ
+        // ã™ã¹ã¦ã®æœ‰åŠ¹ãªã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’æç”»
         for (auto& meshComponent : m_MeshComponents)
         {
             if (meshComponent->IsEnabled() && meshComponent->IsDisplayed())
@@ -286,13 +286,13 @@ public:
             }
         }
     }
-    // •`‰æˆ—(ƒŒƒCƒ„[•Ê)
+    // æç”»å‡¦ç†(ãƒ¬ã‚¤ãƒ¤ãƒ¼åˆ¥)
     virtual void DrawLayer(Camera* camera, RenderLayer layer)
     {
-        // GameObject‚ª–³Œø‚Ì‚Í‰½‚à‚µ‚È‚¢
+        // GameObjectãŒç„¡åŠ¹ã®æ™‚ã¯ä½•ã‚‚ã—ãªã„
         if (!m_Active) return;
 
-        // w’è‚³‚ê‚½ƒŒƒCƒ„[‚ÌƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì‚İ•`‰æ
+        // æŒ‡å®šã•ã‚ŒãŸãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®ã¿æç”»
         for (auto& meshComponent : m_MeshComponents)
         {
             if (meshComponent->IsEnabled() && meshComponent->IsDisplayed() && meshComponent->GetRenderLayer() == layer)
@@ -302,10 +302,10 @@ public:
         }
     }
 
-    // I—¹ˆ—
+    // çµ‚äº†å‡¦ç†
     virtual void Uninit()
     {
-        // ‚·‚×‚Ä‚ÌƒRƒ“ƒ|[ƒlƒ“ƒg‚ÌI—¹ˆ—‚ğŒÄ‚Ô
+        // ã™ã¹ã¦ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®çµ‚äº†å‡¦ç†ã‚’å‘¼ã¶
         for (auto& component : m_Components)
         {
             component->Uninit();
@@ -315,7 +315,7 @@ public:
             meshComponent->Uninit();
         }
 
-        // ƒŠƒXƒg‚Æƒ}ƒbƒv‚ğƒNƒŠƒA
+        // ãƒªã‚¹ãƒˆã¨ãƒãƒƒãƒ—ã‚’ã‚¯ãƒªã‚¢
         m_Components.clear();
         m_ComponentMap.clear();
         m_MeshComponents.clear();
@@ -323,44 +323,44 @@ public:
     }
 
     // ===================================================================
-    // Transform ƒAƒNƒZƒX
+    // Transform ã‚¢ã‚¯ã‚»ã‚¹
     // ===================================================================
 
     Transform& GetTransform() { return m_Transform; }
     const Transform& GetTransform() const { return m_Transform; }
 
     // ===================================================================
-    // ƒAƒNƒeƒBƒu§Œä
+    // ã‚¢ã‚¯ãƒ†ã‚£ãƒ–åˆ¶å¾¡
     // ===================================================================
 
-    // GameObject‚ğ—LŒø‰»/–³Œø‰»
+    // GameObjectã‚’æœ‰åŠ¹åŒ–/ç„¡åŠ¹åŒ–
     void SetActive(bool active) { m_Active = active; }
 
-    // GameObject‚ª—LŒø‚©‚Ç‚¤‚©æ“¾
+    // GameObjectãŒæœ‰åŠ¹ã‹ã©ã†ã‹å–å¾—
     bool IsActive() const { return m_Active; }
 
     // ===================================================================
-    // ƒIƒuƒWƒFƒNƒgID
+    // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆID
     // ===================================================================
-    // ƒIƒuƒWƒFƒNƒgID‚ğİ’è
+    // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆIDã‚’è¨­å®š
     void SetID(const int id) { m_id = id; }
-    // ƒIƒuƒWƒFƒNƒgID‚ğæ“¾
+    // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆIDã‚’å–å¾—
     const int GetID() const { return m_id; }
 
     // ===================================================================
-    // ƒIƒuƒWƒFƒNƒg–¼
+    // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå
     // ===================================================================
-    // ƒIƒuƒWƒFƒNƒg–¼‚ğİ’è
+    // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåã‚’è¨­å®š
     void SetName(const std::string& name) { m_Name = name; }
-    // ƒIƒuƒWƒFƒNƒg–¼‚ğæ“¾
+    // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåã‚’å–å¾—
     const std::string& GetName() const { return m_Name; }
 
     // ===================================================================
-    // ƒ^ƒO
+    // ã‚¿ã‚°
     // ===================================================================
     
-    // ƒ^ƒO‚ğİ’è
+    // ã‚¿ã‚°ã‚’è¨­å®š
     void SetTag(const std::string& tag) { m_Tag = tag; }
-    // ƒ^ƒO‚ğæ“¾
+    // ã‚¿ã‚°ã‚’å–å¾—
     const std::string& GetTag() const { return m_Tag; }
 };

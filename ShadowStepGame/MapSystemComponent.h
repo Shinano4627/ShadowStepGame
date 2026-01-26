@@ -1,6 +1,6 @@
-// ===================================================================
+ï»¿// ===================================================================
 // MapSystemComponent.h
-// ƒ}ƒbƒv‚Ì§Œä‚ğs‚¤
+// ãƒãƒƒãƒ—ã®åˆ¶å¾¡ã‚’è¡Œã†
 // ===================================================================
 #pragma once
 #include "Component.h"
@@ -9,13 +9,16 @@
 #include "Game.h"
 #include "UnitCommon.h"
 
+// å‰æ–¹å®£è¨€
+class GameObjectList;
+
 class MapSystemComponent : public Component
 {
 private:
-    std::string m_DataFile;      // CSVƒtƒ@ƒCƒ‹–¼
-    int m_MapWidth = 0;     // CSV‚©‚ç“Ç‚İæ‚è
-    int m_MapHeight = 0;    // CSV‚©‚ç“Ç‚İæ‚è
-    int** m_MapData = nullptr;  // CSV‚©‚ç“Ç‚İæ‚Á‚½ƒf[ƒ^‚ğ”’l‚ÅŠÇ—
+    std::string m_DataFile;      // CSVãƒ•ã‚¡ã‚¤ãƒ«å
+    int m_MapWidth = 0;     // CSVã‹ã‚‰èª­ã¿å–ã‚Š
+    int m_MapHeight = 0;    // CSVã‹ã‚‰èª­ã¿å–ã‚Š
+    int** m_MapData = nullptr;  // CSVã‹ã‚‰èª­ã¿å–ã£ãŸãƒ‡ãƒ¼ã‚¿ã‚’æ•°å€¤ã§ç®¡ç†
 
     float m_SizePiece = 5.f;
     float m_DrawStartPosX = 0.f;
@@ -23,17 +26,17 @@ private:
 
     enum class EMapTile
     {
-        Empty = 0,  // ‰½‚à‚È‚¢
-        Wall = 1,   // •Ç
-        Player = 2, // ƒvƒŒƒCƒ„[
-        Enemy = 3,  // “G
-        Tree = 4,   // ÷
-        Shadow = 5, // ‰e
+        Empty = 0,  // ä½•ã‚‚ãªã„
+        Wall = 1,   // å£
+        Player = 2, // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
+        Enemy = 3,  // æ•µ
+        Tree = 4,   // æ¨¹
+        Shadow = 5, // å½±
     };
 
 public:
     // ===================================================================
-    // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+    // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     // ===================================================================
     MapSystemComponent(const std::string fileName)
     {
@@ -41,11 +44,11 @@ public:
     }
 
     // ===================================================================
-    // ƒfƒXƒgƒ‰ƒNƒ^
+    // ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     // ===================================================================
     ~MapSystemComponent()
     {
-        // ƒ}ƒbƒv
+        // ãƒãƒƒãƒ—
         for (int i = 0; i < m_MapHeight; i++)
         {
             delete[] m_MapData[i];
@@ -54,7 +57,7 @@ public:
     }
 
     // ===================================================================
-    // XVˆ—
+    // æ›´æ–°å‡¦ç†
     // ===================================================================
     void Update() override
     {
@@ -62,16 +65,16 @@ public:
     }
 
     // ===================================================================
-    // GameSystem‚Ås‚¤MapXVˆ—
-    // UnitData,ShadowData,’nŒ`MapData‚ğŒ³‚ÉMapData‚ğXV‚·‚é
+    // GameSystemã§è¡Œã†Mapæ›´æ–°å‡¦ç†
+    // UnitData,ShadowData,åœ°å½¢MapDataã‚’å…ƒã«MapDataã‚’æ›´æ–°ã™ã‚‹
     // ===================================================================
     void UpdateMap(const std::vector<UnitStatus*>& units,
         const int* const* shadowMap);
 
-    void MakeMap(std::vector<std::unique_ptr<GameObject>>& objectList);      // CSVƒf[ƒ^“Ç‚İ‚İ‚Æƒ}ƒbƒvƒIƒuƒWƒFƒNƒg‚Ìì¬
+    void MakeMap(std::unique_ptr<GameObjectList>& objectList);      // CSVãƒ‡ãƒ¼ã‚¿èª­ã¿è¾¼ã¿ã¨ãƒãƒƒãƒ—ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ä½œæˆ
 
     // ===================================================================
-    // İ’è
+    // è¨­å®š
     // ===================================================================
     float GetMapSizeHeight() const { return (float)m_MapHeight * m_SizePiece; }
     float GetMapSizeWidth() const { return (float)m_MapWidth * m_SizePiece; }

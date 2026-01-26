@@ -27,9 +27,4 @@ public:
     void Draw(Camera*) override;
 
 private:
-    // ボタン整列処理
-    void MakeUIButtons();
-    void MakeUITimeLine();
-    void MakeUIStatus();
-    void MakeUISunRoute();
 };

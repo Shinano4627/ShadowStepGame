@@ -1,4 +1,4 @@
-#include "MapSystemComponent.h"
+ï»¿#include "MapSystemComponent.h"
 
 #include <fstream>
 #include <sstream>
@@ -6,10 +6,11 @@
 
 #include "SimplePlaneRendererComponent.h"
 #include "UnitCommon.h"
+#include "GameObjectList.h"
 
 using namespace std;
 
-void MapSystemComponent::MakeMap(std::vector<std::unique_ptr<GameObject>>& objectList)      // CSVƒf[ƒ^“Ç‚İ‚İ‚Æƒ}ƒbƒvƒIƒuƒWƒFƒNƒg‚Ìì¬
+void MapSystemComponent::MakeMap(std::unique_ptr<GameObjectList>& objectList)      // CSVãƒ‡ãƒ¼ã‚¿èª­ã¿è¾¼ã¿ã¨ãƒãƒƒãƒ—ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ä½œæˆ
 {
     int mapZ = 0;
     int mapX = 0;
@@ -25,47 +26,47 @@ void MapSystemComponent::MakeMap(std::vector<std::unique_ptr<GameObject>>& objec
 
         string line;
 
-        vector<string> words; //•¶š—ñƒxƒNƒgƒ‹‚ğéŒ¾‚·‚é
+        vector<string> words; //æ–‡å­—åˆ—ãƒ™ã‚¯ãƒˆãƒ«ã‚’å®£è¨€ã™ã‚‹
         string word;
-        // ------------ƒf[ƒ^“Ç‚İæ‚è-----------------
+        // ------------ãƒ‡ãƒ¼ã‚¿èª­ã¿å–ã‚Š-----------------
         istringstream sin;
-        // ƒ}ƒbƒv‚ÌL‚³‚ğæ“¾
+        // ãƒãƒƒãƒ—ã®åºƒã•ã‚’å–å¾—
         getline(csv_data, line);
         sin.clear();
         sin.str(line);
-        //•¶š—ñƒXƒgƒŠ[ƒ€sin‚Ì•¶š‚ğƒRƒ“ƒ}‹æØ‚è
+        //æ–‡å­—åˆ—ã‚¹ãƒˆãƒªãƒ¼ãƒ sinã®æ–‡å­—ã‚’ã‚³ãƒ³ãƒåŒºåˆ‡ã‚Š
         getline(sin, word, ',');
         m_MapWidth = stoi(word);
         getline(sin, word, ',');
         m_MapHeight = stoi(word);
 
-        // ƒ}ƒbƒv
+        // ãƒãƒƒãƒ—
         m_MapData = new int* [m_MapHeight]();
         for (int i = 0; i < m_MapHeight; i++)
         {
             m_MapData[i] = new int[m_MapWidth]();
         }
 
-        // Œ´“_‚ğ’†S‚É•\¦‚³‚ê‚é‚æ‚¤‚ÉƒXƒ^[ƒgˆÊ’u‚ğŒvZ
+        // åŸç‚¹ã‚’ä¸­å¿ƒã«è¡¨ç¤ºã•ã‚Œã‚‹ã‚ˆã†ã«ã‚¹ã‚¿ãƒ¼ãƒˆä½ç½®ã‚’è¨ˆç®—
         m_DrawStartPosX = -m_MapWidth * m_SizePiece / 2.f + m_SizePiece / 2.f;
         m_DrawStartPosZ = -m_MapHeight * m_SizePiece / 2.f + m_SizePiece / 2.f;
 
-        // s‚²‚Æ‚Éƒf[ƒ^‚ğ“Ç‚İ‚Ş
+        // è¡Œã”ã¨ã«ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚€
         while (getline(csv_data, line)) {
-            // vector‚¨‚æ‚Ñ•¶šƒXƒgƒŠ[ƒ€‚ğƒNƒŠƒA‚µA‘O‚Ìs ‚Ìƒf[ƒ^‚Ì‚İ‚ğ•Û‘¶‚µ‚Ü‚·
+            // vectorãŠã‚ˆã³æ–‡å­—ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚’ã‚¯ãƒªã‚¢ã—ã€å‰ã®è¡Œ ã®ãƒ‡ãƒ¼ã‚¿ã®ã¿ã‚’ä¿å­˜ã—ã¾ã™
             words.clear();
             sin.clear();
             sin.str(line);
-            //•¶š—ñƒXƒgƒŠ[ƒ€sin‚Ì•¶š‚ğƒRƒ“ƒ}‹æØ‚è•¶š—ñ”z—ñwords‚É”z’u‚·‚é
+            //æ–‡å­—åˆ—ã‚¹ãƒˆãƒªãƒ¼ãƒ sinã®æ–‡å­—ã‚’ã‚³ãƒ³ãƒåŒºåˆ‡ã‚Šæ–‡å­—åˆ—é…åˆ—wordsã«é…ç½®ã™ã‚‹
             while (getline(sin, word, ',')) {
                 //cout << word << endl;
-                words.push_back(word); //ƒZƒ‹“à‚Ìƒf[ƒ^‚ğ1‚Â‚¸‚Âpush‚·‚é
+                words.push_back(word); //ã‚»ãƒ«å†…ã®ãƒ‡ãƒ¼ã‚¿ã‚’1ã¤ãšã¤pushã™ã‚‹
             }
 
-            //s‚É]‚Á‚½map‚Ìì¬‚ğŠJn
+            //è¡Œã«å¾“ã£ãŸmapã®ä½œæˆã‚’é–‹å§‹
             for (string str : words)
             {
-                // ƒgƒ‰ƒ“ƒXƒtƒH[ƒ€ƒf[ƒ^‚ğ“n‚·
+                // ãƒˆãƒ©ãƒ³ã‚¹ãƒ•ã‚©ãƒ¼ãƒ ãƒ‡ãƒ¼ã‚¿ã‚’æ¸¡ã™
                 auto obj = std::make_unique<GameObject>
                     (Vector3(m_DrawStartPosX + mapX * m_SizePiece, 0.2f, m_DrawStartPosZ + mapZ * m_SizePiece), Vector3::Zero, Vector3(m_SizePiece / 2, 1.f, m_SizePiece / 2));
                 GameObject* newObject = obj.get();
@@ -76,32 +77,32 @@ void MapSystemComponent::MakeMap(std::vector<std::unique_ptr<GameObject>>& objec
                 int data = stoi(str);
                 m_MapData[mapZ][mapX] = data;
 
-                // CSV‚©‚ç‚Ì‚æ‚İ‚Æ‚è
+                // CSVã‹ã‚‰ã®ã‚ˆã¿ã¨ã‚Š
                 Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
                 switch (data)
                 {
                 case 0:
-                    //‰½‚à‚È‚¢
+                    //ä½•ã‚‚ãªã„
                     color = Color(1.0f, 1.0f, 1.0f, 1.0f);
                     break;
                 case 1:
-                    //•Ç
+                    //å£
                     color = Color(0.2f, 0.2f, 0.2f, 1.0f);
                     break;
                 case 2:
-                    //ƒvƒŒ[ƒ„[
+                    //ãƒ—ãƒ¬ãƒ¼ãƒ¤ãƒ¼
                     color = Color(0, 0, 1.0f, 1.0f);
                     break;
                 case 3:
-                    //“G
+                    //æ•µ
                     color = Color(1.0f, 0, 0, 1.0f);
                     break;
                 case 4:
-                    //÷
+                    //æ¨¹
                     color = Color(0, 1.0f, 0, 1.0f);
                     break;
                 case 5:
-                    //‰e
+                    //å½±
                     color = Color(0.5f, 0.5f, 0.5f, 1.0f);
                     break;
                 default:
@@ -111,7 +112,7 @@ void MapSystemComponent::MakeMap(std::vector<std::unique_ptr<GameObject>>& objec
                 newObject->AddMeshComponent<SimplePlaneRendererComponent>(color);
                 mapX++;
                 n++;
-                objectList.push_back(std::move(obj));
+                objectList->AddObject(std::move(obj));
             }
             mapX = 0;
             mapZ++;
@@ -121,7 +122,7 @@ void MapSystemComponent::MakeMap(std::vector<std::unique_ptr<GameObject>>& objec
         csv_data.close();
     }
 
-    // ƒfƒoƒbƒOo—Í
+    // ãƒ‡ãƒãƒƒã‚°å‡ºåŠ›
     for (int i = 0; i < m_MapHeight; i++)
     {
         for (int j = 0; j < m_MapWidth; j++)
@@ -134,8 +135,8 @@ void MapSystemComponent::MakeMap(std::vector<std::unique_ptr<GameObject>>& objec
 }
 
 // ===================================================================
-// GameSystem‚Ås‚¤MapXVˆ—
-// UnitData,ShadowData,’nŒ`MapData‚ğŒ³‚ÉMapData‚ğXV‚·‚é
+// GameSystemã§è¡Œã†Mapæ›´æ–°å‡¦ç†
+// UnitData,ShadowData,åœ°å½¢MapDataã‚’å…ƒã«MapDataã‚’æ›´æ–°ã™ã‚‹
 // ===================================================================
 void MapSystemComponent::UpdateMap(const std::vector<UnitStatus*>& units,
     const int* const* shadowMap)
@@ -143,13 +144,13 @@ void MapSystemComponent::UpdateMap(const std::vector<UnitStatus*>& units,
     if (!m_pOwner) return;
 
     //=======================================
-    // ƒ}ƒbƒv‚ğ‰Šú‰»i’nŒ`‚Ì‚İc‚·j
+    // ãƒãƒƒãƒ—ã‚’åˆæœŸåŒ–ï¼ˆåœ°å½¢ã®ã¿æ®‹ã™ï¼‰
     //=======================================
     for (int z = 0; z < m_MapHeight; ++z)
     {
         for (int x = 0; x < m_MapWidth; ++x)
         {
-            // ’nŒ`‚Í‚»‚Ì‚Ü‚ÜA‚»‚êˆÈŠO‚ÍEmpty‚É
+            // åœ°å½¢ã¯ãã®ã¾ã¾ã€ãã‚Œä»¥å¤–ã¯Emptyã«
             if (m_MapData[z][x] != (int)EMapTile::Wall &&
                 m_MapData[z][x] != (int)EMapTile::Tree)
             {
@@ -159,21 +160,21 @@ void MapSystemComponent::UpdateMap(const std::vector<UnitStatus*>& units,
     }
 
     //=======================================
-    // UnitSystem‚©‚çƒvƒŒƒCƒ„[E“G‚ÌˆÊ’u‚ğæ“¾E”½‰f
+    // UnitSystemã‹ã‚‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ»æ•µã®ä½ç½®ã‚’å–å¾—ãƒ»åæ˜ 
     //=======================================
     /*
-        ‘z’è‚·‚éUnitSystem‚ÌŠÖ”Eƒf[ƒ^F
+        æƒ³å®šã™ã‚‹UnitSystemã®é–¢æ•°ãƒ»ãƒ‡ãƒ¼ã‚¿ï¼š
         - static const std::vector<Unit*>& GetUnits();
-            ¨ “o˜^‚³‚ê‚Ä‚¢‚é‘SUnit‚ÌStatus‚ğ•Ô‚·
-        - Unit‘¤‚Å‚Á‚Ä‚¢‚éî•ñF
-            ƒ}ƒbƒvã‚ÌXÀ•W ƒ}ƒbƒvã‚ÌZÀ•W ƒvƒŒƒCƒ„[‚©‚Ç‚¤‚©
+            â†’ ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹å…¨Unitã®Statusã‚’è¿”ã™
+        - Unitå´ã§æŒã£ã¦ã„ã‚‹æƒ…å ±ï¼š
+            ãƒãƒƒãƒ—ä¸Šã®Xåº§æ¨™ ãƒãƒƒãƒ—ä¸Šã®Zåº§æ¨™ ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‹ã©ã†ã‹
     */
     
     for(auto* unit : units)
     {
         if (unit->isDown) continue;
         
-        // ˆÊ’uî•ñæ“¾E”½‰f
+        // ä½ç½®æƒ…å ±å–å¾—ãƒ»åæ˜ 
         switch (unit->type)
         {
         case UnitType::Player:
@@ -186,15 +187,15 @@ void MapSystemComponent::UpdateMap(const std::vector<UnitStatus*>& units,
     }
 
     //=======================================
-    // ShadowSystem‚©‚ç‰eî•ñ‚ğæ“¾E”½‰f
-    // ‹ó‚¢‚Ä‚¢‚éƒZƒ‹‚Ì‚İ”½‰f
+    // ShadowSystemã‹ã‚‰å½±æƒ…å ±ã‚’å–å¾—ãƒ»åæ˜ 
+    // ç©ºã„ã¦ã„ã‚‹ã‚»ãƒ«ã®ã¿åæ˜ 
     //=======================================
     /*
-        ‘z’è‚·‚éShadowSystem‚ÌŠÖ”F
+        æƒ³å®šã™ã‚‹ShadowSystemã®é–¢æ•°ï¼š
         - static bool IsShadowAt(int x, int z);
-            ¨ À•W(x,z)‚É‰e‚ª‚ ‚é‚©‚Ç‚¤‚©•Ô‚·
-        - static void AddShadow(int x, int z);    // ‰e‚ğ“o˜^
-        - static void ClearShadows();              // –ˆƒtƒŒ[ƒ€ƒŠƒZƒbƒg
+            â†’ åº§æ¨™(x,z)ã«å½±ãŒã‚ã‚‹ã‹ã©ã†ã‹è¿”ã™
+        - static void AddShadow(int x, int z);    // å½±ã‚’ç™»éŒ²
+        - static void ClearShadows();              // æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ãƒªã‚»ãƒƒãƒˆ
     */
     for (int z = 0; z < m_MapHeight; ++z)
     {
@@ -210,7 +211,7 @@ void MapSystemComponent::UpdateMap(const std::vector<UnitStatus*>& units,
     
 }
 // ===================================================================
-// ¶ƒ}ƒbƒvƒf[ƒ^æ“¾
+// ç”Ÿãƒãƒƒãƒ—ãƒ‡ãƒ¼ã‚¿å–å¾—
 // ===================================================================
 const int* const* MapSystemComponent::GetRawMapData() const
 {

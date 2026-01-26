@@ -183,6 +183,12 @@
     <ClCompile Include="CursorManager.cpp">
       <Filter>ソース ファイル\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="GameObjectList.cpp">
+      <Filter>ソース ファイル\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRendererComponent.cpp">
+      <Filter>ソース ファイル\GameObject\MeshComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -382,6 +388,9 @@
     </ClInclude>
     <ClInclude Include="CursorManager.h">
       <Filter>ソース ファイル\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectList.h">
+      <Filter>ソース ファイル\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
