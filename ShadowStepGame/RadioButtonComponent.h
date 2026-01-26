@@ -1,35 +1,36 @@
 ﻿// ===================================================================
-// ButtonComponent.h
-// ボタンコンポーネント
-// 選択状態の管理とカーソル判定を行う
+// RadioButtonComponent.h
+// ラジオボタンコンポーネント
+// 複数のButtonComponentを管理し、排他的な選択状態を制御する
 // ===================================================================
 #pragma once
 #include "Component.h"
 #include "GameObject.h"
-#include "Texture2D.h"
-#include "CursorManager.h"
+#include "ButtonComponent.h"
+#include <vector>
 
 // ===================================================================
-// ButtonComponent クラス
+// RadioButtonComponent クラス
 // ===================================================================
-class ButtonComponent : public Component
+class RadioButtonComponent : public Component
 {
 private:
     // ===================================================================
     // メンバ変数
     // ===================================================================
-    bool m_SelectedPre = false;     // 前回の選択状態
-    bool m_IsSelected = false;      // 選択状態
-    DirectX::SimpleMath::Vector3 m_RangeHitScale;
+    std::vector<GameObject*> m_Buttons;     // 管理するボタンオブジェクト
+    int m_SelectedIndex = -1;               // 現在選択中のインデックス（-1は未選択）
 
 public:
     // ===================================================================
     // コンストラクタ・デストラクタ
     // ===================================================================
-    ButtonComponent(const DirectX::SimpleMath::Vector3& rangeHitScale)
-        : m_RangeHitScale(rangeHitScale)
-    {}
-    ~ButtonComponent() override = default;
+    RadioButtonComponent(const std::vector<GameObject*>& buttons)
+        : m_Buttons(buttons)
+        , m_SelectedIndex(-1)
+    {
+    }
+    ~RadioButtonComponent() override = default;
 
     // ===================================================================
     // ライフサイクル
@@ -41,16 +42,22 @@ public:
     // ===================================================================
     // 選択状態
     // ===================================================================
-    bool IsSelected() const { return m_IsSelected; }
-    void SetSelected(bool selected);
+    // 現在選択されているインデックスを取得（-1は未選択）
+    int GetSelectedIndex() const { return m_SelectedIndex; }
+
+    // 現在選択されているボタンオブジェクトを取得（nullptrは未選択）
+    GameObject* GetSelectedButton() const;
+
+    // インデックスで選択状態を設定
+    void SetSelectedIndex(int index);
+
+    // ボタン数を取得
+    int GetButtonCount() const { return static_cast<int>(m_Buttons.size()); }
 
 private:
     // ===================================================================
     // 内部処理
     // ===================================================================
-    // カーソルとの当たり判定
-    bool CheckCursorHit() const;
-
-    // UV切り替え
-    void UpdateUV();
+    // 指定インデックス以外を非選択にする
+    void DeselectOthers(int selectedIndex);
 };

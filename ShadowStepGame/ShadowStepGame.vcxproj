@@ -210,6 +210,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClInclude Include="Framework\utility.h" />
     <ClInclude Include="Framework\VertexBuffer.h" />
     <ClInclude Include="Framework\XmlRW.h" />
+    <ClInclude Include="RadioButtonComponent.h" />
     <ClInclude Include="SceneDebug.h" />
     <ClInclude Include="SceneGame.h" />
     <ClInclude Include="SceneResult.h" />
@@ -269,6 +270,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClCompile Include="Framework\Timer.cpp" />
     <ClCompile Include="Framework\utility.cpp" />
     <ClCompile Include="Framework\XmlRW.cpp" />
+    <ClCompile Include="RadioButtonComponent.cpp" />
     <ClCompile Include="SceneDebug.cpp" />
     <ClCompile Include="SceneGame.cpp" />
     <ClCompile Include="SceneResult.cpp" />

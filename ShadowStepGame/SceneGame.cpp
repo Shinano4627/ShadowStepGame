@@ -22,6 +22,7 @@ using namespace std;
 #include "PlayerMoverComponent.h"
 #include "Texture2D.h"
 #include "ButtonComponent.h"
+#include "RadioButtonComponent.h"
 
 #include <iostream>
 
@@ -192,6 +193,13 @@ void SceneGame::MakeUIButtons()
         }
     }
 
+    // ラジオボタンコンポーネントつきオブジェクト作成
+    std::unique_ptr<GameObject> radioSubButton = std::make_unique<GameObject>();
+    radioSubButton->SetName("RadioSubButton");
+    radioSubButton->SetTag("RadioButton");
+    radioSubButton->AddComponent<RadioButtonComponent>(buttonSubs);
+    m_GameObjects.push_back(std::move(radioSubButton));
+
     // ---------------------------------------------------------------
     // 2行目・3行目: Button（ButtonBuild, ButtonMove）
     // ---------------------------------------------------------------
@@ -252,6 +260,13 @@ void SceneGame::MakeUIButtons()
         // ボタンコンポーネント追加
         targetButtons[i]->AddComponent<ButtonComponent>(targetButtons[i]->GetTransform().GetScale());
     }
+
+    // ラジオボタンコンポーネントつきオブジェクト作成
+    std::unique_ptr<GameObject> radioButton = std::make_unique<GameObject>();
+    radioButton->SetName("RadioButton");
+    radioButton->SetTag("RadioButton");
+    radioButton->AddComponent<RadioButtonComponent>(buttons);
+    m_GameObjects.push_back(std::move(radioButton));
 
     std::cout << "[SceneGame] Buttons arranged in UIAreaButtons" << std::endl;
 }

@@ -12,6 +12,7 @@ using namespace DirectX::SimpleMath;
 void ButtonComponent::Init()
 {
     m_IsSelected = false;
+    m_SelectedPre = false;
 
     // 初期UV設定（非選択状態）
     UpdateUV();
@@ -25,10 +26,15 @@ void ButtonComponent::Update()
     // カーソルとの当たり判定
     bool hit = CheckCursorHit();
 
-    // 選択状態が変化した場合のみUV更新
-    if (m_IsSelected != hit)
+    if (hit)
     {
-        m_IsSelected = hit;
+        m_IsSelected = true;
+    }
+
+    // 選択状態が変化した場合のみUV更新
+    if (m_IsSelected != m_SelectedPre)
+    {
+        m_SelectedPre = m_IsSelected;
         UpdateUV();
     }
 }
@@ -46,11 +52,7 @@ void ButtonComponent::Uninit()
 // ===================================================================
 void ButtonComponent::SetSelected(bool selected)
 {
-    if (m_IsSelected != selected)
-    {
-        m_IsSelected = selected;
-        UpdateUV();
-    }
+    m_IsSelected = selected;
 }
 
 // ===================================================================
