@@ -123,6 +123,7 @@ void SceneGame::Draw()
 
     // UI層のみ描画（カメラ不使用）
     DrawLayer(nullptr, RenderLayer::UI);
+    DrawLayer(nullptr, RenderLayer::UI_2);
 
     // カーソルを最前面に描画
     CURSOR_MANAGER.Draw();
@@ -274,6 +275,7 @@ void SceneGame::MakeTimeLine()
     m_GameObjects.push_back(std::move(windowObj));
     std::cout << "[SceneGame] Timeline window created" << std::endl;
 }
+
 void SceneGame::MakeStatus()
 {
     // UIAreaStatusを名前で取得
@@ -299,4 +301,141 @@ void SceneGame::MakeStatus()
 
     m_GameObjects.push_back(std::move(windowObj));
     std::cout << "[SceneGame] Status window created" << std::endl;
+
+    // ---------------------------------------------------------------
+    // レイアウト計算
+    // ---------------------------------------------------------------
+    const float padding = 5.f;
+    float halfWidth = areaScale.x / 2.f;
+    float leftCenterX = areaPos.x - halfWidth / 2.f;   // 左側の中心X
+    float rightCenterX = areaPos.x + halfWidth / 2.f;  // 右側の中心X
+    float rowHeight = areaScale.y / 3.f;               // 左側3段分割
+    float topY = areaPos.y + areaScale.y / 2.f;        // エリア上端
+
+    // ---------------------------------------------------------------
+    // 右側: UIStatusImage（縦横比維持）
+    // ---------------------------------------------------------------
+    {
+        std::vector<GameObject*> statusImages = FindGameObjectsWithTag("UIStatusImage");
+        if (!statusImages.empty())
+        {
+            for (size_t i = 0; i < statusImages.size(); i++)
+            {
+                GameObject* statusImage = statusImages[i];
+
+                // レイヤーセット
+                auto* tex = statusImage->GetMeshComponent<Texture2D>();
+                tex->SetRenderLayer(RenderLayer::UI_2);
+
+                // 元の縦横比を取得
+                Vector3 originalScale = statusImage->GetTransform().GetScale();
+                float aspectRatio = originalScale.x / originalScale.y;
+
+                // 右側半分に収まるサイズを計算（縦横比維持）
+                float availableWidth = halfWidth - padding * 2.f;
+                float availableHeight = areaScale.y - padding * 2.f;
+
+                float finalWidth, finalHeight;
+                if (availableWidth / aspectRatio <= availableHeight)
+                {
+                    // 幅基準
+                    finalWidth = availableWidth;
+                    finalHeight = availableWidth / aspectRatio;
+                }
+                else
+                {
+                    // 高さ基準
+                    finalHeight = availableHeight;
+                    finalWidth = availableHeight * aspectRatio;
+                }
+
+                statusImage->GetTransform().SetPosition(Vector3(rightCenterX, areaPos.y, 0.f));
+                statusImage->GetTransform().SetScale(Vector3(finalWidth, finalHeight, 1.f));
+
+                // 一旦すべて非表示
+                statusImages[i]->SetActive(false);
+            }
+
+            // 仮で１つ目を表示
+            statusImages[0]->SetActive(true);
+        }
+    }
+    // ---------------------------------------------------------------
+    // 左側2段目: UIStatusJob（1:1、左寄せ）
+    // ---------------------------------------------------------------
+    {
+        std::vector<GameObject*> statusJobs = FindGameObjectsWithTag("UIStatusJob");
+        if (!statusJobs.empty())
+        {
+            // 1:1の大きさ（行の高さより小さめ）
+            float jobSize = (rowHeight - padding * 2.f) * 0.8;
+
+            // 2段目のY座標（上から2番目）
+            float row2Y = topY - rowHeight * 1.5f;
+
+            // 左寄せ（左側エリアの左端からpadding分離す）
+            float leftEdgeX = areaPos.x - halfWidth + padding + jobSize / 2.f;
+
+            for (size_t i = 0; i < statusJobs.size(); i++)
+            {
+                GameObject* statusJob = statusJobs[i];
+
+                // レイヤーセット
+                auto* tex = statusJob->GetMeshComponent<Texture2D>();
+                tex->SetRenderLayer(RenderLayer::UI_2);
+
+                statusJob->GetTransform().SetPosition(Vector3(leftEdgeX, row2Y, 0.f));
+                statusJob->GetTransform().SetScale(Vector3(jobSize, jobSize, 1.f));
+
+                // 一旦すべて非表示
+                statusJobs[i]->SetActive(false);
+            }
+
+            // 仮で１つ目を表示
+            statusJobs[0]->SetActive(true);
+        }
+    }
+    // ---------------------------------------------------------------
+    // 左側3段目: UIStatusSpeed x3（中央整列）
+    // ---------------------------------------------------------------
+    GameObject* speedTemplate = FindGameObjectWithTag("UIStatusSpeed");
+    if (speedTemplate)
+    {
+        // テンプレートを非表示
+        speedTemplate->SetActive(false);
+        auto* speedTex = speedTemplate->GetMeshComponent<Texture2D>();
+        if (speedTex)
+        {
+            // 3段目のY座標（上から3番目）
+            float row3Y = topY - rowHeight * 2.5f;
+
+            // アイコンサイズ（行の高さに合わせる）
+            const int speedCount = 3;
+            float iconSize = rowHeight - padding * 2.f;
+            float totalWidth = iconSize * speedCount + padding * (speedCount + 1);  // 左右もパディングする
+
+            // 中央整列の開始X座標(左をパディング)
+            float startX = leftCenterX - totalWidth / 2.f + iconSize / 2.f + padding;
+
+            for (int i = 0; i < speedCount; i++)
+            {
+                float posX = startX + i * (iconSize + padding);
+
+                auto speedObj = std::make_unique<GameObject>(
+                    Vector3(posX, row3Y, 0.f),
+                    Vector3(0, 0, 0),
+                    Vector3(iconSize, iconSize, 1.f));
+                speedObj->SetID(m_lastID++);
+                speedObj->SetName("UIStatusSpeed" + std::to_string(i + 1));
+                speedObj->SetTag("UIStatusSpeedIcon");
+                auto* tex = speedObj->AddMeshComponent<Texture2D>(speedTex->GetTexturePath(), Color(1, 1, 1, 1));
+                // レイヤーセット
+                tex->SetRenderLayer(RenderLayer::UI_2);
+
+                m_GameObjects.push_back(std::move(speedObj));
+            }
+        }
+    }
+
+    std::cout << "[SceneGame] Status UI elements arranged" << std::endl;
 }
