@@ -1,6 +1,6 @@
-// ===================================================================
+ï»¿// ===================================================================
 // SceneResult.cpp
-// ƒŠƒUƒ‹ƒgƒV[ƒ“À‘• - ƒJƒƒ‰•ûŒü‚É‡‚í‚¹‚½ˆÚ“®
+// ãƒªã‚¶ãƒ«ãƒˆã‚·ãƒ¼ãƒ³å®Ÿè£… - ã‚«ãƒ¡ãƒ©æ–¹å‘ã«åˆã‚ã›ãŸç§»å‹•
 // ===================================================================
 #include "SceneResult.h"
 #include "SceneManager.h"
@@ -8,8 +8,8 @@
 #include "ResourceManager.h"
 #include "Game.h"
 
-// ƒRƒ“ƒ|[ƒlƒ“ƒg
-#include "CameraRelativeMoverComponent.h"      // ƒJƒƒ‰‘Š‘ÎˆÚ“®—p
+// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
+#include "CameraRelativeMoverComponent.h"      // ã‚«ãƒ¡ãƒ©ç›¸å¯¾ç§»å‹•ç”¨
 
 #include <iostream>
 
@@ -18,41 +18,46 @@ void SceneResult::Init()
     std::cout << "========================================" << std::endl;
     std::cout << "[SceneResult] Init START" << std::endl;
 
-    // Šù‘¶ƒIƒuƒWƒFƒNƒg‚ğíœ
-    DeleteObjectList();
+    if (m_GameObjectList == nullptr)
+    {
+        // ãƒªã‚¹ãƒˆã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆ
+        m_GameObjectList = std::make_unique<GameObjectList>();
+    }
+    // æ—¢å­˜ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤
+    m_GameObjectList->DeleteObjectList();
 
-    // •\¦ŠÔ‰Šú‰»
+    // è¡¨ç¤ºæ™‚é–“åˆæœŸåŒ–
     m_DisplayTime = 0.0f;
-    m_pCamera = nullptr; // ƒJƒƒ‰‚ÍDraw()‚Åó‚¯æ‚é
+    m_pCamera = nullptr; // ã‚«ãƒ¡ãƒ©ã¯Draw()ã§å—ã‘å–ã‚‹
 
     using namespace DirectX::SimpleMath;
 
-    // ƒIƒuƒWƒFƒNƒgƒŠƒXƒgì¬
-    MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_RESULT).c_str());
+    // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒªã‚¹ãƒˆä½œæˆ
+    m_GameObjectList->MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_RESULT).c_str());
 
-    // ’Ç‰ÁƒRƒ“ƒ|[ƒlƒ“ƒg
+    // è¿½åŠ ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
     {
         // ===================================================================
-        // ƒJƒƒ‰‘Š‘ÎˆÚ“®ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ’Ç‰Á
-        // ¦ ƒJƒƒ‰‚Í‚Ü‚¾nullptr‚¾‚ªAUpdate()‚Åg—p‚·‚é‘O‚ÉDraw()‚ªŒÄ‚Î‚ê‚ÄƒZƒbƒg‚³‚ê‚é
+        // ã‚«ãƒ¡ãƒ©ç›¸å¯¾ç§»å‹•ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’è¿½åŠ 
+        // â€» ã‚«ãƒ¡ãƒ©ã¯ã¾ã nullptrã ãŒã€Update()ã§ä½¿ç”¨ã™ã‚‹å‰ã«Draw()ãŒå‘¼ã°ã‚Œã¦ã‚»ãƒƒãƒˆã•ã‚Œã‚‹
         // ===================================================================
-        // ƒvƒŒƒCƒ„[ˆÚ“®ƒRƒ“ƒ|[ƒlƒ“ƒg
-        auto* mover = FindGameObjectWithTag("ModelObject")->AddComponent<CameraRelativeMoverComponent>(
-            nullptr,    // ƒJƒƒ‰‚ÍŒã‚ÅƒZƒbƒg
-            8.0f,       // ˆÚ“®‘¬“x
-            3.0f        // ‰ñ“]‘¬“x
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç§»å‹•ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
+        auto* mover = m_GameObjectList->FindGameObjectWithTag("ModelObject")->AddComponent<CameraRelativeMoverComponent>(
+            nullptr,    // ã‚«ãƒ¡ãƒ©ã¯å¾Œã§ã‚»ãƒƒãƒˆ
+            8.0f,       // ç§»å‹•é€Ÿåº¦
+            3.0f        // å›è»¢é€Ÿåº¦
         );
 
         std::cout << "[SceneResult] ModelObject created with camera-relative movement" << std::endl;
     }
 
-    // ƒJƒƒ‰‰Šú‰»
+    // ã‚«ãƒ¡ãƒ©åˆæœŸåŒ–
     m_Camera.Init();
     m_UiCamera.Init();
 
     m_nextScene = SCENE_NONE;
 
-    // ‰Šú‰»Š®—¹
+    // åˆæœŸåŒ–å®Œäº†
     m_isInitialized = true;
 
     std::cout << "[SceneResult] Initialized successfully" << std::endl;
@@ -75,10 +80,10 @@ void SceneResult::Init()
 void SceneResult::UnInit()
 {
     std::cout << "[SceneResult] UnInit" << std::endl;
-    DeleteObjectList();
+    m_GameObjectList->DeleteObjectList();
     m_pCamera = nullptr;
 
-    // ƒJƒƒ‰I—¹ˆ—
+    // ã‚«ãƒ¡ãƒ©çµ‚äº†å‡¦ç†
     m_Camera.Uninit();
     m_UiCamera.Init();
 
@@ -87,14 +92,14 @@ void SceneResult::UnInit()
 
 void SceneResult::Update()
 {
-    // •\¦ŠÔXV
+    // è¡¨ç¤ºæ™‚é–“æ›´æ–°
     m_DisplayTime += Game::GetDeltaTime();
 
-    // ƒJƒƒ‰XV
+    // ã‚«ãƒ¡ãƒ©æ›´æ–°
     m_Camera.Update();
     m_UiCamera.Update();
 
-    // EnterƒL[‚Åƒ^ƒCƒgƒ‹‚Ö
+    // Enterã‚­ãƒ¼ã§ã‚¿ã‚¤ãƒˆãƒ«ã¸
     if (IO_MANAGER.GetKeyDown(TYPE_OK) || IO_MANAGER.GetKeyDownKeyBord(VK_RETURN))
     {
         std::cout << "[SceneResult] ENTER pressed - Back to Title" << std::endl;
@@ -102,7 +107,7 @@ void SceneResult::Update()
         return;
     }
 
-    // EscƒL[‚ÅƒQ[ƒ€‚ğƒŠƒgƒ‰ƒC
+    // Escã‚­ãƒ¼ã§ã‚²ãƒ¼ãƒ ã‚’ãƒªãƒˆãƒ©ã‚¤
     if (IO_MANAGER.GetKeyDownKeyBord(VK_ESCAPE))
     {
         std::cout << "[SceneResult] ESC pressed - Retry Game" << std::endl;
@@ -111,11 +116,11 @@ void SceneResult::Update()
     }
 
     // ===================================================================
-    // CameraRelativeMoverComponent‚ÉƒJƒƒ‰‚ğƒZƒbƒg
+    // CameraRelativeMoverComponentã«ã‚«ãƒ¡ãƒ©ã‚’ã‚»ãƒƒãƒˆ
     // ===================================================================
     if (m_pCamera)
     {
-        auto* modelObject = FindGameObjectWithTag("ModelObject");
+        auto* modelObject = m_GameObjectList->FindGameObjectWithTag("ModelObject");
         if (modelObject)
         {
             auto* mover = modelObject->GetComponent<CameraRelativeMoverComponent>();
@@ -126,80 +131,80 @@ void SceneResult::Update()
         }
     }
 
-    // GameObjectƒŠƒXƒg‚ğXViƒJƒƒ‰‘Š‘ÎˆÚ“®‚È‚Çj
-    UpdateObjectList();
+    // GameObjectãƒªã‚¹ãƒˆã‚’æ›´æ–°ï¼ˆã‚«ãƒ¡ãƒ©ç›¸å¯¾ç§»å‹•ãªã©ï¼‰
+    m_GameObjectList->UpdateObjectList();
 }
 
 void SceneResult::Draw()
 {
-    // 3D•`‰æ
+    // 3Dæç”»
     Draw(&m_Camera);
 
-    // UI‘w‚Ì‚İ•`‰æ
-    DrawLayer(&m_UiCamera, RenderLayer::UI);
+    // UIå±¤ã®ã¿æç”»
+    m_GameObjectList->DrawLayer(&m_UiCamera, RenderLayer::UI);
 }
 
 void SceneResult::Draw(Camera* camera)
 {
-    // ƒJƒƒ‰‚ğ•Û‘¶iUpdate()‚Åg—pj
+    // ã‚«ãƒ¡ãƒ©ã‚’ä¿å­˜ï¼ˆUpdate()ã§ä½¿ç”¨ï¼‰
     m_pCamera = camera;
 
     // ===================================================================
-    // ƒJƒƒ‰§Œäˆ—
+    // ã‚«ãƒ¡ãƒ©åˆ¶å¾¡å‡¦ç†
     // ===================================================================
     if (camera)
     {
-        // ModelObject‚ğŒŸõ
-        auto* modelObject = FindGameObjectWithTag("ModelObject");
+        // ModelObjectã‚’æ¤œç´¢
+        auto* modelObject = m_GameObjectList->FindGameObjectWithTag("ModelObject");
         if (modelObject)
         {
             using namespace DirectX::SimpleMath;
 
-            // ƒJƒƒ‰‚Ì‰ñ“]ˆ—i–îˆóƒL[j
-            static float cameraAngle = 0.0f;       // ƒJƒƒ‰‚Ì…•½Šp“x
-            static float cameraDistance = 10.0f;   // ƒJƒƒ‰‚Ì‹——£
-            static float cameraHeight = 5.0f;      // ƒJƒƒ‰‚Ì‚‚³
+            // ã‚«ãƒ¡ãƒ©ã®å›è»¢å‡¦ç†ï¼ˆçŸ¢å°ã‚­ãƒ¼ï¼‰
+            static float cameraAngle = 0.0f;       // ã‚«ãƒ¡ãƒ©ã®æ°´å¹³è§’åº¦
+            static float cameraDistance = 10.0f;   // ã‚«ãƒ¡ãƒ©ã®è·é›¢
+            static float cameraHeight = 5.0f;      // ã‚«ãƒ¡ãƒ©ã®é«˜ã•
 
             float deltaTime = Game::GetDeltaTime();
 
-            // ¶‰E–îˆóƒL[‚ÅƒJƒƒ‰‰ñ“]
+            // å·¦å³çŸ¢å°ã‚­ãƒ¼ã§ã‚«ãƒ¡ãƒ©å›è»¢
             if (IO_MANAGER.GetKeyPressKeyBord(VK_LEFT))
             {
-                cameraAngle -= 2.0f * deltaTime; // ¶‰ñ“]
+                cameraAngle -= 2.0f * deltaTime; // å·¦å›è»¢
             }
             if (IO_MANAGER.GetKeyPressKeyBord(VK_RIGHT))
             {
-                cameraAngle += 2.0f * deltaTime; // ‰E‰ñ“]
+                cameraAngle += 2.0f * deltaTime; // å³å›è»¢
             }
 
-            // ã‰º–îˆóƒL[‚ÅƒY[ƒ€
+            // ä¸Šä¸‹çŸ¢å°ã‚­ãƒ¼ã§ã‚ºãƒ¼ãƒ 
             if (IO_MANAGER.GetKeyPressKeyBord(VK_UP))
             {
-                cameraDistance -= 8.0f * deltaTime; // ‹ß‚Ã‚­
+                cameraDistance -= 8.0f * deltaTime; // è¿‘ã¥ã
                 if (cameraDistance < 3.0f) cameraDistance = 3.0f;
             }
             if (IO_MANAGER.GetKeyPressKeyBord(VK_DOWN))
             {
-                cameraDistance += 8.0f * deltaTime; // ‰“‚´‚©‚é
+                cameraDistance += 8.0f * deltaTime; // é ã–ã‹ã‚‹
                 if (cameraDistance > 30.0f) cameraDistance = 30.0f;
             }
 
-            // ƒ‚ƒfƒ‹ˆÊ’uæ“¾
+            // ãƒ¢ãƒ‡ãƒ«ä½ç½®å–å¾—
             Vector3 modelPosition = modelObject->GetTransform().GetPosition();
 
-            // ƒJƒƒ‰ˆÊ’u‚ğŒvZi‰~üã‚ğ‰ñ“]j
+            // ã‚«ãƒ¡ãƒ©ä½ç½®ã‚’è¨ˆç®—ï¼ˆå††å‘¨ä¸Šã‚’å›è»¢ï¼‰
             float x = modelPosition.x + sin(cameraAngle) * cameraDistance;
             float z = modelPosition.z + cos(cameraAngle) * cameraDistance;
             float y = modelPosition.y + cameraHeight;
 
             Vector3 cameraPosition(x, y, z);
 
-            // ƒJƒƒ‰İ’è
+            // ã‚«ãƒ¡ãƒ©è¨­å®š
             camera->SetPosition(cameraPosition);
             camera->SetTarget(modelPosition);
         }
     }
 
-    // WORLD‘w‚ğ•`‰æiƒJƒƒ‰g—pj
-    DrawLayer(camera, RenderLayer::WORLD);
+    // WORLDå±¤ã‚’æç”»ï¼ˆã‚«ãƒ¡ãƒ©ä½¿ç”¨ï¼‰
+    m_GameObjectList->DrawLayer(camera, RenderLayer::WORLD);
 }

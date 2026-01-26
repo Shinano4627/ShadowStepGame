@@ -1,12 +1,12 @@
-// ===================================================================
+ï»¿// ===================================================================
 // SceneTitle.cpp
-// ƒ^ƒCƒgƒ‹ƒV[ƒ“À‘•
+// ã‚¿ã‚¤ãƒˆãƒ«ã‚·ãƒ¼ãƒ³å®Ÿè£…
 // ===================================================================
 #include "SceneTitle.h"
 #include "SceneManager.h"
 #include "IOManager.h"
 
-// ƒRƒ“ƒ|[ƒlƒ“ƒg
+// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
 
 #include <iostream>
 
@@ -15,25 +15,30 @@ void SceneTitle::Init()
     std::cout << "========================================" << std::endl;
     std::cout << "[SceneTitle] Init START" << std::endl;
 
-    // Šù‘¶ƒIƒuƒWƒFƒNƒg‚ğíœ
-    DeleteObjectList();
+    if (m_GameObjectList == nullptr)
+    {
+        // ãƒªã‚¹ãƒˆã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆ
+        m_GameObjectList = std::make_unique<GameObjectList>();
+    }
+    // æ—¢å­˜ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤
+    m_GameObjectList->DeleteObjectList();
 
     using namespace DirectX::SimpleMath;
 
-    // ƒIƒuƒWƒFƒNƒgƒŠƒXƒgì¬
-    MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_TITLE).c_str());
+    // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒªã‚¹ãƒˆä½œæˆ
+    m_GameObjectList->MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_TITLE).c_str());
 
-    // ’Ç‰ÁƒRƒ“ƒ|[ƒlƒ“ƒg
+    // è¿½åŠ ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
     {
         std::cout << "[SceneTitle] TitleCube created" << std::endl;
     }
 
-    // ƒJƒƒ‰‰Šú‰»
+    // ã‚«ãƒ¡ãƒ©åˆæœŸåŒ–
     m_Camera.Init();
 
     m_nextScene = SCENE_NONE;
 
-    // ‰Šú‰»Š®—¹
+    // åˆæœŸåŒ–å®Œäº†
     m_isInitialized = true;
 
     std::cout << "[SceneTitle] Initialized successfully" << std::endl;
@@ -49,9 +54,9 @@ void SceneTitle::Init()
 void SceneTitle::UnInit()
 {
     std::cout << "[SceneTitle] UnInit" << std::endl;
-    DeleteObjectList();
+    m_GameObjectList->DeleteObjectList();
 
-    // ƒJƒƒ‰I—¹ˆ—
+    // ã‚«ãƒ¡ãƒ©çµ‚äº†å‡¦ç†
     m_Camera.Uninit();
 
     m_isInitialized = false;
@@ -59,10 +64,10 @@ void SceneTitle::UnInit()
 
 void SceneTitle::Update()
 {
-    // ƒJƒƒ‰XV
+    // ã‚«ãƒ¡ãƒ©æ›´æ–°
     m_Camera.Update();
 
-    // EnterƒL[‚ÅƒQ[ƒ€ŠJn
+    // Enterã‚­ãƒ¼ã§ã‚²ãƒ¼ãƒ é–‹å§‹
     if (IO_MANAGER.GetKeyDown(TYPE_OK) || IO_MANAGER.GetKeyDownKeyBord(VK_RETURN))
     {
         std::cout << "[SceneTitle] ENTER pressed - Starting Game" << std::endl;
@@ -70,21 +75,21 @@ void SceneTitle::Update()
         return;
     }
 
-    // GameObjectƒŠƒXƒg‚ğXV
-    UpdateObjectList();
+    // GameObjectãƒªã‚¹ãƒˆã‚’æ›´æ–°
+    m_GameObjectList->UpdateObjectList();
 }
 
 void SceneTitle::Draw()
 {
-    // 3D•`‰æ
+    // 3Dæç”»
     Draw(&m_Camera);
 
-    // UI‘w‚Ì‚İ•`‰æiƒJƒƒ‰•sg—pj
-    DrawLayer(&m_Camera, RenderLayer::UI);
+    // UIå±¤ã®ã¿æç”»ï¼ˆã‚«ãƒ¡ãƒ©ä¸ä½¿ç”¨ï¼‰
+    m_GameObjectList->DrawLayer(&m_Camera, RenderLayer::UI);
 }
 
 void SceneTitle::Draw(Camera* camera)
 {
-    // WORLD‘w‚ğ•`‰æiƒJƒƒ‰g—pj
-    DrawLayer(camera, RenderLayer::WORLD);
+    // WORLDå±¤ã‚’æç”»ï¼ˆã‚«ãƒ¡ãƒ©ä½¿ç”¨ï¼‰
+    m_GameObjectList->DrawLayer(camera, RenderLayer::WORLD);
 }

@@ -29,8 +29,13 @@ void SceneGame::Init()
     std::cout << "========================================" << std::endl;
     std::cout << "[SceneGame] Init START" << std::endl;
 
+    if (m_GameObjectList == nullptr)
+    {
+        // リストクラスのインスタンス作成
+        m_GameObjectList = std::make_unique<GameObjectList>();
+    }
     // 既存オブジェクトを削除
-    DeleteObjectList();
+    m_GameObjectList->DeleteObjectList();
 
     // ゲーム時間初期化
     m_GameTime = 0.0f;
@@ -38,7 +43,7 @@ void SceneGame::Init()
     using namespace DirectX::SimpleMath;
 
     // オブジェクトリスト作成
-    MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_GAME).c_str());
+    m_GameObjectList->MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_GAME).c_str());
 
     // 追加コンポーネント
     {
@@ -71,7 +76,7 @@ void SceneGame::Init()
 void SceneGame::UnInit()
 {
     std::cout << "[SceneGame] UnInit" << std::endl;
-    DeleteObjectList();
+    m_GameObjectList->DeleteObjectList();
 
     // カメラ終了処理
     m_Camera.Uninit();
@@ -107,7 +112,7 @@ void SceneGame::Update()
     }
 
     // GameObjectリストを更新（プレイヤー移動など）
-    UpdateObjectList();
+    m_GameObjectList->UpdateObjectList();
 }
 
 void SceneGame::Draw()
@@ -116,7 +121,7 @@ void SceneGame::Draw()
     Draw(&m_Camera);
 
     // UI層のみ描画（カメラ不使用）
-    DrawLayer(nullptr, RenderLayer::UI);
+    m_GameObjectList->DrawLayer(nullptr, RenderLayer::UI);
 
     // カーソルを最前面に描画
     CURSOR_MANAGER.Draw();
@@ -125,7 +130,7 @@ void SceneGame::Draw()
 void SceneGame::Draw(Camera* camera)
 {
     // WORLD層を描画（カメラ使用）
-    DrawLayer(camera, RenderLayer::WORLD);
+    m_GameObjectList->DrawLayer(camera, RenderLayer::WORLD);
 }
 
 // ===================================================================
@@ -134,8 +139,8 @@ void SceneGame::Draw(Camera* camera)
 void SceneGame::MakeButtons()
 {
     // UIAreaButtonsの範囲を取得
-    GameObject* buttonArea = FindGameObjectWithTag("UIArea");
-    for (auto& obj : m_GameObjects)
+    GameObject* buttonArea = m_GameObjectList->FindGameObjectWithTag("UIArea");
+    for (auto& obj : m_GameObjectList->GetGameObjects())
     {
         if (obj && obj->GetName() == "UIAreaButtons")
         {
@@ -167,7 +172,7 @@ void SceneGame::MakeButtons()
     // ---------------------------------------------------------------
     // 1行目: ButtonSub（横並び）
     // ---------------------------------------------------------------
-    std::vector<GameObject*> buttonSubs = FindGameObjectsWithTag("ButtonSub");
+    std::vector<GameObject*> buttonSubs = m_GameObjectList->FindGameObjectsWithTag("ButtonSub");
     int subCount = static_cast<int>(buttonSubs.size());
 
     if (subCount > 0)
@@ -194,7 +199,7 @@ void SceneGame::MakeButtons()
     std::vector<std::string> buttonNames = { "ButtonBuild", "ButtonMove" };
 
     // TagがButtonのオブジェクトから該当するものを取得
-    std::vector<GameObject*> buttons = FindGameObjectsWithTag("Button");
+    std::vector<GameObject*> buttons = m_GameObjectList->FindGameObjectsWithTag("Button");
     std::vector<GameObject*> targetButtons;
 
     for (const auto& name : buttonNames)

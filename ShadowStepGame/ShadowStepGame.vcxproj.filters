@@ -279,6 +279,9 @@
     <ClInclude Include="Framework\CursorManager.h">
       <Filter>Framework</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\GameObjectList.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\AABBCollider.cpp">
@@ -432,6 +435,12 @@
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Framework\CursorManager.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\MeshRendererComponent.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\GameObjectList.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
   </ItemGroup>

@@ -163,6 +163,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClInclude Include="Framework\EmptyRender.h" />
     <ClInclude Include="Framework\Game.h" />
     <ClInclude Include="Framework\GameObject.h" />
+    <ClInclude Include="Framework\GameObjectList.h" />
     <ClInclude Include="Framework\imgui\imconfig.h" />
     <ClInclude Include="Framework\imgui\imgui.h" />
     <ClInclude Include="Framework\imgui\imgui_impl_dx11.h" />
@@ -236,6 +237,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClCompile Include="Framework\DebugUI.cpp" />
     <ClCompile Include="Framework\download\tinyxml2.cpp" />
     <ClCompile Include="Framework\Game.cpp" />
+    <ClCompile Include="Framework\GameObjectList.cpp" />
     <ClCompile Include="Framework\imgui\imgui.cpp" />
     <ClCompile Include="Framework\imgui\imgui_demo.cpp" />
     <ClCompile Include="Framework\imgui\imgui_draw.cpp" />
@@ -247,6 +249,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClCompile Include="Framework\IOManager.cpp" />
     <ClCompile Include="Framework\LoadingScreen.cpp" />
     <ClCompile Include="Framework\main.cpp" />
+    <ClCompile Include="Framework\MeshRendererComponent.cpp" />
     <ClCompile Include="Framework\PhysicsManager.cpp" />
     <ClCompile Include="Framework\Renderer.cpp" />
     <ClCompile Include="Framework\ResourceManager.cpp" />

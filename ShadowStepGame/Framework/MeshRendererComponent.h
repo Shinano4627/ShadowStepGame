@@ -1,4 +1,4 @@
-// ===================================================================
+﻿// ===================================================================
 // MeshRendererComponent.h
 // GameObjectに描画機能を追加するコンポーネント（ResourceManager対応版）
 // ===================================================================
@@ -10,8 +10,14 @@
 #include "MeshRenderer.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include "XmlRW.h"
 #include <memory>
 #include <vector>
+
+// ===================================================================
+// 前方宣言
+// ===================================================================
+//struct AnimationData;
 
 // ===================================================================
 // MeshRendererComponent
@@ -45,7 +51,8 @@ private:
     // アニメーション
     std::string m_curAnimation;
     int m_Frame = 0;
-    
+    bool m_doAnim = true;   // アニメーションするか
+    int m_FlameSlowmotion = 1;   // フレームをおとしてスローモーション
     // 初期化済みフラグ
     bool m_Initialized = false;
 
@@ -66,25 +73,7 @@ public:
     // ===================================================================
     // 初期化
     // ===================================================================
-    void Init() override
-    {
-        // メッシュがセットされていればレンダラーを初期化
-        if (m_MeshHandle)
-        {
-            auto* mesh = m_MeshHandle.Get();
-            if (mesh)
-            {
-                // MeshRendererを初期化（頂点・インデックスバッファを作成）
-                m_Renderer.Init(*mesh);
-
-                // マテリアルを作成
-                CreateMaterials();
-
-                // 初期化済みフラグを立てる
-                m_Initialized = true;
-            }
-        }
-    }
+    void Init() override;
 
     // ===================================================================
     // メッシュ設定（shared_ptr版）
@@ -190,8 +179,8 @@ public:
     // ===================================================================
     // データ取得
     // ===================================================================
-    const std::string& GetModelPath() const { return m_ModelPath; }
-    const std::string& GetTexturePath() const { return m_TexturePath; }
+    const std::string& GetModelPath() const { return m_ModelPath; }		// モデルデータの格納パス
+    const std::string& GetTexturePath() const { return m_TexturePath; }	// テクスチャデータパス
 
     // ===================================================================
     // 更新処理
@@ -200,7 +189,8 @@ public:
     {
         auto* mesh = m_MeshHandle.Get();
         if (!mesh) return;
-        
+        if (!m_doAnim) return;
+
         m_Frame++;
         mesh->UpdateAnimation(m_curAnimation.c_str(), m_Frame);
     }
@@ -208,79 +198,7 @@ public:
     // ===================================================================
     // 描画処理
     // ===================================================================
-    void Draw(Camera* camera) override
-    {
-        // 初期化チェック
-        if (!m_Initialized || !m_MeshHandle || !m_ShaderHandle)
-        {
-            return;
-        }
-
-        auto* mesh = m_MeshHandle.Get();
-        auto* shader = m_ShaderHandle.Get();
-
-        if (!mesh || !shader)
-        {
-            return;
-        }
-
-        // カメラ設定（WORLD層のみ）
-        if (camera && GetRenderLayer() == RenderLayer::WORLD)
-        {
-            camera->SetCamera(0); // 3Dモード
-        }
-
-        // Transformからワールド行列を取得
-        Matrix worldMatrix = m_pOwner->GetTransform().GetWorldMatrix();
-        // GPUに設定
-        Renderer::SetWorldMatrix(&worldMatrix);
-
-        // シェーダー設定
-        shader->SetGPU();
-
-        // ボーン行列をGPUに設定
-        Renderer::ResetBoneMatrix();
-        const auto& boneMatrices = mesh->GetBoneMatrices();
-        if (boneMatrices.size() > 0)
-        {
-            Renderer::SetBoneMatrix(boneMatrices);
-        }  
-
-        // 描画前処理
-        m_Renderer.BeforeDraw();
-
-        // サブセットごとに描画
-        const auto& subsets = mesh->GetSubsets();
-        const auto& textureHandles = mesh->GetTextureHandles();
-
-        for (size_t i = 0; i < subsets.size(); i++)
-        {
-            const auto& subset = subsets[i];
-
-            // マテリアルをGPUに設定
-            if (subset.MaterialIdx < m_Materials.size())
-            {
-                m_Materials[subset.MaterialIdx]->SetGPU();
-            }
-
-            // テクスチャをGPUに設定
-            if (subset.MaterialIdx < textureHandles.size() && textureHandles[subset.MaterialIdx])
-            {
-                auto* texture = textureHandles[subset.MaterialIdx].Get();
-                if (texture)
-                {
-                    texture->SetGPU();
-                }
-            }
-
-            // サブセット描画
-            m_Renderer.DrawSubset(
-                subset.IndexNum,    // 描画するインデックス数
-                subset.IndexBase,   // インデックスバッファの開始位置
-                subset.VertexBase   // 頂点バッファの開始位置
-            );
-        }
-    }
+    void Draw(Camera* camera) override;
 
     // ===================================================================
     // 終了処理
@@ -305,6 +223,36 @@ public:
         m_Frame = 0;
         m_curAnimation = newAnimaiton;
     }
+
+    void SetDoAnimation(bool doAnim)
+    {
+        m_doAnim = doAnim;
+    }
+    void SetFlameSlowmotion(int rateSlowmotion) { m_FlameSlowmotion = rateSlowmotion; }
+    int GetFlameSlowmotion() const { return m_FlameSlowmotion; }
+
+    // ===================================================================
+    // 色設定
+    // ===================================================================
+    void SetColor(const DirectX::SimpleMath::Color& color)
+    {
+        m_Color = color;
+
+        // ※頂点カラーを更新が必要
+        //for (auto& v : m_Vertices)
+        //{
+        //    v.color = m_Color;
+        //}
+        //if (m_Initialized)
+        //{
+        //    m_VertexBuffer.Modify(m_Vertices);
+        //}
+    }
+
+    // ===================================================================
+    // 内部関数
+    // ===================================================================
+    void LoadModel(const std::vector<AnimationData>& animations = {});
 
 private:
     // ===================================================================

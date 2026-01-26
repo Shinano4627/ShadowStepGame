@@ -1,6 +1,6 @@
-// ===================================================================
+ï»¿// ===================================================================
 // SceneDebug.cpp
-// ƒfƒoƒbƒO—pƒV[ƒ“À‘•
+// ãƒ‡ãƒãƒƒã‚°ç”¨ã‚·ãƒ¼ãƒ³å®Ÿè£…
 // ===================================================================
 #include "SceneDebug.h"
 
@@ -15,24 +15,30 @@ void SceneDebug::Init()
     std::cout << "========================================" << std::endl;
     std::cout << "[SceneDebug] Init START" << std::endl;
 
-    // Šù‘¶ƒIƒuƒWƒFƒNƒg‚ğíœ
-    DeleteObjectList();
+    if (m_GameObjectList == nullptr)
+    {
+        // ãƒªã‚¹ãƒˆã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆ
+        m_GameObjectList = std::make_unique<GameObjectList>();
+    }
+    // æ—¢å­˜ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤
+    m_GameObjectList->DeleteObjectList();
 
     using namespace DirectX::SimpleMath;
 
-    // ƒIƒuƒWƒFƒNƒgƒŠƒXƒgì¬
-    MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_TITLE).c_str());
+    // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒªã‚¹ãƒˆä½œæˆ
+    m_GameObjectList->MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_TITLE).c_str());
 
-    // ƒJƒƒ‰‰Šú‰»
+    // ã‚«ãƒ¡ãƒ©åˆæœŸåŒ–
     m_Camera.Init();
 
-    // ‚Æ‚è‚ ‚¦‚¸ID‚ªˆê”Ô¬‚³‚¢ƒIƒuƒWƒFƒNƒg‚ğƒAƒNƒeƒBƒu‚É‚·‚é
-    m_activeObjectDebug = m_GameObjects[0].get();
+    // ã¨ã‚Šã‚ãˆãšIDãŒä¸€ç•ªå°ã•ã„ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹
+    m_activeObjectDebug = m_GameObjectList->FindGameObjectWithIndex(0);
+    Renderer::DebugUIInit();
     DebugUIInit();
 
     m_nextScene = SCENE_NONE;
 
-    // ‰Šú‰»Š®—¹
+    // åˆæœŸåŒ–å®Œäº†
     m_isInitialized = true;
 
     std::cout << "[SceneDebug] Initialized successfully" << std::endl;
@@ -48,11 +54,11 @@ void SceneDebug::Init()
 void SceneDebug::UnInit()
 {
     std::cout << "[SceneDebug] UnInit" << std::endl;
-    DeleteObjectList();
+    m_GameObjectList->DeleteObjectList();
 
     DebugUIUnInit();
 
-    // ƒJƒƒ‰I—¹ˆ—
+    // ã‚«ãƒ¡ãƒ©çµ‚äº†å‡¦ç†
     m_Camera.Uninit();
 
     m_isInitialized = false;
@@ -60,18 +66,18 @@ void SceneDebug::UnInit()
 
 void SceneDebug::Update()
 {
-    // ƒJƒƒ‰XV
+    // ã‚«ãƒ¡ãƒ©æ›´æ–°
     m_Camera.Update();
 
-    // BackƒL[‚Åƒ^ƒCƒgƒ‹‚É–ß‚é
+    // Backã‚­ãƒ¼ã§ã‚¿ã‚¤ãƒˆãƒ«ã«æˆ»ã‚‹
     if (IO_MANAGER.GetKeyDownKeyBord(VK_BACK))
     {
         ExitDebug();
         return;
     }
 
-    // Ctrl{SƒL[‚Åxmlƒtƒ@ƒCƒ‹‚ğ•Û‘¶
-    if (IO_MANAGER.GetKeyPressKeyBord(VK_CONTROL)&& IO_MANAGER.GetKeyDownKeyBord(VK_S))
+    // Ctrlï¼‹Sã‚­ãƒ¼ã§xmlãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜
+    if (IO_MANAGER.GetKeyPressKeyBord(VK_CONTROL) && IO_MANAGER.GetKeyDownKeyBord(VK_S))
     {
         SaveData();
     }
@@ -81,55 +87,55 @@ void SceneDebug::Update()
         ReLoadObject();
     }
 
-    // GameObjectƒŠƒXƒg‚ğXV
-    UpdateObjectList();
+    // GameObjectãƒªã‚¹ãƒˆã‚’æ›´æ–°
+    m_GameObjectList->UpdateObjectList();
 }
 
 void SceneDebug::Draw()
 {
-    // 3D•`‰æ
-    Draw(&m_Camera);
+    // UIå±¤ã®ã¿æç”»ï¼ˆã‚«ãƒ¡ãƒ©ä¸ä½¿ç”¨ï¼‰
+    m_GameObjectList->DrawLayer(&m_Camera, RenderLayer::UI);
 
-    // UI‘w‚Ì‚İ•`‰æiƒJƒƒ‰•sg—pj
-    DrawLayer(nullptr, RenderLayer::UI);
+    // 3Dæç”»
+    Draw(&m_Camera);
 }
 
 void SceneDebug::Draw(Camera* camera)
 {
-    // WORLD‘w‚ğ•`‰æiƒJƒƒ‰g—pj
-    DrawLayer(camera, RenderLayer::WORLD);
+    // WORLDå±¤ã‚’æç”»ï¼ˆã‚«ãƒ¡ãƒ©ä½¿ç”¨ï¼‰
+    m_GameObjectList->DrawLayer(camera, RenderLayer::WORLD);
 
     DebugUIRender();
 }
 
 /// <summary>
-/// ƒIƒuƒWƒFƒNƒg‚ÌÄ“Ç‚İ‚İ
+/// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å†èª­ã¿è¾¼ã¿
 /// </summary>
 void SceneDebug::ReLoadObject()
 {
-    // Šù‘¶ƒIƒuƒWƒFƒNƒg‚ğíœ
-    DeleteObjectList();
+    // æ—¢å­˜ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤
+    m_GameObjectList->DeleteObjectList();
 
-    // ƒIƒuƒWƒFƒNƒgƒŠƒXƒgì¬
-    MakeObjectList(SCENE_MANAGER.GetSceneName((SCENE)m_curScene).c_str());
+    // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒªã‚¹ãƒˆä½œæˆ
+    m_GameObjectList->MakeObjectList(SCENE_MANAGER.GetSceneName((SCENE)m_curScene).c_str());
 
-    // ‚Æ‚è‚ ‚¦‚¸ID‚ªˆê”Ô¬‚³‚¢ƒIƒuƒWƒFƒNƒg‚ğƒAƒNƒeƒBƒu‚É‚·‚é
-    m_activeObjectDebug = m_GameObjects[0].get();
+    // ã¨ã‚Šã‚ãˆãšIDãŒä¸€ç•ªå°ã•ã„ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹
+    m_activeObjectDebug = m_GameObjectList->FindGameObjectWithIndex(0);;
 
-    // ì¬Š®—¹‚ğ‚à‚Á‚ÄXV‚·‚é
-    m_preScene = m_curScene;    
+    // ä½œæˆå®Œäº†ã‚’ã‚‚ã£ã¦æ›´æ–°ã™ã‚‹
+    m_preScene = m_curScene;
 }
 
 // ===================================================================
-// Transform‚Ì’²®
+// Transformã®èª¿æ•´
 // ===================================================================
 void SceneDebug::DebugUI()
 {
-	ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_Once);
-	ImGui::Begin("Transform", nullptr, 0);
+    ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_Once);
+    ImGui::Begin("Transform", nullptr, 0);
 
-	{
-        // ƒV[ƒ“‚ÌƒRƒ“ƒ{ƒ{ƒbƒNƒX‚Ìì¬
+    {
+        // ã‚·ãƒ¼ãƒ³ã®ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ä½œæˆ
         if (ImGui::BeginCombo("Scene", SCENE_MANAGER.GetSceneNameAll()[m_curScene].c_str()))
         {
             for (int i = 0; i < SCENE_MANAGER.GetSceneNameAll().size(); i++)
@@ -137,7 +143,7 @@ void SceneDebug::DebugUI()
                 bool isSelected = (m_curScene == i);
                 if (ImGui::Selectable(SCENE_MANAGER.GetSceneNameAll()[i].c_str(), isSelected))
                 {
-                    m_curScene = i; // ‘I‘ğ•ÏX
+                    m_curScene = i; // é¸æŠå¤‰æ›´
                 }
                 if (isSelected)
                 {
@@ -148,13 +154,13 @@ void SceneDebug::DebugUI()
         }
 
         std::vector<std::string> objectNameList;
-        for (auto& gameObject : m_GameObjects)
+        for (auto& gameObject : m_GameObjectList->GetGameObjects())
         {
             objectNameList.push_back(gameObject->GetName());
         }
         int curID = m_activeObjectDebug->GetID();
 
-        // ƒIƒuƒWƒFƒNƒg‚ÌƒRƒ“ƒ{ƒ{ƒbƒNƒX‚Ìì¬
+        // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ä½œæˆ
         if (ImGui::BeginCombo("Object", objectNameList[curID].c_str()))
         {
             for (int i = 0; i < objectNameList.size(); i++)
@@ -162,8 +168,8 @@ void SceneDebug::DebugUI()
                 bool isSelected = (curID == i);
                 if (ImGui::Selectable(objectNameList[i].c_str(), isSelected))
                 {
-                    curID = i; // ‘I‘ğ•ÏX
-                    m_activeObjectDebug = m_GameObjects[curID].get();
+                    curID = i; // é¸æŠå¤‰æ›´
+                    m_activeObjectDebug = m_GameObjectList->FindGameObjectWithIndex(curID);
                 }
                 if (isSelected)
                 {
@@ -175,7 +181,7 @@ void SceneDebug::DebugUI()
 
         ImGui::Separator();
 
-        // ƒgƒ‰ƒ“ƒXƒtƒH[ƒ€ƒf[ƒ^
+        // ãƒˆãƒ©ãƒ³ã‚¹ãƒ•ã‚©ãƒ¼ãƒ ãƒ‡ãƒ¼ã‚¿
         {
             float position[3] =
             {
@@ -200,53 +206,53 @@ void SceneDebug::DebugUI()
             ImGui::SliderFloat3("Rotation", rotation, 0.0f, 100.0f);
             ImGui::SliderFloat3("Scale", scale, 0.0f, 100.0f);
 
-            // •ÏX‚µ‚½’l‚ğƒZƒbƒg‚·‚é
+            // å¤‰æ›´ã—ãŸå€¤ã‚’ã‚»ãƒƒãƒˆã™ã‚‹
             m_activeObjectDebug->GetTransform().SetPosition(Vector3(position[0], position[1], position[2]));
             m_activeObjectDebug->GetTransform().SetRotation(Vector3(rotation[0], rotation[1], rotation[2]));
             m_activeObjectDebug->GetTransform().SetScale(Vector3(scale[0], scale[1], scale[2]));
         }
 
-        // ƒ{ƒ^ƒ“
+        // ãƒœã‚¿ãƒ³
         if (ImGui::Button("Save")) {
             SaveData();
         }
         if (ImGui::Button("Exit")) {
             ExitDebug();
         }
-	}
+    }
 
-	// ƒJƒƒ‰‚ÌˆÊ’u‚ğ‹ÉÀ•W‚©‚çƒfƒJƒ‹ƒgÀ•W‚É•ÏŠ·
-	ImGui::End();
+    // ã‚«ãƒ¡ãƒ©ã®ä½ç½®ã‚’æ¥µåº§æ¨™ã‹ã‚‰ãƒ‡ã‚«ãƒ«ãƒˆåº§æ¨™ã«å¤‰æ›
+    ImGui::End();
 }
 
 void SceneDebug::DebugUIInit()
 {
-	DebugUI::RedistDebugFunction(0, std::bind(&SceneDebug::DebugUI, this));
+    DebugUI::RedistDebugFunction(0, std::bind(&SceneDebug::DebugUI, this));
 }
 
 void SceneDebug::DebugUIUnInit()
 {
-	DebugUI::DisposeUI();
+    DebugUI::DisposeUI();
 }
 
 void SceneDebug::DebugUIRender()
 {
-	// DebugUI‚Ì•`‰æ
-	DebugUI::Render();
+    // DebugUIã®æç”»
+    DebugUI::Render();
 }
 
 void SceneDebug::SaveData()
 {
-    int res = MessageBoxA(NULL, "•Û‘¶‚µ‚Ü‚·‚©H", "Šm”F", MB_OKCANCEL);
+    int res = MessageBoxA(NULL, "ä¿å­˜ã—ã¾ã™ã‹ï¼Ÿ", "ç¢ºèª", MB_OKCANCEL);
     if (res == IDOK) {
         std::cout << "[SceneDebug] Save pressed..." << std::endl;
-        SaveObjectData(SCENE_MANAGER.GetSceneNameAll()[m_curScene].c_str());
+        m_GameObjectList->SaveObjectData(SCENE_MANAGER.GetSceneNameAll()[m_curScene].c_str());
     }
 }
 
 void SceneDebug::ExitDebug()
 {
-    int res = MessageBoxA(NULL, "ƒfƒoƒbƒOƒ‚[ƒh‚ğI—¹‚µ‚Ü‚·‚©H", "Šm”F", MB_OKCANCEL);
+    int res = MessageBoxA(NULL, "ãƒ‡ãƒãƒƒã‚°ãƒ¢ãƒ¼ãƒ‰ã‚’çµ‚äº†ã—ã¾ã™ã‹ï¼Ÿ", "ç¢ºèª", MB_OKCANCEL);
     if (res == IDOK) {
         m_nextScene = SCENE_TITLE;
         SaveData();
