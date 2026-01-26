@@ -140,15 +140,7 @@ void SceneGame::Draw(Camera* camera)
 void SceneGame::MakeButtons()
 {
     // UIAreaButtonsの範囲を取得
-    GameObject* buttonArea = FindGameObjectWithTag("UIArea");
-    for (auto& obj : m_GameObjects)
-    {
-        if (obj && obj->GetName() == "UIAreaButtons")
-        {
-            buttonArea = obj.get();
-            break;
-        }
-    }
+    GameObject* buttonArea = FindGameObjectWithName("UIAreaButtons");
 
     if (!buttonArea)
     {
@@ -255,9 +247,56 @@ void SceneGame::MakeButtons()
 
 void SceneGame::MakeTimeLine()
 {
+    // UIAreaTimelineを名前で取得
+    GameObject* timelineArea = FindGameObjectWithName("UIAreaTimeline");
+    if (!timelineArea) return;
 
+    // WindowTemplateからテクスチャパスを取得
+    GameObject* windowTemplate = FindGameObjectWithTag("WindowTemplate");
+    if (!windowTemplate) return;
+    auto* templateTex = windowTemplate->GetMeshComponent<Texture2D>();
+    if (!templateTex) return;
+
+    // WindowTemplateを非表示にする
+    windowTemplate->SetActive(false);
+
+    // エリアの位置・スケールを取得
+    Vector3 areaPos = timelineArea->GetTransform().GetPosition();
+    Vector3 areaScale = timelineArea->GetTransform().GetScale();
+
+    // タイムラインウィンドウを作成
+    auto windowObj = std::make_unique<GameObject>(areaPos, Vector3(0, 0, 0), areaScale);
+    windowObj->SetID(m_lastID++);
+    windowObj->SetName("WindowTimeline");
+    windowObj->SetTag("Window");
+    windowObj->AddMeshComponent<Texture2D>(templateTex->GetTexturePath(), Color(1, 1, 1, 1));
+
+    m_GameObjects.push_back(std::move(windowObj));
+    std::cout << "[SceneGame] Timeline window created" << std::endl;
 }
 void SceneGame::MakeStatus()
 {
+    // UIAreaStatusを名前で取得
+    GameObject* statusArea = FindGameObjectWithName("UIAreaStatus");
+    if (!statusArea) return;
 
+    // WindowTemplateからテクスチャパスを取得
+    GameObject* windowTemplate = FindGameObjectWithTag("WindowTemplate");
+    if (!windowTemplate) return;
+    auto* templateTex = windowTemplate->GetMeshComponent<Texture2D>();
+    if (!templateTex) return;
+
+    // エリアの位置・スケールを取得
+    Vector3 areaPos = statusArea->GetTransform().GetPosition();
+    Vector3 areaScale = statusArea->GetTransform().GetScale();
+
+    // ステータスウィンドウを作成
+    auto windowObj = std::make_unique<GameObject>(areaPos, Vector3(0, 0, 0), areaScale);
+    windowObj->SetID(m_lastID++);
+    windowObj->SetName("WindowStatus");
+    windowObj->SetTag("Window");
+    windowObj->AddMeshComponent<Texture2D>(templateTex->GetTexturePath(), Color(1, 1, 1, 1));
+
+    m_GameObjects.push_back(std::move(windowObj));
+    std::cout << "[SceneGame] Status window created" << std::endl;
 }

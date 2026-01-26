@@ -80,6 +80,8 @@ protected:
 	// ===================================================================
 	// GameObject　タグ検索
 	// ===================================================================
+	// GameObjectを名前で検索（最初の一つのみ）
+	GameObject* FindGameObjectWithName(const std::string& name);
 	// GameObjectをタグで検索（最初の一つのみ）
 	GameObject* FindGameObjectWithTag(const std::string& tag);
 	// GameObjectをタグで検索（すべて）

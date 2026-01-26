@@ -294,6 +294,21 @@ void SceneBase::DrawAllLayers(Camera* camera)
 }
 
 // ===================================================================
+// GameObjectを名前で検索（最初の一つのみ）
+// ===================================================================
+GameObject* SceneBase::FindGameObjectWithName(const std::string& name)
+{
+	for (auto& obj : m_GameObjects)
+	{
+		if (obj && obj->GetName() == name)
+		{
+			return obj.get();
+		}
+	}
+	return nullptr;
+}
+
+// ===================================================================
 // GameObjectをタグで検索（最初の一つのみ）
 // ===================================================================
 GameObject* SceneBase::FindGameObjectWithTag(const std::string& tag)
