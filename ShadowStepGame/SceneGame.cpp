@@ -21,6 +21,7 @@ using namespace std;
 // コンポーネント
 #include "PlayerMoverComponent.h"
 #include "Texture2D.h"
+#include "ButtonComponent.h"
 
 #include <iostream>
 
@@ -186,6 +187,8 @@ void SceneGame::MakeUIButtons()
             // UVを設定
             auto* tex = buttonSubs[i]->GetMeshComponent<Texture2D>();
             tex->SetUV(1, 1, 2, 1);
+            // ボタンコンポーネント追加
+            buttonSubs[i]->AddComponent<ButtonComponent>(buttonSubs[i]->GetTransform().GetScale());
         }
     }
 
@@ -211,10 +214,10 @@ void SceneGame::MakeUIButtons()
         }
     }
 
-    // 不要なButtonは非アクティブに
     for (auto* btn : buttons)
     {
         bool isTarget = false;
+
         for (auto* target : targetButtons)
         {
             if (btn == target)
@@ -225,6 +228,7 @@ void SceneGame::MakeUIButtons()
         }
         if (!isTarget)
         {
+            // 不要なButtonは非アクティブに
             btn->SetActive(false);
         }
     }
@@ -244,6 +248,9 @@ void SceneGame::MakeUIButtons()
         // UVを設定
         auto* tex = targetButtons[i]->GetMeshComponent<Texture2D>();
         tex->SetUV(1, 1, 2, 1);
+
+        // ボタンコンポーネント追加
+        targetButtons[i]->AddComponent<ButtonComponent>(targetButtons[i]->GetTransform().GetScale());
     }
 
     std::cout << "[SceneGame] Buttons arranged in UIAreaButtons" << std::endl;
