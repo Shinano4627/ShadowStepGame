@@ -28,7 +28,8 @@ public:
 
 private:
     // ボタン整列処理
-    void MakeButtons();
-    void MakeTimeLine();
-    void MakeStatus();
+    void MakeUIButtons();
+    void MakeUITimeLine();
+    void MakeUIStatus();
+    void MakeUISunRoute();
 };

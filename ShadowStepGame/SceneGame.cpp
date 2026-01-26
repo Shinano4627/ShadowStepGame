@@ -43,13 +43,16 @@ void SceneGame::Init()
     // 追加コンポーネント
     {
         // ボタン整列処理
-        MakeButtons();
+        MakeUIButtons();
 
         // タイムラインの表示
-        MakeTimeLine();
+        MakeUITimeLine();
 
         // ステータスの表示
-        MakeStatus();
+        MakeUIStatus();
+
+        // 太陽のルート表示
+        MakeUISunRoute();
 
         std::cout << "[SceneGame] Player created" << std::endl;
     }
@@ -138,7 +141,7 @@ void SceneGame::Draw(Camera* camera)
 // ===================================================================
 // ボタン整列処理
 // ===================================================================
-void SceneGame::MakeButtons()
+void SceneGame::MakeUIButtons()
 {
     // UIAreaButtonsの範囲を取得
     GameObject* buttonArea = FindGameObjectWithName("UIAreaButtons");
@@ -246,7 +249,7 @@ void SceneGame::MakeButtons()
     std::cout << "[SceneGame] Buttons arranged in UIAreaButtons" << std::endl;
 }
 
-void SceneGame::MakeTimeLine()
+void SceneGame::MakeUITimeLine()
 {
     // UIAreaTimelineを名前で取得
     GameObject* timelineArea = FindGameObjectWithName("UIAreaTimeline");
@@ -276,7 +279,7 @@ void SceneGame::MakeTimeLine()
     std::cout << "[SceneGame] Timeline window created" << std::endl;
 }
 
-void SceneGame::MakeStatus()
+void SceneGame::MakeUIStatus()
 {
     // UIAreaStatusを名前で取得
     GameObject* statusArea = FindGameObjectWithName("UIAreaStatus");
@@ -438,4 +441,31 @@ void SceneGame::MakeStatus()
     }
 
     std::cout << "[SceneGame] Status UI elements arranged" << std::endl;
+}
+
+void SceneGame::MakeUISunRoute()
+{
+    // UIAreaStatusを名前で取得
+    GameObject* Area = FindGameObjectWithName("UIAreaSunRoute");
+    if (!Area) return;
+
+    // WindowTemplateからテクスチャパスを取得
+    GameObject* windowTemplate = FindGameObjectWithTag("WindowTemplate");
+    if (!windowTemplate) return;
+    auto* templateTex = windowTemplate->GetMeshComponent<Texture2D>();
+    if (!templateTex) return;
+
+    // エリアの位置・スケールを取得
+    Vector3 areaPos = Area->GetTransform().GetPosition();
+    Vector3 areaScale = Area->GetTransform().GetScale();
+
+    // ステータスウィンドウを作成
+    auto windowObj = std::make_unique<GameObject>(areaPos, Vector3(0, 0, 0), areaScale);
+    windowObj->SetID(m_lastID++);
+    windowObj->SetName("WindowSunRoute");
+    windowObj->SetTag("Window");
+    windowObj->AddMeshComponent<Texture2D>(templateTex->GetTexturePath(), Color(1, 1, 1, 1));
+
+    m_GameObjects.push_back(std::move(windowObj));
+    std::cout << "[SceneGame] SunRoute window created" << std::endl;
 }
