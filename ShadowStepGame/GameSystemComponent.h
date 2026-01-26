@@ -1,42 +1,43 @@
-//=======================================
+ï»¿//=======================================
 // GameSystemComponent.h
-// Eƒ^[ƒ“is
-// Eƒ^ƒCƒ€ƒ‰ƒCƒ“ŠÇ—
-// EŒ»İ‘€ì‰Â”\‚Èƒ†ƒjƒbƒg‚ÌŒˆ’è
-// EŸ”s”»’è
-// ‚È‚Ç‚ğŠÇ—‚·‚éComponentƒNƒ‰ƒX
-// ˆ—‚ÍŠeSystem‚ÉˆÚ÷‚·‚é—\’è
+// ãƒ»ã‚¿ãƒ¼ãƒ³é€²è¡Œ
+// ãƒ»ã‚¿ã‚¤ãƒ ãƒ©ã‚¤ãƒ³ç®¡ç†
+// ãƒ»ç¾åœ¨æ“ä½œå¯èƒ½ãªãƒ¦ãƒ‹ãƒƒãƒˆã®æ±ºå®š
+// ãƒ»å‹æ•—åˆ¤å®š
+// ãªã©ã‚’ç®¡ç†ã™ã‚‹Componentã‚¯ãƒ©ã‚¹
+// å‡¦ç†ã¯å„Systemã«ç§»è­²ã™ã‚‹äºˆå®š
 //=======================================
 #pragma once
 #include "Component.h"
 #include "UnitCommon.h"
 
-// ŠeƒVƒXƒeƒ€‚Ì‘O•ûéŒ¾
+// å„ã‚·ã‚¹ãƒ†ãƒ ã®å‰æ–¹å®£è¨€
 class MapSystemComponent;
 class UnitSystemComponent;
 class SunManageComponent;
 class ShadowSystemComponent;
 class Unit;
+class UISystemComponent;
 
 class GameSystemComponent : public Component
 {
 public:
-	// ƒQ[ƒ€isŠÇ—State
+	// ã‚²ãƒ¼ãƒ é€²è¡Œç®¡ç†State
 	enum class BattleState
 	{
-		Init,	// ‰Šú‰»’¼Œã
-		TurnStart,	// ƒ^[ƒ“ŠJniƒ^ƒCƒ€ƒ‰ƒCƒ“ì¬j
-		UnitSelect,	// Ÿ‚É“®‚­ƒ†ƒjƒbƒg‚ğŒˆ’è
-		UnitActionSelect,	// ƒ†ƒjƒbƒg‚Ì‘€ì“ü—Í
-		UnitActing,	// ƒ†ƒjƒbƒgs“®Às’†
-		UnitEnd,	// ƒ†ƒjƒbƒgs“®I—¹ˆ—
-		SunMove,	// ‘¾—zˆÚ“®•‰eXV
-		TurnEnd,	// ‘Sƒ†ƒjƒbƒgs“®I—¹
-		Judge,	// Ÿ”s”»’è
-		End,	// I—¹
+		Init,	// åˆæœŸåŒ–ç›´å¾Œ
+		TurnStart,	// ã‚¿ãƒ¼ãƒ³é–‹å§‹ï¼ˆã‚¿ã‚¤ãƒ ãƒ©ã‚¤ãƒ³ä½œæˆï¼‰
+		UnitSelect,	// æ¬¡ã«å‹•ããƒ¦ãƒ‹ãƒƒãƒˆã‚’æ±ºå®š
+		UnitActionSelect,	// ãƒ¦ãƒ‹ãƒƒãƒˆã®æ“ä½œå…¥åŠ›
+		UnitActing,	// ãƒ¦ãƒ‹ãƒƒãƒˆè¡Œå‹•å®Ÿè¡Œä¸­
+		UnitEnd,	// ãƒ¦ãƒ‹ãƒƒãƒˆè¡Œå‹•çµ‚äº†å‡¦ç†
+		SunMove,	// å¤ªé™½ç§»å‹•ï¼†å½±æ›´æ–°
+		TurnEnd,	// å…¨ãƒ¦ãƒ‹ãƒƒãƒˆè¡Œå‹•çµ‚äº†
+		Judge,	// å‹æ•—åˆ¤å®š
+		End,	// çµ‚äº†
 	};
 
-	// ƒ^ƒCƒ€ƒ‰ƒCƒ“
+	// ã‚¿ã‚¤ãƒ ãƒ©ã‚¤ãƒ³
 	enum class TimelineActorType
 	{
 		Player,
@@ -48,27 +49,27 @@ public:
 	{
 		UnitStatus* unit = nullptr;
 		TimelineActorType actorType;
-		int speed;	// s“®‡Œˆ’è—p
+		int speed;	// è¡Œå‹•é †æ±ºå®šç”¨
 	};
 
 public:
 	//=======================================
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	//=======================================
 	GameSystemComponent() = default;
 
 	//=======================================
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	//=======================================
 	~GameSystemComponent() = default;
 
 	//=======================================
-	// ‰Šú‰»ˆ—
+	// åˆæœŸåŒ–å‡¦ç†
 	//=======================================
 	void Init() override;
 
 	//=======================================
-	// XVˆ—
+	// æ›´æ–°å‡¦ç†
 	//=======================================
 	void Update() override;
 
@@ -76,9 +77,9 @@ public:
 	BattleState GetBattleState() { return m_State; }
 private:
 	//=======================================
-	// ó‘ÔŠÇ—ŠÖ”
+	// çŠ¶æ…‹ç®¡ç†é–¢æ•°
 	//=======================================
-	void ChangeState(BattleState next);	// ˆø”‚Éisó‘Ô•ÏX
+	void ChangeState(BattleState next);	// å¼•æ•°ã«é€²è¡ŒçŠ¶æ…‹å¤‰æ›´
 	void UpdateState();
 
 	void UpdateInit();
@@ -93,51 +94,53 @@ private:
 	void UpdateEnd();
 
 	//=======================================
-	// ƒ^ƒCƒ€ƒ‰ƒCƒ“ŠÇ—ŠÖ”
+	// ã‚¿ã‚¤ãƒ ãƒ©ã‚¤ãƒ³ç®¡ç†é–¢æ•°
 	//=======================================
 
-	// ƒ†ƒjƒbƒgƒVƒXƒeƒ€‚©‚ç¶‘¶ƒ†ƒjƒbƒg‚ğæ“¾
-	// ‘¬‚³‡‚É•À‚×AÅŒã‚É‘¾—z‚ğ’Ç‰Á
+	// ãƒ¦ãƒ‹ãƒƒãƒˆã‚·ã‚¹ãƒ†ãƒ ã‹ã‚‰ç”Ÿå­˜ãƒ¦ãƒ‹ãƒƒãƒˆã‚’å–å¾—
+	// é€Ÿã•é †ã«ä¸¦ã¹ã€æœ€å¾Œã«å¤ªé™½ã‚’è¿½åŠ 
 	void BuildTimeline();
 
-	// Œ»İ‚Ìƒ^ƒCƒ€ƒ‰ƒCƒ“æ“¾
+	// ç¾åœ¨ã®ã‚¿ã‚¤ãƒ ãƒ©ã‚¤ãƒ³å–å¾—
 	Timeline* GetCurrentTimeline();
 
-	// Ÿ‚Ìƒ^ƒCƒ€ƒ‰ƒCƒ“‚Ö
+	// æ¬¡ã®ã‚¿ã‚¤ãƒ ãƒ©ã‚¤ãƒ³ã¸
 	void NextTimeline();
 
 	//=======================================
-	// Ÿ”sƒWƒƒƒbƒWiUnitSystem‚É–â‚¢‡‚í‚¹‚éŒ`‚Ì—\’èj
+	// å‹æ•—ã‚¸ãƒ£ãƒƒã‚¸ï¼ˆUnitSystemã«å•ã„åˆã‚ã›ã‚‹å½¢ã®äºˆå®šï¼‰
 	//=======================================
 	bool IsPlayerAllDead() const;
 	bool IsEnemyAllDead() const;
 
 private:
 	//=======================================
-	// ƒVƒXƒeƒ€ƒRƒ“ƒ|[ƒlƒ“ƒgQÆ
+	// ã‚·ã‚¹ãƒ†ãƒ ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆå‚ç…§
 	//=======================================
-	// Tag "MapSystem" ‚©‚çæ“¾
+	// Tag "MapSystem" ã‹ã‚‰å–å¾—
 	MapSystemComponent* m_mapSystem = nullptr;
 
-	// Tag "UnitSystem" ‚©‚çæ“¾
+	// Tag "UnitSystem" ã‹ã‚‰å–å¾—
 	UnitSystemComponent* m_unitSystem = nullptr;
 
-	// Tag "SunSystem" ‚©‚çæ“¾
+	// Tag "SunSystem" ã‹ã‚‰å–å¾—
 	SunManageComponent* m_sunSystem = nullptr;
 
-	// Tag "ShadowSystem" ‚©‚çæ“¾
+	// Tag "ShadowSystem" ã‹ã‚‰å–å¾—
 	ShadowSystemComponent* m_shadowSystem = nullptr;
 
+	// Tag "UISystem" ã‹ã‚‰å–å¾—
+	UISystemComponent* m_uISystem = nullptr;
 
 	//=======================================
-	// ó‘Ôƒf[ƒ^
+	// çŠ¶æ…‹ãƒ‡ãƒ¼ã‚¿
 	//=======================================
-	BattleState m_State;	// ¡‚ÌBattleState
-	BattleState m_beforeState;	// ‘O‚ÌBattleState
+	BattleState m_State;	// ä»Šã®BattleState
+	BattleState m_beforeState;	// å‰ã®BattleState
 	int m_TurnCount;
 
 	//=======================================
-	// ƒ^ƒCƒ€ƒ‰ƒCƒ“ƒf[ƒ^
+	// ã‚¿ã‚¤ãƒ ãƒ©ã‚¤ãƒ³ãƒ‡ãƒ¼ã‚¿
 	//=======================================
 	std::vector<Timeline> m_Timeline;
 	int m_TimelineIndex;
@@ -145,7 +148,7 @@ private:
 	UnitStatus* m_CurrentUnit = nullptr;
 
 	//=======================================
-	// ƒfƒoƒbƒO—p
+	// ãƒ‡ãƒãƒƒã‚°ç”¨
 	//=======================================
 	static const char* BattleStateToString(BattleState state);
 

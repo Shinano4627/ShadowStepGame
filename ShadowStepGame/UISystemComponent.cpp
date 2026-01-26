@@ -15,6 +15,14 @@ void UISystemComponent::SetUIObject(std::unique_ptr<GameObjectList>& objectList)
     MakeUITimeLine(objectList);
     MakeUIStatus(objectList);
     MakeUISunRoute(objectList);
+
+    // 一旦タイムライン用オブジェクトを非表示に
+    std::vector<GameObject*> timelineIcons = objectList->FindGameObjectsWithTag("UITimeline");
+    for (auto icon : timelineIcons)
+    {
+        icon->SetActive(false);
+    }
+        
 }
 
 // ===================================================================

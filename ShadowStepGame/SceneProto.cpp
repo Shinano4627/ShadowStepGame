@@ -5,6 +5,7 @@
 #include "SceneProto.h"
 #include "SceneManager.h"
 #include "IOManager.h"
+#include "CursorManager.h"
 #include <iostream>
 
 // Components
@@ -16,6 +17,7 @@
 #include "SunManageComponent.h"
 #include "ShadowSystemComponent.h"
 #include "UnitSystemComponent.h"
+#include "UISystemComponent.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -51,12 +53,16 @@ void SceneProto::Init()
         // シャドウシステム
         auto* shadowSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<ShadowSystemComponent>();
         
-
         // ユニットシステム
         auto* unitSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<UnitSystemComponent>();
 
+        // UIシステム
+        auto* uiSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<UISystemComponent>();
+        uiSystem->SetUIObject(m_GameObjectList);     // UI作成
+
         // ゲームシステム
         auto* gameSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<GameSystemComponent>();
+
 
         // カメラ
         auto* orbitCamera = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<OrbitCameraComponent>(&m_Camera);
@@ -106,6 +112,9 @@ void SceneProto::Update()
     // 1. カメラ更新
     m_Camera.Update();
 
+    // ゲーム用カーソルアップデート
+    CURSOR_MANAGER.Update();
+
     // 2. 全GameObject更新
     m_GameObjectList->UpdateObjectList();
 
@@ -120,6 +129,10 @@ void SceneProto::Draw()
 
     // Ui
     m_GameObjectList->DrawLayer(&m_Camera, RenderLayer::UI);
+    m_GameObjectList->DrawLayer(nullptr, RenderLayer::UI_2);
+
+    // カーソルを最前面に描画
+    CURSOR_MANAGER.Draw();
 }
 
 void SceneProto::Draw(Camera* camera)

@@ -21,7 +21,6 @@ using namespace std;
 // コンポーネント
 #include "PlayerMoverComponent.h"
 #include "Texture2D.h"
-#include "UISystemComponent.h"
 
 #include <iostream>
 
