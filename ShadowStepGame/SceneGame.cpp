@@ -1,6 +1,6 @@
-// ===================================================================
+ï»¿// ===================================================================
 // SceneGame.cpp
-// ƒQ[ƒ€ƒV[ƒ“À‘•
+// ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³å®Ÿè£…
 // ===================================================================
 #include "SceneGame.h"
 #include "SceneManager.h"
@@ -18,8 +18,9 @@
 using namespace std;
 
 
-// ƒRƒ“ƒ|[ƒlƒ“ƒg
+// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
 #include "PlayerMoverComponent.h"
+#include "Texture2D.h"
 
 #include <iostream>
 
@@ -28,28 +29,31 @@ void SceneGame::Init()
     std::cout << "========================================" << std::endl;
     std::cout << "[SceneGame] Init START" << std::endl;
 
-    // Šù‘¶ƒIƒuƒWƒFƒNƒg‚ğíœ
+    // æ—¢å­˜ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤
     DeleteObjectList();
 
-    // ƒQ[ƒ€ŠÔ‰Šú‰»
+    // ã‚²ãƒ¼ãƒ æ™‚é–“åˆæœŸåŒ–
     m_GameTime = 0.0f;
 
     using namespace DirectX::SimpleMath;
 
-    // ƒIƒuƒWƒFƒNƒgƒŠƒXƒgì¬
+    // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒªã‚¹ãƒˆä½œæˆ
     MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_GAME).c_str());
 
-    // ’Ç‰ÁƒRƒ“ƒ|[ƒlƒ“ƒg
+    // è¿½åŠ ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
     {
+        // ãƒœã‚¿ãƒ³æ•´åˆ—å‡¦ç†
+        MakeButtons();
+
         std::cout << "[SceneGame] Player created" << std::endl;
     }
 
-    // ƒJƒƒ‰‰Šú‰»
+    // ã‚«ãƒ¡ãƒ©åˆæœŸåŒ–
     m_Camera.Init();
 
     m_nextScene = SCENE_NONE;
 
-    // ‰Šú‰»Š®—¹
+    // åˆæœŸåŒ–å®Œäº†
     m_isInitialized = true;
 
     std::cout << "[SceneGame] Initialized successfully" << std::endl;
@@ -69,7 +73,7 @@ void SceneGame::UnInit()
     std::cout << "[SceneGame] UnInit" << std::endl;
     DeleteObjectList();
 
-    // ƒJƒƒ‰I—¹ˆ—
+    // ã‚«ãƒ¡ãƒ©çµ‚äº†å‡¦ç†
     m_Camera.Uninit();
 
     m_isInitialized = false;
@@ -77,16 +81,16 @@ void SceneGame::UnInit()
 
 void SceneGame::Update()
 {
-    // ƒQ[ƒ€ŠÔXV
+    // ã‚²ãƒ¼ãƒ æ™‚é–“æ›´æ–°
     m_GameTime += Game::GetDeltaTime();
 
-    // ƒQ[ƒ€“àƒJ[ƒ\ƒ‹ƒAƒbƒvƒf[ƒg
+    // ã‚²ãƒ¼ãƒ ç”¨ã‚«ãƒ¼ã‚½ãƒ«ã‚¢ãƒƒãƒ—ãƒ‡ãƒ¼ãƒˆ
     CURSOR_MANAGER.Update();
 
-    // ƒJƒƒ‰XV
+    // ã‚«ãƒ¡ãƒ©æ›´æ–°
     m_Camera.Update();
 
-    // EnterƒL[‚ÅƒŠƒUƒ‹ƒg‚Ö
+    // Enterã‚­ãƒ¼ã§ãƒªã‚¶ãƒ«ãƒˆã¸
     if (IO_MANAGER.GetKeyDown(TYPE_OK) || IO_MANAGER.GetKeyDownKeyBord(VK_RETURN))
     {
         std::cout << "[SceneGame] ENTER pressed - Go to Result" << std::endl;
@@ -94,7 +98,7 @@ void SceneGame::Update()
         return;
     }
 
-    // EscƒL[‚Åƒ^ƒCƒgƒ‹‚Ö–ß‚é
+    // Escã‚­ãƒ¼ã§ã‚¿ã‚¤ãƒˆãƒ«ã¸æˆ»ã‚‹
     if (IO_MANAGER.GetKeyDownKeyBord(VK_ESCAPE))
     {
         std::cout << "[SceneGame] ESC pressed - Back to Title" << std::endl;
@@ -102,24 +106,143 @@ void SceneGame::Update()
         return;
     }
 
-    // GameObjectƒŠƒXƒg‚ğXViƒvƒŒƒCƒ„[ˆÚ“®‚È‚Çj
+    // GameObjectãƒªã‚¹ãƒˆã‚’æ›´æ–°ï¼ˆãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç§»å‹•ãªã©ï¼‰
     UpdateObjectList();
 }
 
 void SceneGame::Draw()
 {
-    // 3D•`‰æ
+    // 3Dæç”»
     Draw(&m_Camera);
 
-    // UI‘w‚Ì‚İ•`‰æiƒJƒƒ‰•sg—pj
+    // UIå±¤ã®ã¿æç”»ï¼ˆã‚«ãƒ¡ãƒ©ä¸ä½¿ç”¨ï¼‰
     DrawLayer(nullptr, RenderLayer::UI);
 
-    // ƒJ[ƒ\ƒ‹‚ğÅ‘O–Ê‚É•`‰æ
+    // ã‚«ãƒ¼ã‚½ãƒ«ã‚’æœ€å‰é¢ã«æç”»
     CURSOR_MANAGER.Draw();
 }
 
 void SceneGame::Draw(Camera* camera)
 {
-    // WORLD‘w‚ğ•`‰æiƒJƒƒ‰g—pj
+    // WORLDå±¤ã‚’æç”»ï¼ˆã‚«ãƒ¡ãƒ©ä½¿ç”¨ï¼‰
     DrawLayer(camera, RenderLayer::WORLD);
+}
+
+// ===================================================================
+// ãƒœã‚¿ãƒ³æ•´åˆ—å‡¦ç†
+// ===================================================================
+void SceneGame::MakeButtons()
+{
+    // UIAreaButtonsã®ç¯„å›²ã‚’å–å¾—
+    GameObject* buttonArea = FindGameObjectWithTag("UIArea");
+    for (auto& obj : m_GameObjects)
+    {
+        if (obj && obj->GetName() == "UIAreaButtons")
+        {
+            buttonArea = obj.get();
+            break;
+        }
+    }
+
+    if (!buttonArea)
+    {
+        std::cout << "[SceneGame] UIAreaButtons not found!" << std::endl;
+        return;
+    }
+
+    Vector3 areaPos = buttonArea->GetTransform().GetPosition();
+    Vector3 areaScale = buttonArea->GetTransform().GetScale();
+
+    // ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°ï¼ˆä»®å€¤ï¼‰
+    const float padding = 5.f;
+
+    // è¡Œæ•°: ButtonSub(1è¡Œ) + Button(2è¡Œ) = 3è¡Œ
+    const int rowCount = 3;
+    float rowHeight = (areaScale.y - padding * (rowCount + 1)) / rowCount;
+
+    // å„è¡Œã®Yåº§æ¨™ã‚’è¨ˆç®—ï¼ˆä¸Šã‹ã‚‰é †ã«ï¼‰
+    // ã‚¨ãƒªã‚¢ã®ä¸Šç«¯ã‹ã‚‰ã‚¹ã‚¿ãƒ¼ãƒˆ
+    float topY = areaPos.y + areaScale.y / 2.f;
+
+    // ---------------------------------------------------------------
+    // 1è¡Œç›®: ButtonSubï¼ˆæ¨ªä¸¦ã³ï¼‰
+    // ---------------------------------------------------------------
+    std::vector<GameObject*> buttonSubs = FindGameObjectsWithTag("ButtonSub");
+    int subCount = static_cast<int>(buttonSubs.size());
+
+    if (subCount > 0)
+    {
+        float row1Y = topY - padding - rowHeight / 2.f;
+        float subWidth = (areaScale.x - padding * (subCount + 1)) / subCount;
+        float startX = areaPos.x - areaScale.x / 2.f + padding + subWidth / 2.f;
+
+        for (int i = 0; i < subCount; i++)
+        {
+            float posX = startX + i * (subWidth + padding);
+            buttonSubs[i]->GetTransform().SetPosition(Vector3(posX, row1Y, 0.f));
+            buttonSubs[i]->GetTransform().SetScale(Vector3(subWidth, rowHeight, 1.f));
+            // UVã‚’è¨­å®š
+            auto* tex = buttonSubs[i]->GetMeshComponent<Texture2D>();
+            tex->SetUV(1, 1, 2, 1);
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // 2è¡Œç›®ãƒ»3è¡Œç›®: Buttonï¼ˆButtonBuild, ButtonMoveï¼‰
+    // ---------------------------------------------------------------
+    // è¡¨ç¤ºã™ã‚‹ãƒœã‚¿ãƒ³åã®ãƒªã‚¹ãƒˆ
+    std::vector<std::string> buttonNames = { "ButtonBuild", "ButtonMove" };
+
+    // TagãŒButtonã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‹ã‚‰è©²å½“ã™ã‚‹ã‚‚ã®ã‚’å–å¾—
+    std::vector<GameObject*> buttons = FindGameObjectsWithTag("Button");
+    std::vector<GameObject*> targetButtons;
+
+    for (const auto& name : buttonNames)
+    {
+        for (auto* btn : buttons)
+        {
+            if (btn->GetName() == name)
+            {
+                targetButtons.push_back(btn);
+                break;
+            }
+        }
+    }
+
+    // ä¸è¦ãªButtonã¯éã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«
+    for (auto* btn : buttons)
+    {
+        bool isTarget = false;
+        for (auto* target : targetButtons)
+        {
+            if (btn == target)
+            {
+                isTarget = true;
+                break;
+            }
+        }
+        if (!isTarget)
+        {
+            btn->SetActive(false);
+        }
+    }
+
+    // ãƒœã‚¿ãƒ³ã‚’é…ç½®ï¼ˆ2è¡Œç›®ã€3è¡Œç›®ï¼‰
+    float buttonWidth = areaScale.x - padding * 2;
+    for (int i = 0; i < static_cast<int>(targetButtons.size()); i++)
+    {
+        // è¡Œã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ï¼ˆ1è¡Œç›®ã¯ButtonSubãªã®ã§ã€i+1ï¼‰
+        int rowIndex = i + 1;
+        float rowY = topY - padding - rowHeight / 2.f - rowIndex * (rowHeight + padding);
+        float posX = areaPos.x;
+
+        targetButtons[i]->GetTransform().SetPosition(Vector3(posX, rowY, 0.f));
+        targetButtons[i]->GetTransform().SetScale(Vector3(buttonWidth, rowHeight, 1.f));
+
+        // UVã‚’è¨­å®š
+        auto* tex = targetButtons[i]->GetMeshComponent<Texture2D>();
+        tex->SetUV(1, 1, 2, 1);
+    }
+
+    std::cout << "[SceneGame] Buttons arranged in UIAreaButtons" << std::endl;
 }

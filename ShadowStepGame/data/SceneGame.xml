@@ -11,4 +11,180 @@
         <Scale X="1280" Y="720" Z="0"/>
         <Color R="1" G="1" B="1" A="1"/>
     </Object>
+    <Object ID="2">
+        <ObjectName Value="ButtonMove"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="Button"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/Buttons/Game_Move.png"/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="400" Y="200" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="1">
+        <ObjectName Value="ButtonAttack"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="Button"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/Buttons/Game_Attack.png"/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="400" Y="200" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="1">
+        <ObjectName Value="ButtonBuild"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="Button"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/Buttons/Game_Build.png"/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="400" Y="200" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="1">
+        <ObjectName Value="ButtonBuildSub1"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="ButtonSub"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/Buttons/Game_Build_Sub1.png"/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="400" Y="200" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+        <Object ID="1">
+        <ObjectName Value="ButtonBuildSub2"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="ButtonSub"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/Buttons/Game_Build_Sub2.png"/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="400" Y="200" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="2">
+        <ObjectName Value="IconPlayer"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="UITimeline"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/iconPlayer.png"/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="400" Y="200" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="2">
+        <ObjectName Value="IconEnemy"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="UITimeline"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/iconEnemy.png"/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="400" Y="200" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="2">
+        <ObjectName Value="ImagePlayer1"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="UIStatusImage"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/PlayerBustup.png"/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="400" Y="400" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="2">
+        <ObjectName Value="ImageEnemy1"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="UIStatusImage"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/EnemyBustup.png"/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="400" Y="400" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="2">
+        <ObjectName Value="UIStatusJobAttack"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="UIStatusJob"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/iconAttack.png"/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="400" Y="400" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="2">
+        <ObjectName Value="UIStatusJobBuild"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="UIStatusJob"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/iconBuild.png"/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="400" Y="400" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="2">
+        <ObjectName Value="UIStatusJobBuild"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="UIStatusJob"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/iconSpeed.png"/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="400" Y="400" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+        <Object ID="1">
+        <ObjectName Value="UIAreaTimeline"/>
+        <ObjectType Value="Empty"/>
+        <Tag Value="UIArea"/>
+        <FileName Value=""/>
+        <Texture Value=""/>
+        <Posision X="-300" Y="330" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="200" Y="450" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="1">
+        <ObjectName Value="UIAreaStatus"/>
+        <ObjectType Value="Empty"/>
+        <Tag Value="UIArea"/>
+        <FileName Value=""/>
+        <Texture Value=""/>
+        <Posision X="492" Y="217" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="276" Y="234" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="1">
+        <ObjectName Value="UIAreaButtons"/>
+        <ObjectType Value="Empty"/>
+        <Tag Value="UIArea"/>
+        <FileName Value=""/>
+        <Texture Value=""/>
+        <Posision X="440" Y="-150" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="300" Y="400" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="1">
+        <ObjectName Value="WindowTemplate"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="WindowTemplate"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/Window.png"/>
+        <Posision X="0" Y="-0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="300" Y="400" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
 </Objects>
