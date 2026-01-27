@@ -48,7 +48,7 @@ void SceneProto::Init()
 
         // 太陽
         auto* sun = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<SunManageComponent>(
-            widthMap, heightMap, mapSystem->GetMapHeight(), mapSystem->GetMapWidth());
+            widthMap, heightMap, m_MaxSunMoveTurn);
 
         // シャドウシステム
         auto* shadowSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<ShadowSystemComponent>();

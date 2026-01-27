@@ -226,8 +226,7 @@ void GameSystemComponent::UpdateSunMove()
     // 影計算
     ShadowParam param =
         m_shadowSystem->CalcShadowParm(
-            m_sunSystem->GetCurPosX(),
-            m_sunSystem->GetCurPosZ(),
+            m_sunSystem->GetDirection(),
             m_mapSystem->GetMapWidth(),
             m_mapSystem->GetMapSizeHeight()
         );
@@ -327,8 +326,7 @@ void GameSystemComponent::NextTimeline()
     // 影計算
     ShadowParam param =
         m_shadowSystem->CalcShadowParm(
-            m_sunSystem->GetCurPosX(),
-            m_sunSystem->GetCurPosZ(),
+            m_sunSystem->GetDirection(),
             m_mapSystem->GetMapWidth(),
             m_mapSystem->GetMapSizeHeight()
         );

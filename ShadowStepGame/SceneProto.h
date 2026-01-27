@@ -1,4 +1,4 @@
-// ===================================================================
+﻿// ===================================================================
 // SceneProto.h
 // Plese Write scene explanation
 // ===================================================================
@@ -11,6 +11,7 @@ class SceneProto :public SceneBase
 public:
 
 private:
+	const int m_MaxSunMoveTurn = 9;	// 何ターンかけて太陽を昇る→沈むまで移動するか
 
 #pragma endregion
 

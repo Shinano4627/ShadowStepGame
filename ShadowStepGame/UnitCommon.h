@@ -1,4 +1,4 @@
-//=======================================
+Ôªø//=======================================
 // UnitCommon.h
 //=======================================
 #pragma once
@@ -20,16 +20,111 @@ struct MapPosition
 {
 	int x;
 	int z;
+
+	// „Ç≥„É≥„Çπ„Éà„É©„ÇØ„Çø
+	MapPosition() = default;
+	MapPosition(int _x, int _z)
+		: x(_x)
+		, z(_z)
+	{}
+
+	// „Ç™„Éö„É¨„Éº„Çø„Éº„Ç™„Éº„Éê„Éº„É≠„Éº„Éâ
+	MapPosition& operator=(const MapPosition& pos)
+	{
+		x = pos.x;
+		z = pos.z;
+		return *this;
+	}
+	MapPosition operator+(const MapPosition& pos) const
+	{
+		return MapPosition{ x + pos.x,z + pos.z };
+	}
+	MapPosition& operator+=(const MapPosition& pos)
+	{
+		x += pos.x;
+		z += pos.z;
+		return *this;
+	}
+	MapPosition operator-(const MapPosition& pos) const
+	{
+		return MapPosition{ x - pos.x,z - pos.z };
+	}
+	MapPosition& operator-=(const MapPosition& pos)
+	{
+		x -= pos.x;
+		z -= pos.z;
+		return *this;
+	}
+	MapPosition operator*(const MapPosition& pos) const
+	{
+		return MapPosition{ x * pos.x, z * pos.z };
+	}
+	MapPosition& operator*=(const MapPosition& pos)
+	{
+		x *= pos.x;
+		z *= pos.z;
+		return *this;
+	}
+	MapPosition operator/(const MapPosition& pos) const
+	{
+		return MapPosition{ x / pos.x, z / pos.z };
+	}
+	MapPosition& operator/=(const MapPosition& pos)
+	{
+		x /= pos.x;
+		z /= pos.z;
+		return *this;
+	}
+	MapPosition operator+(const int& n) const
+	{
+		return MapPosition{ x + n, z + n };
+	}
+	MapPosition& operator+=(const int& n)
+	{
+		x += n;
+		z += n;
+		return *this;
+	}
+	MapPosition operator-(const int& n)const
+	{
+		return MapPosition{ x - n, z - n };
+	}
+	MapPosition& operator-=(const int& n)
+	{
+		x -= n;
+		z -= n;
+		return *this;
+	}
+	MapPosition operator*(const int& n)const
+	{
+		return MapPosition{ x * n, z * n };
+	}
+	MapPosition& operator*=(const int& n)
+	{
+		x *= n;
+		z *= n;
+		return *this;
+	}
+	MapPosition operator/(const int& n)const
+	{
+		return MapPosition{ x / n, z / n };
+	}
+	MapPosition& operator/=(const int& n)
+	{
+		x /= n;
+		z /= n;
+		return *this;
+	}
 };
 
 struct UnitStatus
 {
-	int id;		// GameObject IDÇ∆àÍívÇ≥ÇπÇÈ
+	int id;		// GameObject ID„Å®‰∏ÄËá¥„Åï„Åõ„Çã
 	UnitType type;	// Player / Enemy
-	UnitModel model;	// ÉÜÉjÉbÉgéÌï 
-	MapPosition pos;	// É}ÉbÉvç¿ïW
+	UnitModel model;	// „É¶„Éã„ÉÉ„ÉàÁ®ÆÂà•
+	MapPosition pos;	// „Éû„ÉÉ„ÉóÂ∫ßÊ®ô
 	int hp;
 	int speed;
-	bool isDown = false;	// çsìÆïsî\
+	bool isDown = false;	// Ë°åÂãï‰∏çËÉΩ
 };
 

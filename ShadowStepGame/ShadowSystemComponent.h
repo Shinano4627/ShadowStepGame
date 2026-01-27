@@ -1,6 +1,6 @@
-//=======================================
+ï»¿//=======================================
 // ShadowSystemComponent.h
-// ‚·‚×‚Ä‚Ì‰e‚ğŠÇ—
+// ã™ã¹ã¦ã®å½±ã‚’ç®¡ç†
 //=======================================
 #pragma once
 #include "Component.h"
@@ -9,23 +9,16 @@
 #include "Game.h"
 #include <algorithm>
 
-struct CellPosision
-{
-    int row;
-    int column;
-};
-
 struct ShadowParam
 {
-    int dirX;      // -1 / 0 / 1
-    int dirZ;      // -1 / 0 / 1
-    int length;    // ‰e‚Ì’·‚³
+    MapPosition lightDirection = {0,0};
+    int length;    // å½±ã®é•·ã•
 };
 
 class ShadowSystemComponent : public Component
 {
 private:
-    // ‰eƒ}ƒbƒvi0:‰e‚È‚µ,1:‰e‚ ‚èj
+    // å½±ãƒãƒƒãƒ—ï¼ˆ0:å½±ãªã—,1:å½±ã‚ã‚Šï¼‰
     int** m_ShadowMapData = nullptr; 
 
     int m_MapWidth = 0;
@@ -33,12 +26,12 @@ private:
 
 public:
     //=======================================
-    // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+    // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     //=======================================
     ShadowSystemComponent() {}
 
     //=======================================
-    // ƒfƒXƒgƒ‰ƒNƒ^
+    // ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     //=======================================
     ~ShadowSystemComponent()
     {
@@ -50,7 +43,7 @@ public:
     }
 
     //=======================================
-    // ‰Šú‰»
+    // åˆæœŸåŒ–
     //=======================================
     void Init(){}
     void SetUp(int mapWidth, int mapHeight)
@@ -61,12 +54,12 @@ public:
     }
 
     //=======================================
-    // XV
+    // æ›´æ–°
     //=======================================
     void Update() override {}
 
     //=======================================
-    // ‰eŒvZ
+    // å½±è¨ˆç®—
     //=======================================
     void UpdateShadowMap(
         const int* const* mapData,
@@ -75,19 +68,19 @@ public:
     )
     {
         //=======================================
-        // ‰Šú‰»
+        // åˆæœŸåŒ–
         //=======================================
         ClearShadowMap();
 
         //=======================================
-        // y’nŒ`‰ez
-        // •ÇE÷‚È‚Ç‚Ì•s•ÏƒIƒuƒWƒFƒNƒg
+        // ã€åœ°å½¢å½±ã€‘
+        // å£ãƒ»æ¨¹ãªã©ã®ä¸å¤‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
         //=======================================
         for (int z = 0; z < m_MapHeight; ++z)
         {
             for (int x = 0; x < m_MapWidth; ++x)
             {
-                // ‰e‚ğ—‚Æ‚·ƒIƒuƒWƒFƒNƒg‚Ì‚İ
+                // å½±ã‚’è½ã¨ã™ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã¿
                 if (mapData[z][x] != 1 && mapData[z][x] != 4)
                     continue;
 
@@ -95,19 +88,19 @@ public:
                 int shadowZ = z;
 
                 //-----------------------------------
-                // ˆê—¥•ûŒüEˆê—¥’·‚³‚Å‰e‚ğ¶¬
+                // ä¸€å¾‹æ–¹å‘ãƒ»ä¸€å¾‹é•·ã•ã§å½±ã‚’ç”Ÿæˆ
                 //-----------------------------------
                 for (int i = 0; i < param.length; ++i)
                 {
-                    shadowX += param.dirX;
-                    shadowZ += param.dirZ;
+                    shadowX += param.lightDirection.x;
+                    shadowZ += param.lightDirection.z;
 
-                    // ƒ}ƒbƒvŠO‚È‚çI—¹
+                    // ãƒãƒƒãƒ—å¤–ãªã‚‰çµ‚äº†
                     if (shadowX < 0 || shadowX >= m_MapWidth ||
                         shadowZ < 0 || shadowZ >= m_MapHeight)
                         break;
 
-                    // ‹ó‚«ƒ}ƒX‚Ì‚İ‰e
+                    // ç©ºããƒã‚¹ã®ã¿å½±
                     if (mapData[shadowZ][shadowX] == 0)
                     {
                         m_ShadowMapData[shadowZ][shadowX] = 1;
@@ -117,8 +110,8 @@ public:
         }
 
         //=======================================
-    // y«—ˆŠg’£z
-    // Unit ‚Ì‰ei“¯•ûŒüE“¯’·‚³j
+    // ã€å°†æ¥æ‹¡å¼µã€‘
+    // Unit ã®å½±ï¼ˆåŒæ–¹å‘ãƒ»åŒé•·ã•ï¼‰
     //=======================================
     /*
     for (const auto& unitPos : unitPositions)
@@ -145,47 +138,36 @@ public:
     }
 
     //=======================================
-    // ‰e‚Ì‘å‚«‚³EŒü‚«
+    // å½±ã®å¤§ãã•ãƒ»å‘ã
     //=======================================
     ShadowParam CalcShadowParm(
-        int sunX,int sunZ,
+        MapPosition lightDirection,
         int mapWidth,int mapHeight
     )
     {
         ShadowParam param{};
 
+        param.lightDirection = lightDirection;
+
         //=======================================
-        // ^ãi‰e‚È‚µj
+        // çœŸä¸Šï¼ˆå½±ãªã—ï¼‰
         //=======================================
-        if (sunX == 0 && sunZ == 0)
+        if (lightDirection.x == 0 && lightDirection.z == 0)
         {
-            param.dirX = 0;
-            param.dirZ = 0;
             param.length = 0;
             return param;
         }
 
         //=======================================
-        // ‰e•ûŒüi\š4•ûŒüj
+        // å½±æ–¹å‘ï¼ˆåå­—4æ–¹å‘ï¼‰
         //=======================================
-        if (abs(sunX) > abs(sunZ))
-        {
-            // X•ûŒü‚©‚çÆ‚ç‚·
-            param.dirX = (sunX > 0) ? -1 : 1;
-            param.dirZ = 0;
-        }
-        else
-        {
-            // Z•ûŒü‚©‚çÆ‚ç‚·
-            param.dirX = 0;
-            param.dirZ = (sunZ > 0) ? -1 : 1;
-        }
+
 
         //=======================================
-        // ‰e‚Ì’·‚³i‹——£Š´j
+        // å½±ã®é•·ã•ï¼ˆè·é›¢æ„Ÿï¼‰
         //=======================================
         int distance =
-            abs(sunX) + abs(sunZ);   // ƒ}ƒ“ƒnƒbƒ^ƒ“‹——£
+            abs(lightDirection.x) + abs(lightDirection.z);   // ãƒãƒ³ãƒãƒƒã‚¿ãƒ³è·é›¢
 
         param.length = std::clamp(
             distance / 2,   // SHADOW_DIV
@@ -197,14 +179,14 @@ public:
     }
 
     //=======================================
-    // æ“¾
+    // å–å¾—
     //=======================================
     const int* const* GetShadowMap() const
     { return m_ShadowMapData;};
 
 private:
     //=======================================
-    // ‰eƒ}ƒbƒv¶¬
+    // å½±ãƒãƒƒãƒ—ç”Ÿæˆ
     //=======================================
     void MakeShadowMap()
     {
@@ -217,7 +199,7 @@ private:
     }
 
     //=======================================
-    // ‰Šú‰»
+    // åˆæœŸåŒ–
     //=======================================
     void ClearShadowMap()
     {
