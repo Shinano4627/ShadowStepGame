@@ -81,4 +81,7 @@ public:
     int GetMapHeight() const { return m_MapHeight; }
     int GetMapWidth() const { return m_MapWidth; }
     const int* const* GetRawMapData() const;
+    float GetSizePiece() const { return m_SizePiece; }
+    float GetDrawStartPosX() const { return m_DrawStartPosX; }
+    float GetDrawStartPosZ() const { return m_DrawStartPosZ; }
 };
