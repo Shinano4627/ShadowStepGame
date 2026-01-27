@@ -8,6 +8,7 @@
 #include "IOManager.h"
 #include "Game.h"
 #include "UnitCommon.h"
+#include "SimpleCubeRendererComponent.h"
 
 // 太陽の種類と移動方向
 enum SunType
@@ -215,9 +216,12 @@ public:
     // ===================================================================
     void Init() override
     {
+        m_CurIdx = 0;
+
         // 初期位置を設定
-        UpdateSunPosition(0);
-        UpdateLightDirection(0);
+        UpdateSunPosition(m_CurIdx);
+        UpdateLightDirection(m_CurIdx);
+        m_pOwner->GetMeshComponent<SimpleCubeRendererComponent>()->SetColor(m_SunList[m_CurIdx].color);
     }
 
     // ===================================================================
@@ -262,6 +266,7 @@ public:
         }
         UpdateSunPosition(m_TurnProgress);
         UpdateLightDirection(m_TurnProgress);
+        m_pOwner->GetMeshComponent<SimpleCubeRendererComponent>()->SetColor(m_SunList[m_CurIdx].color);
     }
 
     // ===================================================================
