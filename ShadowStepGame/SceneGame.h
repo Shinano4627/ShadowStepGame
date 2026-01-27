@@ -27,6 +27,4 @@ public:
     void Draw(Camera*) override;
 
 private:
-    // ボタン整列処理
-    void MakeButtons();
 };

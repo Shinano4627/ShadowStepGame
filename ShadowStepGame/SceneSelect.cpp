@@ -17,11 +17,16 @@ void SceneSelect::Init()
     std::cout << "========================================" << std::endl;
     std::cout << "[SceneSelect] Init START" << std::endl;
 
+    if (m_GameObjectList == nullptr)
+    {
+        // リストクラスのインスタンス作成
+        m_GameObjectList = std::make_unique<GameObjectList>();
+    }
     // Delete ObjectList
-    DeleteObjectList();
+    m_GameObjectList->DeleteObjectList();
 
     // オブジェクトリスト作成
-    MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_SELECT).c_str());
+    m_GameObjectList->MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_SELECT).c_str());
 
     // 追加コンポーネント
     {
@@ -50,7 +55,7 @@ void SceneSelect::Init()
 void SceneSelect::UnInit()
 {
     std::cout << "[SceneSelect] UnInit" << std::endl;
-    DeleteObjectList();
+    m_GameObjectList->DeleteObjectList();
 
     // UnInit Camera
     m_Camera.Uninit();
@@ -96,7 +101,7 @@ void SceneSelect::Update()
     }
 
     // Update GameObjectList
-    UpdateObjectList();
+    m_GameObjectList->UpdateObjectList();
 }
 
 void SceneSelect::Draw()
@@ -105,20 +110,20 @@ void SceneSelect::Draw()
     Draw(&m_Camera);
 
     // Ui
-    DrawLayer(&m_Camera, RenderLayer::UI);
+    m_GameObjectList->DrawLayer(&m_Camera, RenderLayer::UI);
 
     // メッセージを表示
-    DrawLayer(&m_Camera, RenderLayer::UI_Message);
+    m_GameObjectList->DrawLayer(&m_Camera, RenderLayer::UI_Message);
 }
 
 void SceneSelect::Draw(Camera* camera)
 {
-    DrawLayer(camera, RenderLayer::WORLD);
+    m_GameObjectList->DrawLayer(camera, RenderLayer::WORLD);
 }
 
 void SceneSelect::MakeButton()
 {
-    std::vector<GameObject*> buttonMesseges = FindGameObjectsWithTag("ButtonMessage");
+    std::vector<GameObject*> buttonMesseges = m_GameObjectList->FindGameObjectsWithTag("ButtonMessage");
     // アクティブなButtonMessageのみ抽出
     std::vector<GameObject*> activeMessages;
     for (auto* msg : buttonMesseges)
@@ -134,7 +139,7 @@ void SceneSelect::MakeButton()
     const float padding = 10.f;
 
     // ButtonAreaの範囲を取得
-    GameObject* buttonArea = FindGameObjectWithTag("ButtonArea");
+    GameObject* buttonArea = m_GameObjectList->FindGameObjectWithTag("ButtonArea");
     Vector3 areaPos = buttonArea->GetTransform().GetPosition();
     Vector3 areaScale = buttonArea->GetTransform().GetScale();
 
@@ -145,7 +150,7 @@ void SceneSelect::MakeButton()
     float buttonSize = std::min(buttonWidth, buttonHeight);
 
     // 元のButtonオブジェクトを取得（テンプレートとして使用）
-    GameObject* buttonTemplate = FindGameObjectWithTag("ButtonTemplate");
+    GameObject* buttonTemplate = m_GameObjectList->FindGameObjectWithTag("ButtonTemplate");
     std::string texturePath = buttonTemplate->GetMeshComponent<Texture2D>()->GetTexturePath();
     buttonTemplate->SetActive(false); // テンプレートは非表示
 
@@ -165,7 +170,7 @@ void SceneSelect::MakeButton()
         newButton->SetTag("Button");
         auto* tex = newButton->AddMeshComponent<Texture2D>(texturePath);
         tex->SetUV(1, 1, 2, 1);
-        m_GameObjects.push_back(std::move(newButton));
+        m_GameObjectList->AddObject(std::move(newButton));
 
         // 対応するButtonMessageを同じ位置に配置
         if (i < static_cast<int>(activeMessages.size()))
@@ -179,14 +184,14 @@ void SceneSelect::MakeButton()
     // 最初のボタンを選択
     m_CurrentSelected = 0;
     // 表示も変更する
-    FindGameObjectWithTag("Button")->GetMeshComponent<Texture2D>()->UpdateUV(true, false);
+    m_GameObjectList->FindGameObjectWithTag("Button")->GetMeshComponent<Texture2D>()->UpdateUV(true, false);
 }
 
 void SceneSelect::UpdateButton(int dir)
 {
     if (m_MaxButton <= 1) return;
 
-    std::vector<GameObject*> buttons= FindGameObjectsWithTag("Button");
+    std::vector<GameObject*> buttons= m_GameObjectList->FindGameObjectsWithTag("Button");
 
     buttons[m_CurrentSelected]->GetMeshComponent<Texture2D>()->UpdateUV(true, false);
     m_CurrentSelected += dir;

@@ -1,10 +1,11 @@
-// ===================================================================
+ï»¿// ===================================================================
 // SceneProto.cpp
 // Plese Write scene explanation
 // ===================================================================
 #include "SceneProto.h"
 #include "SceneManager.h"
 #include "IOManager.h"
+#include "CursorManager.h"
 #include <iostream>
 
 // Components
@@ -16,6 +17,7 @@
 #include "SunManageComponent.h"
 #include "ShadowSystemComponent.h"
 #include "UnitSystemComponent.h"
+#include "UISystemComponent.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -25,57 +27,68 @@ void SceneProto::Init()
     std::cout << "========================================" << std::endl;
     std::cout << "[SceneProto] Init START" << std::endl;
 
+    if (m_GameObjectList == nullptr)
+    {
+        // ãƒªã‚¹ãƒˆã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆ
+        m_GameObjectList = std::make_unique<GameObjectList>();
+    }
     // Delete ObjectList
-    DeleteObjectList();
+    m_GameObjectList->DeleteObjectList();
 
     // Make ObjectList
-    MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_PROTO).c_str());
+    m_GameObjectList->MakeObjectList(SCENE_MANAGER.GetSceneName(SCENE_PROTO).c_str());
 
-    // ’Ç‰ÁƒRƒ“ƒ|[ƒlƒ“ƒg
+    // è¿½åŠ ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
     {
-        // ƒ}ƒbƒvƒVƒXƒeƒ€
-        auto* mapSystem = FindGameObjectWithTag("System")->AddComponent<MapSystemComponent>("TestMap.csv");
-        mapSystem->MakeMap(m_GameObjects);    // ƒ}ƒbƒv‚Ì“Ç‚Ýž‚Ý
+        // ãƒžãƒƒãƒ—ã‚·ã‚¹ãƒ†ãƒ 
+        auto* mapSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<MapSystemComponent>("TestMap.csv");
+        mapSystem->MakeMap(m_GameObjectList);    // ãƒžãƒƒãƒ—ã®èª­ã¿è¾¼ã¿
         int heightMap = mapSystem->GetMapSizeHeight();
         int widthMap = mapSystem->GetMapSizeWidth();
 
-        // ‘¾—z
-        auto* sun = FindGameObjectWithTag("System")->AddComponent<SunManageComponent>(
+        // å¤ªé™½
+        auto* sun = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<SunManageComponent>(
             widthMap, heightMap, mapSystem->GetMapHeight(), mapSystem->GetMapWidth());
 
-        // ƒVƒƒƒhƒEƒVƒXƒeƒ€
-        auto* shadowSystem = FindGameObjectWithTag("System")->AddComponent<ShadowSystemComponent>();
+        // ã‚·ãƒ£ãƒ‰ã‚¦ã‚·ã‚¹ãƒ†ãƒ 
+        auto* shadowSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<ShadowSystemComponent>();
         
+        // ãƒ¦ãƒ‹ãƒƒãƒˆã‚·ã‚¹ãƒ†ãƒ 
+        auto* unitSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<UnitSystemComponent>();
 
-        // ƒ†ƒjƒbƒgƒVƒXƒeƒ€
-        auto* unitSystem = FindGameObjectWithTag("System")->AddComponent<UnitSystemComponent>();
+        // UIã‚·ã‚¹ãƒ†ãƒ 
+        auto* uiSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<UISystemComponent>();
+        uiSystem->SetUIObject(m_GameObjectList);     // UIä½œæˆ
 
-        // ƒQ[ƒ€ƒVƒXƒeƒ€
-        auto* gameSystem = FindGameObjectWithTag("System")->AddComponent<GameSystemComponent>();
+        // ã‚²ãƒ¼ãƒ ã‚·ã‚¹ãƒ†ãƒ 
+        auto* gameSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<GameSystemComponent>();
 
-        // ƒJƒƒ‰
-        auto* orbitCamera = FindGameObjectWithTag("System")->AddComponent<OrbitCameraComponent>(&m_Camera);
+
+        // ã‚«ãƒ¡ãƒ©
+        auto* orbitCamera = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<OrbitCameraComponent>(&m_Camera);
         orbitCamera->SetGameSystem(gameSystem);
         orbitCamera->SetRotationSpeed(0.02f);
 
-        // ‚±‚±‚Å SunManageComponent ‚ðƒZƒbƒg
-        // ¦m_sunSystem ‚ÍŒ»ó private ‚È‚Ì‚ÅApublic setter ‚Ü‚½‚Í friend ‚ÅƒAƒNƒZƒX„§
-        // gameSystem->SetSunSystem(sun); // setter ‚ðì‚é‚Æ—Ç‚¢
+
+        // ã“ã“ã§ SunManageComponent ã‚’ã‚»ãƒƒãƒˆ
+        // â€»m_sunSystem ã¯ç¾çŠ¶ private ãªã®ã§ã€public setter ã¾ãŸã¯ friend ã§ã‚¢ã‚¯ã‚»ã‚¹æŽ¨å¥¨
+        // gameSystem->SetSunSystem(sun); // setter ã‚’ä½œã‚‹ã¨è‰¯ã„
 
 
 
 
 
 
-        // ƒvƒŒƒCƒ„[
-        auto* playerObj = FindGameObjectWithTag("Player");
+        
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
+        auto* playerObj = m_GameObjectList->FindGameObjectWithTag("Player");
         auto* playerUnit = playerObj->AddComponent<UnitComponent>();
         playerUnit->SetCamp(UnitComponent::UnitCamp::UnitPlayer);
         playerUnit->SetGridPos({ 0,0 });
         playerUnit->SetUnitId(1);
 
-        //ƒGƒlƒ~[
-        auto* enemyObj = FindGameObjectWithTag("Enemy");
+        //ã‚¨ãƒãƒŸãƒ¼
+        auto* enemyObj = m_GameObjectList->FindGameObjectWithTag("Enemy");
         auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
         enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
         enemyUnit->SetGridPos({ 1,0 });
@@ -100,7 +113,7 @@ void SceneProto::Init()
 void SceneProto::UnInit()
 {
     std::cout << "[SceneProto] UnInit" << std::endl;
-    DeleteObjectList();
+    m_GameObjectList->DeleteObjectList();
 
     // UnInit Camera
     m_Camera.Uninit();
@@ -111,14 +124,14 @@ void SceneProto::UnInit()
 
 void SceneProto::Update()
 {
-    // ============================
-    // ƒIƒuƒWƒFƒNƒgXV
-    // ============================
-    UpdateObjectList();
-
-
-    // ƒJƒƒ‰XV
+    // 1. ã‚«ãƒ¡ãƒ©æ›´æ–°
     m_Camera.Update();
+
+    // ã‚²ãƒ¼ãƒ ç”¨ã‚«ãƒ¼ã‚½ãƒ«ã‚¢ãƒƒãƒ—ãƒ‡ãƒ¼ãƒˆ
+    CURSOR_MANAGER.Update();
+
+    // 2. å…¨GameObjectæ›´æ–°
+    m_GameObjectList->UpdateObjectList();
 }
 
 
@@ -129,11 +142,15 @@ void SceneProto::Draw()
     Draw(&m_Camera);
 
     // Ui
-    DrawLayer(&m_Camera, RenderLayer::UI);
+    m_GameObjectList->DrawLayer(&m_Camera, RenderLayer::UI);
+    m_GameObjectList->DrawLayer(nullptr, RenderLayer::UI_2);
+
+    // ã‚«ãƒ¼ã‚½ãƒ«ã‚’æœ€å‰é¢ã«æç”»
+    CURSOR_MANAGER.Draw();
 }
 
 void SceneProto::Draw(Camera* camera)
 {
-    DrawLayer(camera, RenderLayer::WORLD);
+    m_GameObjectList->DrawLayer(camera, RenderLayer::WORLD);
 }
 

@@ -1,47 +1,67 @@
-//=======================================
-// GameSystemComponentÀ‘•
+ï»¿//=======================================
+// GameSystemComponentå®Ÿè£…
 //=======================================
 
 #include "GameSystemComponent.h"
 #include "GameObject.h"
 
-// ‘¼ƒVƒXƒeƒ€
+// ä»–ã‚·ã‚¹ãƒ†ãƒ 
 #include "MapSystemComponent.h"
 #include "UnitSystemComponent.h"
 #include "SunManageComponent.h"
 #include "ShadowSystemComponent.h"
+#include "UISystemComponent.h"
 
 void GameSystemComponent::Init()
 {
-    // “¯‚¶ GameObject ‚É‚ ‚é‘¼‚Ì SystemComponent ‚ğæ“¾
+    // åŒã˜ GameObject ã«ã‚ã‚‹ä»–ã® SystemComponent ã‚’å–å¾—
     m_mapSystem = m_pOwner->GetComponent<MapSystemComponent>();
     m_unitSystem = m_pOwner->GetComponent<UnitSystemComponent>();
     m_sunSystem = m_pOwner->GetComponent<SunManageComponent>();
+    m_shadowSystem = m_pOwner->GetComponent<ShadowSystemComponent>();
+    m_uISystem = m_pOwner->GetComponent<UISystemComponent>();
+
+    // å®‰å…¨ãƒã‚§ãƒƒã‚¯
+    if (!m_mapSystem)
+    {
+        std::cout << "[GameSystem] MapSystemComponent ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ï¼\n"; assert(false);
+    }
+    if (!m_unitSystem)
+    {
+        std::cout << "[GameSystem] UnitSystemComponent ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ï¼\n"; assert(false);
+    }
+    if (!m_sunSystem)
+    {
+        std::cout << "[GameSystem] SunManageComponent ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ï¼\n"; assert(false);
+    }
+    if (!m_shadowSystem)
+    {
+        std::cout << "[GameSystem] ShadowSystemComponent ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ï¼\n"; assert(false);
+    }
+    if (!m_uISystem)
+    {
+        std::cout << "[GameSystem] UISystemComponent ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ï¼\n"; assert(false);
+    }
+
+    // åˆæœŸå‡¦ç†å®Ÿè¡Œ
     int map_w = m_mapSystem->GetMapWidth();
     int map_h = m_mapSystem->GetMapHeight();
-    m_shadowSystem = m_pOwner->GetComponent<ShadowSystemComponent>();
-    m_shadowSystem->SetUp(map_w,map_h);
+    m_shadowSystem->SetUp(map_w, map_h);
 
-    // ˆÀ‘Sƒ`ƒFƒbƒN
-    if (!m_mapSystem)  std::cout << "[GameSystem] MapSystemComponent ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñI\n";
-    if (!m_unitSystem) std::cout << "[GameSystem] UnitSystemComponent ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñI\n";
-    if (!m_sunSystem)  std::cout << "[GameSystem] SunManageComponent ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñI\n";
-    if (!m_shadowSystem) std::cout << "[GameSystem] ShadowSystemComponent ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñI\n";
-
-    // ó‘Ôƒf[ƒ^‰Šú‰»
+    // çŠ¶æ…‹ãƒ‡ãƒ¼ã‚¿åˆæœŸåŒ–
     m_TurnCount = 0;
     m_TimelineIndex = 0;
 
-    // Ÿ‚ÌBattleState‚Ö
+    // æ¬¡ã®BattleStateã¸
     ChangeState(BattleState::Init);
 }
 
 void GameSystemComponent::Update()
 {
-    // VK_E ‚ª‰Ÿ‚³‚ê‚½‚çó‘ÔXViƒeƒXƒg—pj
+    // VK_E ãŒæŠ¼ã•ã‚ŒãŸã‚‰çŠ¶æ…‹æ›´æ–°ï¼ˆãƒ†ã‚¹ãƒˆç”¨ï¼‰
     if (IO_MANAGER.GetKeyDownKeyBord(VK_E))
     {
-        // ƒ^[ƒ“ó‘Ô‚É‡‚í‚¹‚½ŠÖ”‚ğŒÄ‚Ño‚µ
+        // ã‚¿ãƒ¼ãƒ³çŠ¶æ…‹ã«åˆã‚ã›ãŸé–¢æ•°ã‚’å‘¼ã³å‡ºã—
         UpdateState();
     }
 }
@@ -54,16 +74,16 @@ void GameSystemComponent::ChangeState(BattleState next)
         << " -> " << BattleStateToString(next)
         << std::endl;
 
-    // ¡‚ÌState‚ğ•Û‘¶
+    // ä»Šã®Stateã‚’ä¿å­˜
     m_beforeState = m_State;
-    // Ÿ‚ÌState‚Ö•ÏX
+    // æ¬¡ã®Stateã¸å¤‰æ›´
     m_State = next;
 }
 
 
 void GameSystemComponent::UpdateState()
 {
-    // Œ»İ‚Ìƒ^[ƒ“ó‘Ô‚É‡‚í‚¹‚ÄŠÖ”‚ğŒÄ‚Ño‚µ
+    // ç¾åœ¨ã®ã‚¿ãƒ¼ãƒ³çŠ¶æ…‹ã«åˆã‚ã›ã¦é–¢æ•°ã‚’å‘¼ã³å‡ºã—
     switch (m_State)
     {
     case BattleState::Init:          UpdateInit(); break;
@@ -81,41 +101,41 @@ void GameSystemComponent::UpdateState()
 
 //=======================================
 // BattleState:Init
-// SceneŠJnA‰Šú‰»’¼Œã‚É‚·‚×‚«ˆ—
+// Sceneé–‹å§‹ã€åˆæœŸåŒ–ç›´å¾Œã«ã™ã¹ãå‡¦ç†
 //=======================================
 void GameSystemComponent::UpdateInit()
 {
-    // í“¬ƒ^[ƒ“‚ğn‚ß‚é
+    // æˆ¦é—˜ã‚¿ãƒ¼ãƒ³ã‚’å§‹ã‚ã‚‹
     ChangeState(BattleState::TurnStart);
 }
 
 //=======================================
 // BattleState:TurnStart
-// TurnŠJnBŠeƒ^[ƒ“‚ÌÅ‰‚É‚·‚×‚«ˆ—
+// Turné–‹å§‹ã€‚å„ã‚¿ãƒ¼ãƒ³ã®æœ€åˆã«ã™ã¹ãå‡¦ç†
 //=======================================
 void GameSystemComponent::UpdateTurnStart()
 {
-    // Œ»İƒ^[ƒ“‚Ì‰ÁZ
+    // ç¾åœ¨ã‚¿ãƒ¼ãƒ³ã®åŠ ç®—
     m_TurnCount++;
 
-    // ƒ^ƒCƒ€ƒ‰ƒCƒ“ì¬
+    // ã‚¿ã‚¤ãƒ ãƒ©ã‚¤ãƒ³ä½œæˆ
     BuildTimeline();
     m_TimelineIndex = 0;
 
-    // Ÿ‚ÌBattleState‚Ö
+    // æ¬¡ã®BattleStateã¸
     ChangeState(BattleState::UnitSelect);
 }
 
 //=======================================
 // BattleState:UnitSelect
-// ƒ^ƒCƒ€ƒ‰ƒCƒ“‚©‚çŸ‚É“®‚­ƒ†ƒjƒbƒg‚ğŒˆ’è
+// ã‚¿ã‚¤ãƒ ãƒ©ã‚¤ãƒ³ã‹ã‚‰æ¬¡ã«å‹•ããƒ¦ãƒ‹ãƒƒãƒˆã‚’æ±ºå®š
 //=======================================
 void GameSystemComponent::UpdateUnitSelect()
 {
-    // Œ»İ‚Ìƒ^ƒCƒ€ƒ‰ƒCƒ“‚ğæ“¾
+    // ç¾åœ¨ã®ã‚¿ã‚¤ãƒ ãƒ©ã‚¤ãƒ³ã‚’å–å¾—
     Timeline* cur = GetCurrentTimeline();
 
-    // ƒ^ƒCƒ€ƒ‰ƒCƒ“‚ª‚È‚¯‚ê‚Îƒ^[ƒ“I—¹
+    // ã‚¿ã‚¤ãƒ ãƒ©ã‚¤ãƒ³ãŒãªã‘ã‚Œã°ã‚¿ãƒ¼ãƒ³çµ‚äº†
     if (!cur)
     {
         ChangeState(BattleState::TurnEnd);
@@ -123,7 +143,7 @@ void GameSystemComponent::UpdateUnitSelect()
     }
 
     // ============================
-    // ‘¾—z‚Ìƒ^[ƒ“‚©‚Ç‚¤‚©
+    // å¤ªé™½ã®ã‚¿ãƒ¼ãƒ³ã‹ã©ã†ã‹
     // ============================
     if (cur->actorType == TimelineActorType::Sun)
     {
@@ -132,11 +152,11 @@ void GameSystemComponent::UpdateUnitSelect()
     }
 
     // ============================
-    // ƒ†ƒjƒbƒg‚Ìƒ^[ƒ“
+    // ãƒ¦ãƒ‹ãƒƒãƒˆã®ã‚¿ãƒ¼ãƒ³
     // ============================
     auto* unit = cur->unit;
 
-    // ƒ†ƒjƒbƒg‚ª‚¢‚é‚©‚Ìƒ`ƒFƒbƒN
+    // ãƒ¦ãƒ‹ãƒƒãƒˆãŒã„ã‚‹ã‹ã®ãƒã‚§ãƒƒã‚¯
     if (!unit || unit->isDown == true)
     {
         NextTimeline();
@@ -146,52 +166,52 @@ void GameSystemComponent::UpdateUnitSelect()
     m_CurrentUnit = unit;
 
     // ============================
-    // ƒvƒŒƒCƒ„[ or “G‚Å•ªŠò
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ or æ•µã§åˆ†å²
     // ============================
     if (unit->type == UnitType::Player)
     {
-        ChangeState(BattleState::UnitActionSelect); // ƒvƒŒƒCƒ„[“ü—Í‘Ò‚¿
+        ChangeState(BattleState::UnitActionSelect); // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼å…¥åŠ›å¾…ã¡
     }
     else
     {
-        ChangeState(BattleState::UnitActing); // “GAIs“®
+        ChangeState(BattleState::UnitActing); // æ•µAIè¡Œå‹•
     }
 }
 
 //=======================================
 // BattleState:UnitActionSelect
-// ƒvƒŒƒCƒ„[“ü—Í‘Ò‚¿ó‘Ô
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼å…¥åŠ›å¾…ã¡çŠ¶æ…‹
 //=======================================
 void GameSystemComponent::UpdateUnitActionSelect()
 {
-    // TODO: ƒvƒŒƒCƒ„[“ü—Í‘Ò‚¿
-    // m_CurrentUnit->StartActionInput(); ‚È‚Ç
+    // TODO: ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼å…¥åŠ›å¾…ã¡
+    // m_CurrentUnit->StartActionInput(); ãªã©
 }
 
 //=======================================
 // BattleState:UnitActing
-// ƒ†ƒjƒbƒg‚Ìs“®ˆ—’†
+// ãƒ¦ãƒ‹ãƒƒãƒˆã®è¡Œå‹•å‡¦ç†ä¸­
 //=======================================
 void GameSystemComponent::UpdateUnitActing()
 {
-    // TODO: “GAIs“®ŠJn
-    // m_CurrentUnit->ExecuteAIAction(); ‚È‚Ç
+    // TODO: æ•µAIè¡Œå‹•é–‹å§‹
+    // m_CurrentUnit->ExecuteAIAction(); ãªã©
 }
 
 //=======================================
 // BattleState:UnitEnd
-// Œ»İƒ^ƒCƒ€ƒ‰ƒCƒ“‚Ìƒ†ƒjƒbƒgs“®I—¹
+// ç¾åœ¨ã‚¿ã‚¤ãƒ ãƒ©ã‚¤ãƒ³ã®ãƒ¦ãƒ‹ãƒƒãƒˆè¡Œå‹•çµ‚äº†
 //=======================================
 void GameSystemComponent::UpdateUnitEnd()
 {
     m_CurrentUnit = nullptr;
-    // ƒ^ƒCƒ€ƒ‰ƒCƒ“‚ğŠm”F‚µ‘S‚Ä‚Ìƒ†ƒjƒbƒg‘€ìŠ®—¹‚©’²‚×‚é
+    // ã‚¿ã‚¤ãƒ ãƒ©ã‚¤ãƒ³ã‚’ç¢ºèªã—å…¨ã¦ã®ãƒ¦ãƒ‹ãƒƒãƒˆæ“ä½œå®Œäº†ã‹èª¿ã¹ã‚‹
     NextTimeline();
 }
 
 //=======================================
 // BattleState:TurnEnd
-// ƒ^[ƒ“I—¹ˆ—
+// ã‚¿ãƒ¼ãƒ³çµ‚äº†å‡¦ç†
 //=======================================
 void GameSystemComponent::UpdateTurnEnd()
 {
@@ -200,10 +220,10 @@ void GameSystemComponent::UpdateTurnEnd()
 
 void GameSystemComponent::UpdateSunMove()
 {
-    // ‘¾—zis
+    // å¤ªé™½é€²è¡Œ
     m_sunSystem->AdvanceTurn();
 
-    // ‰eŒvZ
+    // å½±è¨ˆç®—
     ShadowParam param =
         m_shadowSystem->CalcShadowParm(
             m_sunSystem->GetCurPosX(),
@@ -217,33 +237,33 @@ void GameSystemComponent::UpdateSunMove()
         param
     );
 
-    // ƒ}ƒbƒvXV
+    // ãƒãƒƒãƒ—æ›´æ–°
     m_mapSystem->UpdateMap(
         m_unitSystem->GetAllUnits(),
         m_shadowSystem->GetShadowMap()
     );
 
-    // Ÿ‚ÍŸ”s”»’è‚Ö
+    // æ¬¡ã¯å‹æ•—åˆ¤å®šã¸
     ChangeState(BattleState::Judge);
 }
 
 void GameSystemComponent::UpdateJudge()
 {
 
-    // Ÿ”sŠm’è
+    // å‹æ•—ç¢ºå®š
     if (IsEnemyAllDead() || IsPlayerAllDead())
     {
         ChangeState(BattleState::End);
     }
     
-    // –¢Œˆ’…
+    // æœªæ±ºç€
     if (m_beforeState == BattleState::TurnEnd)
     {
         ChangeState(BattleState::TurnStart);
     }
     else
     {
-        // UnitEnd ‚©‚ç—ˆ‚½
+        // UnitEnd ã‹ã‚‰æ¥ãŸ
         NextTimeline();
         ChangeState(BattleState::UnitSelect);
     }
@@ -258,7 +278,7 @@ void GameSystemComponent::BuildTimeline()
 {
     m_Timeline.clear();
 
-    // ƒ†ƒjƒbƒg
+    // ãƒ¦ãƒ‹ãƒƒãƒˆ
     auto units = m_unitSystem->GetUnitsSortedBySpeed();
     for (auto* u : units)
     {
@@ -277,7 +297,7 @@ void GameSystemComponent::BuildTimeline()
         m_Timeline.push_back(t);
     }
 
-    // ‘¾—z
+    // å¤ªé™½
     Timeline sun;
     sun.unit = nullptr;
     sun.actorType = TimelineActorType::Sun;
@@ -286,7 +306,7 @@ void GameSystemComponent::BuildTimeline()
 
 }
 
-// Index‚ª”ÍˆÍ“à‚È‚ç•Ô‚·
+// IndexãŒç¯„å›²å†…ãªã‚‰è¿”ã™
 GameSystemComponent::Timeline*
 GameSystemComponent::GetCurrentTimeline()
 {
@@ -298,13 +318,13 @@ GameSystemComponent::GetCurrentTimeline()
     return &m_Timeline[m_TimelineIndex];
 }
 
-// Index‚ği‚ß‚é¨TurnEnd
+// Indexã‚’é€²ã‚ã‚‹â†’TurnEnd
 void GameSystemComponent::NextTimeline()
 {
     //=======================================
-    // Map/ShadowXV
+    // Map/Shadowæ›´æ–°
     //=======================================
-    // ‰eŒvZ
+    // å½±è¨ˆç®—
     ShadowParam param =
         m_shadowSystem->CalcShadowParm(
             m_sunSystem->GetCurPosX(),
@@ -312,38 +332,38 @@ void GameSystemComponent::NextTimeline()
             m_mapSystem->GetMapWidth(),
             m_mapSystem->GetMapSizeHeight()
         );
-    // ‰eƒ}ƒbƒvXV
+    // å½±ãƒãƒƒãƒ—æ›´æ–°
     m_shadowSystem->UpdateShadowMap(
         m_mapSystem->GetRawMapData(),
         param
     );
-    // ƒ}ƒbƒvXV
+    // ãƒãƒƒãƒ—æ›´æ–°
     m_mapSystem->UpdateMap(
         m_unitSystem->GetAllUnits(),
         m_shadowSystem->GetShadowMap()
     );
 
     //=======================================
-    // ƒ^ƒCƒ€ƒ‰ƒCƒ“‚ği‚ß‚é
+    // ã‚¿ã‚¤ãƒ ãƒ©ã‚¤ãƒ³ã‚’é€²ã‚ã‚‹
     //=======================================
     m_TimelineIndex++;
 
     //=======================================
-    // ƒ^[ƒ“I—¹ or Œp‘±”»’è
+    // ã‚¿ãƒ¼ãƒ³çµ‚äº† or ç¶™ç¶šåˆ¤å®š
     //=======================================
     if (m_TimelineIndex >= static_cast<int>(m_Timeline.size()))
     {
-        // ‘Sˆõs“®I—¹
+        // å…¨å“¡è¡Œå‹•çµ‚äº†
         ChangeState(BattleState::TurnEnd);
     }
     else
     {
-        // ‚Ü‚¾s“®‘Ò‚¿ƒ†ƒjƒbƒg‚ªc‚Á‚Ä‚¢‚é
+        // ã¾ã è¡Œå‹•å¾…ã¡ãƒ¦ãƒ‹ãƒƒãƒˆãŒæ®‹ã£ã¦ã„ã‚‹
         ChangeState(BattleState::Judge);
     }
 }
 
-// Ÿ”s”»’è
+// å‹æ•—åˆ¤å®š
 bool GameSystemComponent::IsPlayerAllDead() const
 {
     return m_unitSystem->IsPlayerAllDead();

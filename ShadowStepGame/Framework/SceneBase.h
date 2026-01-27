@@ -1,5 +1,5 @@
-// ===================================================================
-// SceneBase.h ƒV[ƒ“Šî’êƒNƒ‰ƒX(GameObject‚ÌŠÇ—‹@”\•t‚«)
+ï»¿// ===================================================================
+// SceneBase.h ã‚·ãƒ¼ãƒ³åŸºåº•ã‚¯ãƒ©ã‚¹(GameObjectã®ç®¡ç†æ©Ÿèƒ½ä»˜ã)
 // ===================================================================
 
 #pragma once
@@ -7,11 +7,11 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <atomic>
 
 #include "SystemCommon.h"
 #include "Camera.h"
-#include "GameObject.h"
-#include "XmlRW.h"
+#include "GameObjectList.h"
 
 enum SceneReturnCode
 {
@@ -23,67 +23,41 @@ enum SceneReturnCode
 
 class SceneBase
 {
-#pragma region •Ï”
+#pragma region å¤‰æ•°
 protected:
-	bool m_isInitialized = false;
+	std::atomic<bool> m_isInitialized = false;	// ã‚¹ãƒ¬ãƒƒãƒ‰ã‚»ãƒ¼ãƒ•ãªåˆæœŸåŒ–ãƒ•ãƒ©ã‚°
 	bool m_isActive = false;
 	int m_nextScene = 999;
 	int m_lastID = 0;
 
-	// ƒJƒƒ‰
+	// ã‚«ãƒ¡ãƒ©
 	Camera  m_Camera;
 	Camera  m_UiCamera;
 	
-	// GameObject ƒŠƒXƒg
-	std::vector<std::unique_ptr<GameObject>> m_GameObjects;
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒªã‚¹ãƒˆ
+	std::unique_ptr<GameObjectList> m_GameObjectList = nullptr;
+
 private:
 
 #pragma endregion
 
-#pragma region ŠÖ”
+#pragma region é–¢æ•°
 public:
 	// ===================================================================
-	// ƒ‰ƒCƒtƒTƒCƒNƒ‹	(”h¶ƒNƒ‰ƒX‚ÅÀ‘••K{I)
+	// ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«	(æ´¾ç”Ÿã‚¯ãƒ©ã‚¹ã§å®Ÿè£…å¿…é ˆï¼)
 	// ===================================================================
-	virtual void Init() = 0;			// ƒV[ƒ“Ø‚è‘Ö‚¦‚ÉÀs‚³‚ê‚Ü‚·
-	virtual void UnInit() = 0;		// ƒV[ƒ“Ø‚è‘Ö‚¦‚ÉÀs‚³‚ê‚Ü‚·
-	virtual void Update() = 0;	// –ˆƒtƒŒ[ƒ€Às‚³‚ê‚Ü‚·
-	virtual void Draw() = 0;		// –ˆƒtƒŒ[ƒ€Às‚³‚ê‚Ü‚·
-	virtual void Draw(Camera*) = 0;	// –ˆƒtƒŒ[ƒ€Às‚³‚ê‚Ü‚·B3D—p
+	virtual void Init() = 0;			// ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆæ™‚ã«å®Ÿè¡Œã•ã‚Œã¾ã™
+	virtual void UnInit() = 0;		// ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆæ™‚ã«å®Ÿè¡Œã•ã‚Œã¾ã™
+	virtual void Update() = 0;	// æ¯ãƒ•ãƒ¬ãƒ¼ãƒ å®Ÿè¡Œã•ã‚Œã¾ã™
+	virtual void Draw() = 0;		// æ¯ãƒ•ãƒ¬ãƒ¼ãƒ å®Ÿè¡Œã•ã‚Œã¾ã™
+	virtual void Draw(Camera*) = 0;	// æ¯ãƒ•ãƒ¬ãƒ¼ãƒ å®Ÿè¡Œã•ã‚Œã¾ã™ã€‚3Dç”¨
 
 	// ===================================================================
-	// ó‘Ôæ“¾
+	// çŠ¶æ…‹å–å¾—
 	// ===================================================================
-	bool IsInitialized() { return m_isInitialized; }	// ‰Šú‰»‚ªŠ®—¹‚µ‚Ä‚¢‚é‚©
-	bool IsActive() { return m_isActive; }				// Às‚³‚ê‚éƒV[ƒ“‚©
-	int GetNextScene() { return m_nextScene;	 }	// Ÿ‚ÌƒV[ƒ“
-
-protected:
-	// ===================================================================
-	// GameObjectŠÇ—
-	// ===================================================================
-	// xmlƒtƒ@ƒCƒ‹‚©‚çƒIƒuƒWƒFƒNƒg‚Ìƒf[ƒ^‚ğæ“¾‚µ‚ÄƒŠƒXƒg‚ğì¬‚·‚é
-	void MakeObjectList(const char* _stage);
-	// xmlƒtƒ@ƒCƒ‹‚ÉXVƒf[ƒ^‚ğ•Û‘¶‚·‚é
-	void SaveObjectData(const char* _stage);
-	// GameObjectƒŠƒXƒgíœ
-	void DeleteObjectList();
-	// GameObjectƒŠƒXƒgXV
-	void UpdateObjectList();
-	// GameObjectƒŠƒXƒg•`‰æi‹Œ”ÅEŒİŠ·«‚Ì‚½‚ßc‚·j
-	void DrawObjectList(Camera* camera);
-	// GameObjectw’èƒŒƒCƒ„[‚Ì‚İ•`‰æ
-	void DrawLayer(Camera* camera, RenderLayer layer);
-	// GameObject‘SƒŒƒCƒ„[‚ğ‡”Ô‚É•`‰æ
-	void DrawAllLayers(Camera* camera);
-
-	// ===================================================================
-	// GameObject@ƒ^ƒOŒŸõ
-	// ===================================================================
-	// GameObject‚ğƒ^ƒO‚ÅŒŸõiÅ‰‚Ìˆê‚Â‚Ì‚İj
-	GameObject* FindGameObjectWithTag(const std::string& tag);
-	// GameObject‚ğƒ^ƒO‚ÅŒŸõi‚·‚×‚Äj
-	std::vector<GameObject*> FindGameObjectsWithTag(const std::string& tag);
+	bool IsInitialized() { return m_isInitialized.load(); }	// åˆæœŸåŒ–ãŒå®Œäº†ã—ã¦ã„ã‚‹ã‹
+	bool IsActive() { return m_isActive; }				// å®Ÿè¡Œä¸­ã®ã‚·ãƒ¼ãƒ³ã‹
+	int GetNextScene() { return m_nextScene;	 }	// æ¬¡ã®ã‚·ãƒ¼ãƒ³
 private:
 
 #pragma endregion

@@ -147,6 +147,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="Framework\AABBCollider.h" />
     <ClInclude Include="Framework\Application.h" />
     <ClInclude Include="Framework\AssimpPerse.h" />
@@ -163,6 +164,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClInclude Include="Framework\EmptyRender.h" />
     <ClInclude Include="Framework\Game.h" />
     <ClInclude Include="Framework\GameObject.h" />
+    <ClInclude Include="Framework\GameObjectList.h" />
     <ClInclude Include="Framework\imgui\imconfig.h" />
     <ClInclude Include="Framework\imgui\imgui.h" />
     <ClInclude Include="Framework\imgui\imgui_impl_dx11.h" />
@@ -210,6 +212,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClInclude Include="Framework\VertexBuffer.h" />
     <ClInclude Include="Framework\XmlRW.h" />
     <ClInclude Include="UnitComponent.h" />
+    <ClInclude Include="RadioButtonComponent.h" />
     <ClInclude Include="SceneDebug.h" />
     <ClInclude Include="SceneGame.h" />
     <ClInclude Include="SceneResult.h" />
@@ -221,11 +224,13 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneProto.h" />
     <ClInclude Include="SunManageComponent.h" />
+    <ClInclude Include="UISystemComponent.h" />
     <ClInclude Include="UnitCommon.h" />
     <ClInclude Include="ShadowSystemComponent.h" />
     <ClInclude Include="UnitSystemComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="Framework\AABBCollider.cpp" />
     <ClCompile Include="Framework\Application.cpp" />
     <ClCompile Include="Framework\AssimpPerse.cpp" />
@@ -236,6 +241,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClCompile Include="Framework\DebugUI.cpp" />
     <ClCompile Include="Framework\download\tinyxml2.cpp" />
     <ClCompile Include="Framework\Game.cpp" />
+    <ClCompile Include="Framework\GameObjectList.cpp" />
     <ClCompile Include="Framework\imgui\imgui.cpp" />
     <ClCompile Include="Framework\imgui\imgui_demo.cpp" />
     <ClCompile Include="Framework\imgui\imgui_draw.cpp" />
@@ -247,6 +253,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClCompile Include="Framework\IOManager.cpp" />
     <ClCompile Include="Framework\LoadingScreen.cpp" />
     <ClCompile Include="Framework\main.cpp" />
+    <ClCompile Include="Framework\MeshRendererComponent.cpp" />
     <ClCompile Include="Framework\PhysicsManager.cpp" />
     <ClCompile Include="Framework\Renderer.cpp" />
     <ClCompile Include="Framework\ResourceManager.cpp" />
@@ -268,6 +275,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClCompile Include="Framework\utility.cpp" />
     <ClCompile Include="Framework\XmlRW.cpp" />
     <ClCompile Include="UnitComponent.cpp" />
+    <ClCompile Include="RadioButtonComponent.cpp" />
     <ClCompile Include="SceneDebug.cpp" />
     <ClCompile Include="SceneGame.cpp" />
     <ClCompile Include="SceneResult.cpp" />
@@ -276,6 +284,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClCompile Include="GameSystemComponent.cpp" />
     <ClCompile Include="MapSystemComponent.cpp" />
     <ClCompile Include="SceneProto.cpp" />
+    <ClCompile Include="UISystemComponent.cpp" />
     <ClCompile Include="UnitSystemComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
