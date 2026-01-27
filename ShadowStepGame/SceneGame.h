@@ -1,6 +1,6 @@
-// ===================================================================
+ï»¿// ===================================================================
 // SceneGame.h
-// ƒQ[ƒ€ƒV[ƒ“ - ƒvƒŒƒCƒ„[ˆÚ“®‚Æ°‚Ì•\¦
+// ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³ - ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç§»å‹•ã¨åºŠã®è¡¨ç¤º
 // ===================================================================
 #pragma once
 #include "SceneBase.h"
@@ -8,7 +8,7 @@
 class SceneGame : public SceneBase
 {
 private:
-    // ƒIƒuƒWƒFƒNƒgŠÇ——pID
+    // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç®¡ç†ç”¨ID
     enum OBJECT_ID
     {
         ID_PLAYER,
@@ -17,7 +17,7 @@ private:
         ID_COUNT,
     };
 
-    float m_GameTime = 0.f; // ƒQ[ƒ€Œo‰ßŠÔ
+    float m_GameTime = 0.f; // ã‚²ãƒ¼ãƒ çµŒéæ™‚é–“
 
 public:
     void Init() override;
@@ -25,4 +25,8 @@ public:
     void Update() override;
     void Draw() override;
     void Draw(Camera*) override;
+
+private:
+    // ãƒœã‚¿ãƒ³æ•´åˆ—å‡¦ç†
+    void MakeButtons();
 };
