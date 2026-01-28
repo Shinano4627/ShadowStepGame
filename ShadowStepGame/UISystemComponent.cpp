@@ -5,6 +5,7 @@
 #include "Texture2D.h"
 #include "ButtonComponent.h"
 #include "RadioButtonComponent.h"
+#include "UIAnimationComponent.h"
 
 // ===================================================================
 // UIオブジェクトの追加・設定
@@ -140,8 +141,10 @@ void UISystemComponent::MakeUIButtons(std::unique_ptr<GameObjectList>& objectLis
 
         // UVを設定
         auto* tex = targetButtons[i]->GetMeshComponent<Texture2D>();
-        tex->SetUV(1, 1, 2, 1);
+        tex->SetUV(1, 1, 3, 3);
 
+        //アニメーションコンポネント追加
+        targetButtons[i]->AddComponent<UIAnimationComponent>();
         // ボタンコンポーネント追加
         targetButtons[i]->AddComponent<ButtonComponent>(targetButtons[i]->GetTransform().GetScale());
     }
