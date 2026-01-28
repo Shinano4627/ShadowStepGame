@@ -348,7 +348,7 @@ void MapSystemComponent::MakeSelectMap(std::unique_ptr<GameObjectList>& objectLi
     // MeshComponentをAdd
     Color color = Color(1.0f, 1.0f, 1.0f, 0.8f);
     newObject->AddMeshComponent<SimplePlaneRendererComponent>(
-        color, "asset/texture/");
+        color);
     obj->SetActive(false);
     n++;
     objectList->AddObject(std::move(obj));
