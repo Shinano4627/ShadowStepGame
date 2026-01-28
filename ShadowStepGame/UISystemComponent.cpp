@@ -76,6 +76,9 @@ void UISystemComponent::MakeUIButtons(std::unique_ptr<GameObjectList>& objectLis
             tex->SetUV(1, 1, 2, 1);
             // ボタンコンポーネント追加
             buttonSubs[i]->AddComponent<ButtonComponent>(buttonSubs[i]->GetTransform().GetScale());
+
+            //一旦非アクティブ
+            buttonSubs[i]->SetActive(false);
         }
     }
 
@@ -188,6 +191,8 @@ void UISystemComponent::MakeUITimeLine(std::unique_ptr<GameObjectList>& objectLi
     windowObj->SetTag("Window");
     windowObj->AddMeshComponent<Texture2D>(templateTex->GetTexturePath(), Color(1, 1, 1, 1));
 
+    windowObj->SetActive(false);
+
     objectList->AddObject(std::move(windowObj));
     std::cout << "[SceneGame] Timeline window created" << std::endl;
 }
@@ -274,7 +279,8 @@ void UISystemComponent::MakeUIStatus(std::unique_ptr<GameObjectList>& objectList
             }
 
             // 仮で１つ目を表示
-            statusImages[0]->SetActive(true);
+            // ☆一旦非アクティブ
+            statusImages[0]->SetActive(false);
         }
     }
     // ---------------------------------------------------------------
@@ -349,6 +355,9 @@ void UISystemComponent::MakeUIStatus(std::unique_ptr<GameObjectList>& objectList
                 auto* tex = speedObj->AddMeshComponent<Texture2D>(speedTex->GetTexturePath(), Color(1, 1, 1, 1));
                 // レイヤーセット
                 tex->SetRenderLayer(RenderLayer::UI_2);
+
+                //一旦非アクティブ
+                speedObj->SetActive(false);
 
                 objectList->AddObject(std::move(speedObj));
             }

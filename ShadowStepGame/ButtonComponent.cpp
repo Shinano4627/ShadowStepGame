@@ -40,11 +40,11 @@ void ButtonComponent::Update()
         auto* anim = m_pOwner->GetComponent<UIAnimationComponent>();
         if (!anim)return;
 
-        if (anim)
+        /*if (anim)
         {
             anim->Play("Select");
             std::cout << "Play Select called" << std::endl;
-        }
+        }*/
 
         if (m_IsSelected)
         {

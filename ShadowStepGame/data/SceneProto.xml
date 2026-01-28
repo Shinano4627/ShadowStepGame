@@ -61,7 +61,7 @@
         <ObjectType Value="2D"/>
         <Tag Value="Button"/>
         <FileName Value=""/>
-        <Texture Value="asset/texture/Buttons/Game_Attack.png"/>
+        <Texture Value="asset/texture/Buttons/atk_up.png"/>
         <Posision X="0" Y="0" Z="0"/>
         <Rotation X="0" Y="0" Z="0"/>
         <Scale X="400" Y="200" Z="0"/>
@@ -73,7 +73,7 @@
         <ObjectType Value="2D"/>
         <Tag Value="Button"/>
         <FileName Value=""/>
-        <Texture Value="asset/texture/Buttons/Game_Build.png"/>
+        <Texture Value="asset/texture/Buttons/atk_up.png"/>
         <Posision X="0" Y="0" Z="0"/>
         <Rotation X="0" Y="0" Z="0"/>
         <Scale X="400" Y="200" Z="0"/>
