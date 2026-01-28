@@ -152,8 +152,8 @@ void MapSystemComponent::UpdateMap(const std::vector<UnitComponent*>& units,
         for (int x = 0; x < m_MapWidth; ++x)
         {
             // 地形はそのまま、それ以外はEmptyに
-            if (m_MapData[z][x] == (int)EMapTile::Wall &&
-                m_MapData[z][x] == (int)EMapTile::Tree)
+            if (m_MapData[z][x] != (int)EMapTile::Wall ||
+                m_MapData[z][x] != (int)EMapTile::Tree)
             {
                 m_MapData[z][x] = (int)EMapTile::Empty;
             }

@@ -63,8 +63,10 @@ void GameSystemComponent::Update()
     if (IO_MANAGER.GetKeyDownKeyBord(VK_E))
     {
         // ターン状態に合わせた関数を呼び出し
-        UpdateState();
+        // UpdateState();
     }
+    // ターン状態に合わせた関数を呼び出し
+    UpdateState();
 }
 
 void GameSystemComponent::ChangeState(BattleState next)
@@ -158,8 +160,13 @@ void GameSystemComponent::UpdateUnitSelect()
     auto* unit = cur->unit;
 
     // ユニットがいるかのチェック
-    if (!unit || unit->IsDown() == true)
+    if (!unit)
     {
+        NextTimeline();
+        return;
+    }
+    if (unit->IsDown() == true) {
+        unit->RecoverDown();
         NextTimeline();
         return;
     }
@@ -168,10 +175,12 @@ void GameSystemComponent::UpdateUnitSelect()
 
     m_CurrentUnit->StartTurn();
 
+
     // ============================
     // プレイヤー or 敵で分岐
     // ============================
-    if (unit->GetType() == UnitType::Player)
+    if (unit->GetType() == UnitType::Player
+        || unit->GetType() == UnitType::Enemy)
     {
         // Select関係変数
         m_SelectAction = false;
@@ -179,9 +188,12 @@ void GameSystemComponent::UpdateUnitSelect()
         m_SelectMapPosition = unit->GetPosition();
         m_Unitposition = unit->GetPosition();
         m_UnitType = unit->GetType();
+        m_UnitModel = unit->GetModel();
         m_SelectType = UnitActionType::None;
+        m_SelectPhase = SelectPhase::Action;
         // SelectMap起動
         m_mapSystem->StartSelectMap(unit, m_SelectMapPosition);
+        
         ChangeState(BattleState::UnitActionSelect); // プレイヤー入力待ち
     }
     else
@@ -209,94 +221,100 @@ void GameSystemComponent::UpdateUnitActionSelect()
         3:UnitActへ
     */
 
-    // Action未選択
-    if (!m_SelectAction) {
-        // 入力確認
-        //UISystemからenumで選択を貰う
+    // ============================
+    // Action入力（常に受け付ける）
+    // ============================
 
+    if (IO_MANAGER.GetKeyDownKeyBord(VK_T))
+    {
+        m_SelectType = UnitActionType::Move;
+    }
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_G) &&
+        m_UnitModel == UnitModel::Attack)
+    {
+        m_SelectType = UnitActionType::Attack;
+    }
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_B) &&
+        m_UnitModel == UnitModel::Place)
+    {
+        m_SelectType = UnitActionType::Place;
     }
 
+    // Actionが初めて選ばれた瞬間
+    if (m_SelectType != UnitActionType::None &&
+        m_SelectPhase == SelectPhase::Action)
+    {
+        m_SelectPhase = SelectPhase::Position;
+    }
+
+
+
     // まだポジション選択していない
-    if (!m_SelectPosition)
+    if (m_SelectPhase == SelectPhase::Position)
     {
         // 入力管理
         // セレクト移動（仮実装：カメラがマップを右上を正、左下を負と見ていると仮定）
         Input_Select();
-        // Mapに反映
-        // m_mapSystem->SetSelectPosition(m_SelectMapPosition);
-
-        // 選択確定(Enter)
-        if (IO_MANAGER.GetKeyDown(TYPE_OK))
+        
+        // 選択確定(F)
+        if (IO_MANAGER.GetKeyDownKeyBord(VK_F))
         {
+            bool ok = false;
             // Actionに合わせてMapの位置をチェック(あとで関数化)
             switch (m_SelectType)
             {
             case UnitActionType::Move:
-                // OKか？
-                if (m_mapSystem->IsWalkableAtUnitPos(
-                    m_SelectMapPosition.x, m_SelectMapPosition.z
-                )){
-
-                    m_SelectPosition = true;
-                }
-                else {
-                    // 実行できないので他を選択してもらう
-                }
-
+                ok = m_mapSystem->IsWalkableAtUnitPos(
+                    m_SelectMapPosition.x,
+                    m_SelectMapPosition.z);
                 break;
+
             case UnitActionType::Attack:
-                // OKか？
-                if (m_mapSystem->IsAttackableAtUnitPos(
-                    m_Unitposition.x, m_Unitposition.z,  // Unit位置
-                    m_SelectMapPosition.x, m_SelectMapPosition.z,    // 攻撃したい位置
-                    m_UnitType  // Player or Enemy のどちらの処理か
-                )) {
-                    m_SelectPosition = true;
-                }
-                else {
-                    // 実行できないので他を選択してもらう
-                }
+                ok = m_mapSystem->IsAttackableAtUnitPos(
+                    m_Unitposition.x, m_Unitposition.z,
+                    m_SelectMapPosition.x, m_SelectMapPosition.z,
+                    m_UnitType);
 
+                if (ok)
+                {
+                    UnitComponent* target =
+                        m_unitSystem->FindUnitAtPosition(m_SelectMapPosition);
+
+                    if (target)
+                    {
+                        // 仮：2ターン行動不能
+                        target->SetDown(2);
+                    }
+                }
                 break;
-            case UnitActionType::Place:
-                // OKか？
-                if (m_mapSystem->IsPlacebleAtUnitPos(
-                    m_SelectMapPosition.x, m_SelectMapPosition.z
-                )) {
 
-                    m_SelectPosition = true;
-                }
-                else {
-                    // 実行できないので他を選択してもらう
-                }
+            case UnitActionType::Place:
+                ok = m_mapSystem->IsPlacebleAtUnitPos(
+                    m_SelectMapPosition.x,
+                    m_SelectMapPosition.z);
                 break;
             }
 
+            if (ok)
+            {
+                // UnitActionを組み立て
+                UnitAction action;
+                action.type = m_SelectType;
+                action.targetGrid = m_SelectMapPosition;
+
+                // Unitに行動をセット
+                m_CurrentUnit->SetAction(action);
+
+                // SelectMap終了
+                m_mapSystem->EndSelectMap();
+
+                // 行動を実行
+                m_CurrentUnit->ExcuteAction();
+
+                ChangeState(BattleState::UnitActing);
+            }
 
         }
-    }
-
-    // 全て選択完了した
-    if (m_SelectAction && m_SelectPosition)
-    {
-        // UnitActionを組み立て
-        UnitAction action;
-        action.type = m_SelectType;
-        action.targetGrid = m_SelectMapPosition;
-
-        // Unitに行動をセット
-        m_CurrentUnit->SetAction(action);
-
-        // SelectMap終了
-        m_mapSystem->EndSelectMap();
-
-        // 行動を実行
-        m_CurrentUnit->ExcuteAction();
-
-
-        // 次の状態へ
-        ChangeState(BattleState::UnitActing);
-        
     }
 }
 
@@ -322,8 +340,7 @@ void GameSystemComponent::UpdateUnitEnd()
 {
 
     m_CurrentUnit = nullptr;
-    // タイムラインを確認し全てのユニット操作完了か調べる
-    NextTimeline();
+    ChangeState(BattleState::Judge);
 }
 
 //=======================================
@@ -332,7 +349,7 @@ void GameSystemComponent::UpdateUnitEnd()
 //=======================================
 void GameSystemComponent::UpdateTurnEnd()
 {
-    ChangeState(BattleState::SunMove);
+    ChangeState(BattleState::TurnStart);
 }
 
 void GameSystemComponent::UpdateSunMove()
@@ -372,17 +389,9 @@ void GameSystemComponent::UpdateJudge()
     {
         ChangeState(BattleState::End);
     }
-    
-    // 未決着
-    if (m_beforeState == BattleState::TurnEnd)
-    {
-        ChangeState(BattleState::TurnStart);
-    }
-    else
-    {
-        // UnitEnd から来た
+    else {
+        // タイムラインを確認し全てのユニット操作完了か調べる
         NextTimeline();
-        ChangeState(BattleState::UnitSelect);
     }
 }
 
@@ -476,7 +485,7 @@ void GameSystemComponent::NextTimeline()
     else
     {
         // まだ行動待ちユニットが残っている
-        ChangeState(BattleState::Judge);
+        ChangeState(BattleState::UnitSelect);
     }
 }
 
@@ -494,22 +503,22 @@ bool GameSystemComponent::IsEnemyAllDead() const
 void GameSystemComponent::Input_Select()
 {
     
-    if (IO_MANAGER.GetKeyDownKeyBord(VK_UP))
+    if (IO_MANAGER.GetKeyDownKeyBord(VK_RIGHT))
     {
         m_SelectMapPosition.x += 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
     }
-    else if (IO_MANAGER.GetKeyDownKeyBord(VK_DOWN))
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_LEFT))
     {
         m_SelectMapPosition.x -= 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
     }
-    else if (IO_MANAGER.GetKeyDownKeyBord(VK_RIGHT))
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_UP))
     {
         m_SelectMapPosition.z += 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
     }
-    else if (IO_MANAGER.GetKeyDownKeyBord(VK_LEFT))
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_DOWN))
     {
         m_SelectMapPosition.z -= 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);

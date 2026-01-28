@@ -42,10 +42,9 @@ std::vector<UnitComponent*> UnitSystemComponent::GetAliveUnits() const
 
 	for (auto* unit : m_UnitList)
 	{
-		if (unit && !unit->IsDown())
-		{
+		
 			result.push_back(unit);
-		}
+		
 	}
 	return result;
 }
@@ -70,6 +69,21 @@ UnitComponent* UnitSystemComponent::FindUnit(int id)
 	{
 		if (u->GetId() == id)
 			return u;
+	}
+	return nullptr;
+}
+
+UnitComponent* UnitSystemComponent::FindUnitAtPosition(const MapPosition& pos) const
+{
+	for (auto* unit : m_UnitList)
+	{
+		if (!unit) continue;
+		
+		MapPosition uPos = unit->GetPosition();
+		if (uPos.x == pos.x && uPos.z == pos.z)
+		{
+			return unit;
+		}
 	}
 	return nullptr;
 }

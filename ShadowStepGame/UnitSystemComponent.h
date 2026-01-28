@@ -66,6 +66,7 @@ public:
     // 検索
     //=======================================
     UnitComponent* FindUnit(int id);
+    UnitComponent* FindUnitAtPosition(const MapPosition& pos) const;
 
     //=======================================
     // 勝敗判定

@@ -73,13 +73,13 @@ void SceneProto::Init()
         // プレイヤー
         auto* playerObj = m_GameObjectList->FindGameObjectWithTag("Player");
         auto* playerUnit = playerObj->AddComponent<UnitComponent>();
-        UnitStatus pl_1 = { 1000,UnitType::Player,UnitModel::Attack,MapPosition{1,0},10,10,false };
+        UnitStatus pl_1 = { 1000,UnitType::Player,UnitModel::Attack,MapPosition{0,0},10,10,false };
         playerUnit->SetStatus(pl_1);
 
         //エネミー
         auto* enemyObj = m_GameObjectList->FindGameObjectWithTag("Enemy");
         auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
-        UnitStatus en_1 = { 1000,UnitType::Enemy,UnitModel::Attack,MapPosition{0,0},10,5,false };
+        UnitStatus en_1 = { 1000,UnitType::Enemy,UnitModel::Attack,MapPosition{1,0},10,5,false };
         enemyUnit->SetStatus(en_1);
 
 

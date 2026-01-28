@@ -17,6 +17,8 @@ private:
     // アクション情報
     UnitAction m_action;
 
+    int downTurn = 0;
+
     // -------- 各Flug --------
     bool m_isMyTurn = false;        // 自分のターンか
     bool m_actionConfirmed = false; // 行動確定済みか
@@ -86,6 +88,24 @@ public:
     }
 
     void SetStatus(UnitStatus status) { m_status = status; }
+
+    void SetDown(int turn)
+    {
+        m_status.isDown = true;
+        downTurn = turn;
+
+        std::cout << "Down!\n";
+    }
+
+    void RecoverDown()
+    {
+        downTurn--;
+        if (downTurn <= 0)
+        {
+            m_status.isDown = false;
+            downTurn = 0;
+        }
+    }
 
 private:
     void Move();

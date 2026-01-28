@@ -52,6 +52,12 @@ public:
 		int speed;	// 行動順決定用
 	};
 
+	enum class SelectPhase
+	{
+		Action,     // 1:アクション選択
+		Position,   // 2:ポジション選択
+	};
+
 public:
 	//=======================================
 	// コンストラクタ
@@ -75,6 +81,13 @@ public:
 
 
 	BattleState GetBattleState() { return m_State; }
+	MapPosition GetUnitPosition() { return m_Unitposition; }
+	bool IsSelectingPosition() const
+	{
+		return m_State == BattleState::UnitActionSelect &&
+			m_SelectPhase == SelectPhase::Position;
+	}
+
 private:
 	//=======================================
 	// 状態管理関数
@@ -163,6 +176,9 @@ private:
 	MapPosition m_Unitposition;			// ユニット位置
 	UnitType m_UnitType;
 	UnitActionType m_SelectType;	// 今選んでいるアクション選択
+	UnitModel m_UnitModel;
+
+	SelectPhase m_SelectPhase = SelectPhase::Action;
 
 	//=======================================
 	// デバッグ用

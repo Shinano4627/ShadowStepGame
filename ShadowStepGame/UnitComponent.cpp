@@ -1,4 +1,5 @@
 ﻿#include "UnitComponent.h"
+#include "GameObject.h"
 
 void UnitComponent::Update()
 {
@@ -59,10 +60,16 @@ void UnitComponent::ExcuteAction()
     m_isActing = true;
 
     // 行動開始時の初期化だけ
+    Transform& transform = m_pOwner->GetTransform();
+    Vector3 pos = transform.GetPosition();
     switch (m_action.type)
     {
     case UnitActionType::Move:
         // 移動開始準備（開始位置保存など）
+        // 簡易移動
+        pos.x = m_action.targetGrid.x * 5.0f;
+        pos.z = m_action.targetGrid.z * 5.0f;
+        transform.SetPosition(pos);
         break;
     case UnitActionType::Attack:
         // 攻撃モーション開始
@@ -83,6 +90,7 @@ void UnitComponent::Move()
         m_status.pos = m_action.targetGrid;
         m_isActing = false;
         m_turnFinished = true; // ← GameSystem が確定するなら不要
+        
     }
 }
 
