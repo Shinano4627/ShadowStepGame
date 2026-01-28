@@ -62,7 +62,7 @@ void SceneProto::Init()
 
         // ゲームシステム
         auto* gameSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<GameSystemComponent>();
-        gameSystem->InitGame(m_GameObjectList);
+        gameSystem->InitGame(m_GameObjectList); // ゲームシステム開始
 
         // カメラ
         auto* orbitCamera = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<OrbitCameraComponent>(&m_Camera);
@@ -117,7 +117,7 @@ void SceneProto::Update()
 
     // システムアップデート
     auto* gameSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<GameSystemComponent>();
-    gameSystem->InitGame(m_GameObjectList);
+    gameSystem->UpdateGame(m_GameObjectList);   // リスト権限を渡して各種アップデート
 
     // 2. 全GameObject更新
     m_GameObjectList->UpdateObjectList();

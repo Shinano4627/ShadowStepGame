@@ -63,7 +63,7 @@ void CursorManager::Update()
 	newPos = DirectX::SimpleMath::Vector3::Lerp(currentPos, newPos, m_mouseSensitivity);
 	transform.SetPosition(newPos);
 
-	std::cout << "Cursol Position : " << newPos.x << ", " << newPos.y << std::endl;
+	//std::cout << "Cursol Position : " << newPos.x << ", " << newPos.y << std::endl;
 }
 
 // ===================================================================

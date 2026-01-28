@@ -81,7 +81,7 @@ public:
 		return;
 	}
 
-	void UpdateGame(GameObjectList* gameObjectList);
+	void UpdateGame(std::unique_ptr<GameObjectList>& gameObjectList);
 
 	BattleState GetBattleState() { return m_State; }
 private:

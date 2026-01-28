@@ -63,13 +63,13 @@ void GameSystemComponent::InitGame(std::unique_ptr<GameObjectList>& gameObjectLi
     ChangeState(BattleState::Init);
 }
 
-void GameSystemComponent::UpdateGame(GameObjectList* gameObjectList)
+void GameSystemComponent::UpdateGame(std::unique_ptr<GameObjectList>& gameObjectList)
 {
     // VK_E が押されたら状態更新（テスト用）
     if (IO_MANAGER.GetKeyDownKeyBord(VK_E))
     {
         // ターン状態に合わせた関数を呼び出し
-        UpdateState(gameObjectList);
+        UpdateState(gameObjectList.get());
     }
 }
 
