@@ -44,6 +44,7 @@ void GameSystemComponent::InitGame(std::unique_ptr<GameObjectList>& gameObjectLi
     }
 
     // 初期処理実行
+    // 影の設定
     int map_w = m_mapSystem->GetMapWidth();
     int map_h = m_mapSystem->GetMapHeight();
     m_shadowSystem->SetUp(
@@ -54,6 +55,7 @@ void GameSystemComponent::InitGame(std::unique_ptr<GameObjectList>& gameObjectLi
         m_mapSystem->GetDrawStartPosZ(),
         gameObjectList.get()
     );
+    UpdateShadow(gameObjectList.get());
 
     // 状態データ初期化
     m_TurnCount = 0;
@@ -231,18 +233,7 @@ void GameSystemComponent::UpdateSunMove(GameObjectList* gameObjectList)
     m_sunSystem->AdvanceTurn();
 
     // 影計算
-    ShadowParam param =
-        m_shadowSystem->CalcShadowParm(
-            m_sunSystem->GetDirection(),
-            m_mapSystem->GetMapWidth(),
-            m_mapSystem->GetMapSizeHeight()
-        );
-
-    m_shadowSystem->UpdateShadowMap(
-        m_mapSystem->GetRawMapData(),
-        param,
-        gameObjectList
-    );
+    UpdateShadow(gameObjectList);
 
     // マップ更新
     m_mapSystem->UpdateMap(
@@ -279,6 +270,22 @@ void GameSystemComponent::UpdateJudge(GameObjectList* gameObjectList)
 void GameSystemComponent::UpdateEnd()
 {
 
+}
+
+void GameSystemComponent::UpdateShadow(GameObjectList* gameObjectList)
+{
+    ShadowParam param =
+        m_shadowSystem->CalcShadowParm(
+            m_sunSystem->GetDirection(),
+            m_mapSystem->GetMapWidth(),
+            m_mapSystem->GetMapSizeHeight()
+        );
+
+    m_shadowSystem->UpdateShadowMap(
+        m_mapSystem->GetRawMapData(),
+        param,
+        gameObjectList
+    );
 }
 
 void GameSystemComponent::BuildTimeline()
@@ -331,19 +338,9 @@ void GameSystemComponent::NextTimeline(GameObjectList* gameObjectList)
     //=======================================
     // Map/Shadow更新
     //=======================================
-    // 影計算
-    ShadowParam param =
-        m_shadowSystem->CalcShadowParm(
-            m_sunSystem->GetDirection(),
-            m_mapSystem->GetMapWidth(),
-            m_mapSystem->GetMapSizeHeight()
-        );
-    // 影マップ更新
-    m_shadowSystem->UpdateShadowMap(
-        m_mapSystem->GetRawMapData(),
-        param,
-        gameObjectList
-    );
+    // 影更新
+    UpdateShadow(gameObjectList);
+
     // マップ更新
     m_mapSystem->UpdateMap(
         m_unitSystem->GetAllUnits(),

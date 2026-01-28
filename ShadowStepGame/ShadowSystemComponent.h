@@ -8,9 +8,12 @@
 #include "GameObjectList.h"
 #include "IOManager.h"
 #include "Game.h"
-#include "SimplePlaneRendererComponent.h"
 #include <algorithm>
 #include <vector>
+
+// コンポーネント
+#include "SimplePlaneRendererComponent.h"
+#include "Texture2D.h"
 
 struct ShadowParam
 {
@@ -226,11 +229,14 @@ private:
 
         // テンプレートからテクスチャパスを取得
         std::string texturePath = "";
-        auto* templateRenderer = shadowTemplate->GetMeshComponent<SimplePlaneRendererComponent>();
+        auto* templateRenderer = shadowTemplate->GetMeshComponent<Texture2D>();
         if (templateRenderer)
         {
             texturePath = templateRenderer->GetTexturePath();
         }
+
+        // テンプレートを非表示
+        shadowTemplate->SetActive(false);
 
         // マップサイズ分の影オブジェクトを生成
         int objectId = 5000; // 影オブジェクト用ID開始値
@@ -255,7 +261,7 @@ private:
 
                 // レンダラー追加
                 Color shadowColor = Color(0.0f, 0.0f, 0.0f, 0.5f);
-                newObject->AddMeshComponent<SimplePlaneRendererComponent>(shadowColor, texturePath);
+                newObject->AddMeshComponent<Texture2D>(texturePath, shadowColor);
 
                 // 初期状態は非表示
                 newObject->SetActive(false);
@@ -266,6 +272,9 @@ private:
         }
 
         std::cout << "[ShadowSystem] 影オブジェクトを" << cnt << "個生成しました" << std::endl;
+
+        // 影の更新
+        UpdateShadowObjects(gameObjectList);
     }
 
     //=======================================
