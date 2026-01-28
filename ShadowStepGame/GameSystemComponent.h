@@ -36,6 +36,8 @@ public:
 		TurnEnd,	// 全ユニット行動終了
 		Judge,	// 勝敗判定
 		End,	// 終了
+
+		StateCount,
 	};
 
 	// タイムライン

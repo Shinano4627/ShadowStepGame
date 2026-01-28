@@ -271,12 +271,9 @@ private:
                 newObject->SetName("Shadow");
                 newObject->SetTag("Shadow");
 
-                // レンダラー追加
+                // レンダラー追加（SimplePlaneRendererComponentは3D用）
                 Color shadowColor = Color(0.0f, 0.0f, 0.0f, 0.5f);
-                auto mesh = newObject->AddMeshComponent<Texture2D>(m_ShadowTexturePath, shadowColor);
-
-                // レイヤーを３Dに設定
-                mesh->SetRenderLayer(RenderLayer::WORLD);
+                newObject->AddMeshComponent<SimplePlaneRendererComponent>(shadowColor, m_ShadowTexturePath);
 
                 gameObjectList->AddObject(std::move(obj));
                 cnt++;
@@ -325,12 +322,9 @@ private:
                         newObject->SetName("Shadow");
                         newObject->SetTag("Shadow");
 
-                        // レンダラー追加
+                        // レンダラー追加（SimplePlaneRendererComponentは3D用）
                         Color shadowColor = Color(0.0f, 0.0f, 0.0f, 0.5f);
-                        auto mesh =  newObject->AddMeshComponent<Texture2D>(m_ShadowTexturePath, shadowColor);
-
-                        // レイヤーを３Dに設定
-                        mesh->SetRenderLayer(RenderLayer::WORLD);
+                        newObject->AddMeshComponent<SimplePlaneRendererComponent>(shadowColor, m_ShadowTexturePath);
                     }
 
                     GameObject* shadowObj = shadowObjects[shadowCnt];
@@ -342,22 +336,24 @@ private:
                     float baseX = m_DrawStartPosX + x * m_SizePiece;
                     float baseZ = m_DrawStartPosZ + z * m_SizePiece;
 
+                    float sizeShadow = m_SizePiece * 0.5f;
+
                     // スケール計算（伸びる方向にLength分拡大）
-                    float scaleX = m_SizePiece / 2;
-                    float scaleZ = m_SizePiece / 2;
+                    float scaleX = sizeShadow;
+                    float scaleZ = sizeShadow;
 
                     if (shadowDirX != 0)
                     {
-                        scaleX = m_SizePiece / 2 * param.length;
+                        scaleX = sizeShadow * param.length;
                     }
                     if (shadowDirZ != 0)
                     {
-                        scaleZ = m_SizePiece / 2 * param.length;
+                        scaleZ = sizeShadow * param.length;
                     }
 
                     // 位置計算（影の中心を伸びる方向にオフセット）
-                    float offsetX = shadowDirX * (param.length * m_SizePiece / 2.0f);
-                    float offsetZ = shadowDirZ * (param.length * m_SizePiece / 2.0f);
+                    float offsetX = shadowDirX * (param.length * sizeShadow / 2.0f);
+                    float offsetZ = shadowDirZ * (param.length * sizeShadow / 2.0f);
 
                     float posX = baseX + offsetX;
                     float posZ = baseZ + offsetZ;
