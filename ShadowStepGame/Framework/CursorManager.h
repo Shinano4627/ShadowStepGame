@@ -25,7 +25,7 @@ private:
 	Camera  m_Camera;
 
 	// マウス感度
-	float m_mouseSensitivity = 3.f;
+	float m_mouseSensitivity = 10.f;
 
 	// ===================================================================
 	// 関数

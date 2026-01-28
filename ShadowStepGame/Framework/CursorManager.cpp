@@ -56,8 +56,8 @@ void CursorManager::Update()
 	Vector3 currentPos = transform.GetPosition();
 	Vector3 newPos = currentPos;
 
-	newPos.y -= IO_MANAGER.GetMouseDeltaY() * m_mouseSensitivity;
-	newPos.x += IO_MANAGER.GetMouseDeltaX() * m_mouseSensitivity;
+	newPos.y -= IO_MANAGER.GetMouseDeltaY();
+	newPos.x += IO_MANAGER.GetMouseDeltaX();
 
 	// なめらかに移動
 	newPos = DirectX::SimpleMath::Vector3::Lerp(currentPos, newPos, m_mouseSensitivity);

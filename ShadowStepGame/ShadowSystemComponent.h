@@ -36,7 +36,13 @@ private:
     float m_DrawStartPosZ = 0.0f;
 
     // 影オブジェクトの高さ（マップタイルより少し上）
-    const float m_ShadowHeight = 0.3f;
+    const float m_ShadowHeight = 0.5f;
+
+    // 影のテクスチャ（xmlから取得）
+    std::string m_ShadowTexturePath = "";
+
+    // 影オブジェクト用ID 開始値5000
+    int m_LastObjectId = 5000;
 
 public:
     //=======================================
@@ -60,7 +66,8 @@ public:
     // 初期化
     //=======================================
     void Init(){}
-    void SetUp(int mapWidth, int mapHeight, float sizePiece, float startPosX, float startPosZ, GameObjectList* gameObjectList)
+    void SetUp(int mapWidth, int mapHeight, float sizePiece, float startPosX, float startPosZ,
+               const int* const* mapData, GameObjectList* gameObjectList)
     {
         m_MapWidth = mapWidth;
         m_MapHeight = mapHeight;
@@ -69,7 +76,7 @@ public:
         m_DrawStartPosZ = startPosZ;
 
         MakeShadowMap();
-        CreateShadowObjects(gameObjectList);
+        CreateShadowObjects(mapData, gameObjectList);
     }
 
     //=======================================
@@ -84,7 +91,6 @@ public:
         const int* const* mapData,
         const ShadowParam& param,
         GameObjectList* gameObjectList
-        // const std::vector<CellPosision>& unitPositions
     )
     {
         //=======================================
@@ -93,16 +99,15 @@ public:
         ClearShadowMap();
 
         //=======================================
-        // 【地形影】
-        // 壁・樹などの不変オブジェクト
+        // データ更新
         //=======================================
+        // ★TODO　巨人など影の大きさが異なるものにも対応する
         for (int z = 0; z < m_MapHeight; ++z)
         {
             for (int x = 0; x < m_MapWidth; ++x)
             {
-                // 影を落とすオブジェクトのみ
-                if (mapData[z][x] != 1 && mapData[z][x] != 4)
-                    continue;
+                // オブジェクトがある場合のみ
+                if (mapData[z][x] == 0) continue;
 
                 int shadowX = x;
                 int shadowZ = z;
@@ -130,9 +135,9 @@ public:
         }
 
         //=======================================
-        // 影オブジェクトの表示/非表示を更新
+        // 影オブジェクトの表示/Scale/Positionを更新
         //=======================================
-        UpdateShadowObjects(gameObjectList);
+        UpdateShadowObjects(mapData, param, gameObjectList);
     }
 
     //=======================================
@@ -211,13 +216,12 @@ private:
     }
 
     //=======================================
-    // 影オブジェクト生成（最大数を確保）
+    // 影オブジェクト生成（MapDataが0以外のセルのみ）
     //=======================================
-    void CreateShadowObjects(GameObjectList* gameObjectList)
+    void CreateShadowObjects(const int* const* mapData, GameObjectList* gameObjectList)
     {
         if (!gameObjectList) return;
-
-        int cnt = 0;
+        if (!mapData) return;
 
         // ShadowTemplateを取得
         GameObject* shadowTemplate = gameObjectList->FindGameObjectWithTag("ShadowTemplate");
@@ -228,43 +232,51 @@ private:
         }
 
         // テンプレートからテクスチャパスを取得
-        std::string texturePath = "";
         auto* templateRenderer = shadowTemplate->GetMeshComponent<Texture2D>();
         if (templateRenderer)
         {
-            texturePath = templateRenderer->GetTexturePath();
+            m_ShadowTexturePath = templateRenderer->GetTexturePath();
         }
 
         // テンプレートを非表示
         shadowTemplate->SetActive(false);
 
-        // マップサイズ分の影オブジェクトを生成
-        int objectId = 5000; // 影オブジェクト用ID開始値
+        // MapDataが0以外のセルに対して影オブジェクトを生成        
+        int cnt = 0;
+
         for (int z = 0; z < m_MapHeight; ++z)
         {
             for (int x = 0; x < m_MapWidth; ++x)
             {
-                // 位置計算
+                // 0の場合は生成しない
+                if (mapData[z][x] == 0)
+                    continue;
+
+                // 影を落とすオブジェクト（壁=1、樹=4）のみ
+                if (mapData[z][x] != 1 && mapData[z][x] != 4)
+                    continue;
+
+                // 元オブジェクトの位置計算
                 float posX = m_DrawStartPosX + x * m_SizePiece;
                 float posZ = m_DrawStartPosZ + z * m_SizePiece;
 
-                // オブジェクト生成
+                // オブジェクト生成（初期状態では基本サイズ）
                 auto obj = std::make_unique<GameObject>(
                     Vector3(posX, m_ShadowHeight, posZ),
                     Vector3::Zero,
-                    Vector3(m_SizePiece / 2, 1.0f, m_SizePiece / 2)
+                    Vector3(m_SizePiece, 1.0f, m_SizePiece)
                 );
                 GameObject* newObject = obj.get();
-                newObject->SetID(objectId++);
+                newObject->SetID(m_LastObjectId++);
                 newObject->SetName("Shadow");
                 newObject->SetTag("Shadow");
 
                 // レンダラー追加
                 Color shadowColor = Color(0.0f, 0.0f, 0.0f, 0.5f);
-                newObject->AddMeshComponent<Texture2D>(texturePath, shadowColor);
+                auto mesh = newObject->AddMeshComponent<Texture2D>(m_ShadowTexturePath, shadowColor);
 
-                // 初期状態は非表示
-                newObject->SetActive(false);
+                // レイヤーを３Dに設定
+                mesh->SetRenderLayer(RenderLayer::WORLD);
 
                 gameObjectList->AddObject(std::move(obj));
                 cnt++;
@@ -272,37 +284,89 @@ private:
         }
 
         std::cout << "[ShadowSystem] 影オブジェクトを" << cnt << "個生成しました" << std::endl;
-
-        // 影の更新
-        UpdateShadowObjects(gameObjectList);
     }
 
     //=======================================
-    // 影オブジェクトの表示/非表示を更新
+    // 影オブジェクトの表示/Scale/Positionを更新
     //=======================================
-    void UpdateShadowObjects(GameObjectList* gameObjectList)
+    void UpdateShadowObjects(const int* const* mapData, const ShadowParam& param, GameObjectList* gameObjectList)
     {
+        // 影の方向（光源の反対方向）
+        int shadowDirX = -param.lightDirection.x;
+        int shadowDirZ = -param.lightDirection.z;
+
+        int shadowCnt = 0;
+
+        std::vector<GameObject*> shadowObjects = gameObjectList->FindGameObjectsWithTag("Shadow");
+        // すべて非表示
+        for (auto& object : shadowObjects)
+        {
+            object->SetActive(false);
+        }
+
         for (int z = 0; z < m_MapHeight; ++z)
         {
             for (int x = 0; x < m_MapWidth; ++x)
             {
-                std::vector<GameObject*> shadowObjects = gameObjectList->FindGameObjectsWithTag("Shadow");
-                int index = z * m_MapWidth + x;
-                if (index >= static_cast<int>(shadowObjects.size())) continue;
-
-                GameObject* shadowObj = shadowObjects[index];
-                if (!shadowObj) continue;
-
-                // 影マップに影があれば表示、なければ非表示
-                bool hasShadow = (m_ShadowMapData[z][x] == 1);
-                shadowObj->SetActive(hasShadow);
-
-                // 位置を更新（必要に応じて）
-                if (hasShadow)
+                // オブジェクトありの場合
+                if (mapData[z][x] != 0)
                 {
-                    float posX = m_DrawStartPosX + x * m_SizePiece;
-                    float posZ = m_DrawStartPosZ + z * m_SizePiece;
+                    // 影がオブジェクトが足りない場合は追加
+                    if (shadowObjects.size() < shadowCnt)
+                    {
+                        // オブジェクト生成（初期状態では基本サイズ）
+                        auto obj = std::make_unique<GameObject>(
+                            Vector3(0.f, m_ShadowHeight, 0.f),  // 位置はあとで変えるので仮
+                            Vector3::Zero,
+                            Vector3(m_SizePiece, 1.0f, m_SizePiece)
+                        );
+                        GameObject* newObject = obj.get();
+                        newObject->SetID(m_LastObjectId++);
+                        newObject->SetName("Shadow");
+                        newObject->SetTag("Shadow");
+
+                        // レンダラー追加
+                        Color shadowColor = Color(0.0f, 0.0f, 0.0f, 0.5f);
+                        auto mesh =  newObject->AddMeshComponent<Texture2D>(m_ShadowTexturePath, shadowColor);
+
+                        // レイヤーを３Dに設定
+                        mesh->SetRenderLayer(RenderLayer::WORLD);
+                    }
+
+                    GameObject* shadowObj = shadowObjects[shadowCnt];
+
+                    // 表示
+                    shadowObj->SetActive(true);
+
+                    // 元オブジェクトの描画位置
+                    float baseX = m_DrawStartPosX + x * m_SizePiece;
+                    float baseZ = m_DrawStartPosZ + z * m_SizePiece;
+
+                    // スケール計算（伸びる方向にLength分拡大）
+                    float scaleX = m_SizePiece / 2;
+                    float scaleZ = m_SizePiece / 2;
+
+                    if (shadowDirX != 0)
+                    {
+                        scaleX = m_SizePiece / 2 * param.length;
+                    }
+                    if (shadowDirZ != 0)
+                    {
+                        scaleZ = m_SizePiece / 2 * param.length;
+                    }
+
+                    // 位置計算（影の中心を伸びる方向にオフセット）
+                    float offsetX = shadowDirX * (param.length * m_SizePiece / 2.0f);
+                    float offsetZ = shadowDirZ * (param.length * m_SizePiece / 2.0f);
+
+                    float posX = baseX + offsetX;
+                    float posZ = baseZ + offsetZ;
+
+                    // Transform更新
                     shadowObj->GetTransform().SetPosition(Vector3(posX, m_ShadowHeight, posZ));
+                    shadowObj->GetTransform().SetScale(Vector3(scaleX, 1.0f, scaleZ));
+
+                    shadowCnt++;
                 }
             }
         }

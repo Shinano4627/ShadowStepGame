@@ -16,6 +16,16 @@ enum class UnitModel
 	Giant
 };
 
+enum class EMapTile
+{
+	Empty = 0,  // 何もない
+	Wall = 1,   // 壁
+	Player = 2, // プレイヤー
+	Enemy = 3,  // 敵
+	Tree = 4,   // 樹
+	Shadow = 5, // 影
+};
+
 struct MapPosition
 {
 	int x;

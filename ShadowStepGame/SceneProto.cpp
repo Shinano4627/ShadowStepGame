@@ -83,6 +83,7 @@ void SceneProto::Init()
 
     // Init Camera
     m_Camera.Init();
+    m_UiCamera.Init();
 
     // Init Data
     m_nextScene = SCENE_NONE;
@@ -102,6 +103,7 @@ void SceneProto::UnInit()
 
     // UnInit Camera
     m_Camera.Uninit();
+    m_UiCamera.Uninit();
 
     // Complete
     m_isInitialized = false;
@@ -111,6 +113,7 @@ void SceneProto::Update()
 {
     // 1. カメラ更新
     m_Camera.Update();
+    m_UiCamera.Update();
 
     // ゲーム用カーソルアップデート
     CURSOR_MANAGER.Update();
@@ -132,8 +135,8 @@ void SceneProto::Draw()
     Draw(&m_Camera);
 
     // Ui
-    m_GameObjectList->DrawLayer(&m_Camera, RenderLayer::UI);
-    m_GameObjectList->DrawLayer(nullptr, RenderLayer::UI_2);
+    m_GameObjectList->DrawLayer(&m_UiCamera, RenderLayer::UI);
+    m_GameObjectList->DrawLayer(&m_UiCamera, RenderLayer::UI_2);
 
     // カーソルを最前面に描画
     CURSOR_MANAGER.Draw();

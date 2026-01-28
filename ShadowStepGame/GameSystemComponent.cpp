@@ -53,6 +53,7 @@ void GameSystemComponent::InitGame(std::unique_ptr<GameObjectList>& gameObjectLi
         m_mapSystem->GetSizePiece(),
         m_mapSystem->GetDrawStartPosX(),
         m_mapSystem->GetDrawStartPosZ(),
+        m_mapSystem->GetRawMapData(),
         gameObjectList.get()
     );
     UpdateShadow(gameObjectList.get());
