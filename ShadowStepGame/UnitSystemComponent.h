@@ -1,7 +1,6 @@
-
-// ===================================================================
+ï»¿// ===================================================================
 // UnitSystemComponent.h
-// ƒ†ƒjƒbƒg‚Ì§Œä‚ğs‚¤
+// ãƒ¦ãƒ‹ãƒƒãƒˆã®é›†åˆç®¡ç†
 // ===================================================================
 #pragma once
 #include "Component.h"
@@ -9,60 +8,67 @@
 #include "IOManager.h"
 #include "Game.h"
 #include "UnitCommon.h"
-
+#include "UnitComponent.h"
 
 class UnitSystemComponent : public Component
 {
 
 private:
-    // UnitStatusList
-    std::vector<std::unique_ptr<UnitStatus>> m_UnitList;
+    // UnitComponentList
+    std::vector<UnitComponent*> m_UnitList;
 
 public:
     // ===================================================================
-    // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+    // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     // ===================================================================
     UnitSystemComponent()
     {
+        m_UnitList.clear(); // ãƒªã‚¹ãƒˆåˆæœŸåŒ–
     }
 
     // ===================================================================
-    // ƒfƒXƒgƒ‰ƒNƒ^
+    // ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     // ===================================================================
     ~UnitSystemComponent()
     {
     }
 
     // ===================================================================
-    // XVˆ—
+    // æ›´æ–°å‡¦ç†
     // ===================================================================
     void Update() override;
 
     // ===================================================================
-    // I—¹ˆ—
+    // çµ‚äº†å‡¦ç†
     // ===================================================================
     void Uninit() override;
 
     //=======================================
-    // “o˜^Eíœ
+    // ç™»éŒ²ãƒ»å‰Šé™¤
     //=======================================
-    void RegisterUnit(const UnitStatus& status);
-    void KillUnit(int id);      // List‚©‚çíœ
-    void DamageUnit(int id, int damage);    // 0ˆÈ‰º‚È‚çKill     
+    void RegisterUnit(UnitComponent* unit);
+    void UnRegisterUnit(UnitComponent* unit);
 
     //=======================================
-    // æ“¾ŠÖ”
+    // å–å¾—é–¢æ•°
     //=======================================
-    std::vector<UnitStatus*> GetAllUnits() const;
-    std::vector<UnitStatus*> GetUnitsSortedBySpeed() const;
+    const std::vector<UnitComponent*> GetAllUnits() const;
+    std::vector<UnitComponent*> GetAliveUnits() const;
+
+    // std::vector<UnitComponent*> GetUnitsByTeam(int teamId) const;
+    // std::vector<UnitComponent*> GetEnemyUnits(int teamId) const;
+
+    // -------- ã‚¿ãƒ¼ãƒ³é–¢é€£ --------
+    // é€Ÿåº¦é †ä¸¦ã¹æ›¿ãˆListå–å¾—
+    std::vector<UnitComponent*> GetUnitsSortedBySpeed() const;
 
     //=======================================
-    // ŒŸõ
+    // æ¤œç´¢
     //=======================================
-    UnitStatus* FindUnit(int id);
+    UnitComponent* FindUnit(int id);
 
     //=======================================
-    // Ÿ”s”»’è
+    // å‹æ•—åˆ¤å®š
     //=======================================
     bool IsPlayerAllDead() const;
     bool IsEnemyAllDead() const;

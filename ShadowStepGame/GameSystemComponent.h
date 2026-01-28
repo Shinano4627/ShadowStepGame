@@ -16,7 +16,7 @@ class MapSystemComponent;
 class UnitSystemComponent;
 class SunManageComponent;
 class ShadowSystemComponent;
-class Unit;
+class UnitComponent;
 class UISystemComponent;
 
 class GameSystemComponent : public Component
@@ -47,7 +47,7 @@ public:
 
 	struct Timeline
 	{
-		UnitStatus* unit = nullptr;
+		UnitComponent* unit = nullptr;
 		TimelineActorType actorType;
 		int speed;	// 行動順決定用
 	};
@@ -113,6 +113,12 @@ private:
 	bool IsPlayerAllDead() const;
 	bool IsEnemyAllDead() const;
 
+	//=======================================
+	// 入力関数
+	//=======================================
+	void Input_Select();
+
+
 private:
 	//=======================================
 	// システムコンポーネント参照
@@ -145,11 +151,26 @@ private:
 	std::vector<Timeline> m_Timeline;
 	int m_TimelineIndex;
 
-	UnitStatus* m_CurrentUnit = nullptr;
+	UnitComponent* m_CurrentUnit = nullptr;
+
+	//=======================================
+	// Select関係変数
+	//=======================================
+	bool m_SelectAction = false;	// アクション選択したか
+	bool m_SelectPosition = false;	// ポジション選択したか
+
+	MapPosition m_SelectMapPosition;	// 今選んでいるマップポジション
+	MapPosition m_Unitposition;			// ユニット位置
+	UnitType m_UnitType;
+	UnitActionType m_SelectType;	// 今選んでいるアクション選択
 
 	//=======================================
 	// デバッグ用
 	//=======================================
 	static const char* BattleStateToString(BattleState state);
 
+
+	bool m_RequestStartSelectMap = false;
+	UnitComponent* m_RequestUnit = nullptr;
+	MapPosition m_RequestPos;
 };
