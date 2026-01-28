@@ -12,6 +12,8 @@
 // ===================================================================
 void UISystemComponent::SetUIObject(std::unique_ptr<GameObjectList>& objectList)
 {
+    m_pUIObjects = objectList.get();
+
     MakeUIButtons(objectList);
     MakeUITimeLine(objectList);
     MakeUIStatus(objectList);
@@ -149,7 +151,23 @@ void UISystemComponent::MakeUIButtons(std::unique_ptr<GameObjectList>& objectLis
         //アニメーションコンポネント追加
         targetButtons[i]->AddComponent<UIAnimationComponent>();
         // ボタンコンポーネント追加
-        targetButtons[i]->AddComponent<ButtonComponent>(targetButtons[i]->GetTransform().GetScale());
+        auto* btnComp=targetButtons[i]->AddComponent<ButtonComponent>(targetButtons[i]->GetTransform().GetScale());
+
+        if (btnComp)
+        {
+            if (targetButtons[i]->GetName() == "ButtonBuild")
+            {
+                btnComp->SetButtonType(ButtonComponent::UIButtonType::Build);
+            }
+            else if(targetButtons[i]->GetName() == "ButtonMove")
+            {
+                btnComp->SetButtonType(ButtonComponent::UIButtonType::Move);
+            }
+            else if (targetButtons[i]->GetName() == "ButtonAttack")
+            {
+                btnComp->SetButtonType(ButtonComponent::UIButtonType::Attack);
+            }
+        }
     }
 
     // ラジオボタンコンポーネントつきオブジェクト作成
@@ -397,4 +415,24 @@ void UISystemComponent::MakeUISunRoute(std::unique_ptr<GameObjectList>& objectLi
 
     objectList->AddObject(std::move(windowObj));
     std::cout << "[SceneGame] SunRoute window created" << std::endl;
+}
+
+ButtonComponent::UIButtonType UISystemComponent::GetHoverButton() const
+{
+    if(!m_pUIObjects) return ButtonComponent::UIButtonType::None;
+
+    //UI上の全ボタンを取得
+    auto buttons = m_pUIObjects->FindGameObjectsWithTag("Button");
+
+    for (auto* btnObj : buttons)
+    {
+        auto* buttonComp = btnObj->GetComponent<ButtonComponent>();
+        if (!buttonComp) continue;
+
+        if (buttonComp->IsSelected())
+        {
+            return buttonComp->GetButtonType();
+        }
+    }
+    return ButtonComponent::UIButtonType::None;
 }

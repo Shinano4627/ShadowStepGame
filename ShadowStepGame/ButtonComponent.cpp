@@ -4,6 +4,7 @@
 // ===================================================================
 #include "ButtonComponent.h"
 #include "UIAnimationComponent.h"
+#include "UISystemComponent.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -32,6 +33,7 @@ void ButtonComponent::Update()
 {
     bool hit = CheckCursorHit();
     m_IsSelected = hit;
+
 
     if (m_IsSelected != m_SelectedPre)
     {
