@@ -105,12 +105,18 @@ private:
 	// ４：接近
 	UnitAction MakeMoveCloserAction(
 		UnitComponent* enemy,
-		UnitComponent* target
+		UnitComponent* target,
+		const int* const* mapData,
+		int mapW,
+		int mapH
 	) const;
 
 	MapPosition DecideMoveCloser(
 		UnitComponent* enemy,
-		UnitComponent* target
+		UnitComponent* target,
+		const int* const* mapData,
+		int mapW,
+		int mapH
 	) const;
 
 };

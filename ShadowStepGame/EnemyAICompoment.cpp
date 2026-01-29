@@ -30,7 +30,7 @@ UnitAction EnemyAI::DecideAction(
 
 	// ４：近づけるか？
 	if (CanMove(enemy))
-		return MakeMoveCloserAction(enemy, target);
+		return MakeMoveCloserAction(enemy, target, mapData, mapWidth, mapHeight);
 
 	// ５：何もできない
 	return none;
@@ -90,8 +90,8 @@ bool EnemyAI::CanStepOnShadow(
 		return false;
 
 	MapPosition epos = enemy->GetPosition();
-	return abs(epos.x - shadow.x) <= 5 &&
-		abs(epos.z - shadow.z) <= 5;
+	return abs(epos.x - shadow.x) <= 1 &&
+		abs(epos.z - shadow.z) <= 1;
 }
 
 bool EnemyAI::CanAttack(
@@ -164,18 +164,24 @@ UnitAction EnemyAI::MakeAttackAction(
 
 UnitAction EnemyAI::MakeMoveCloserAction(
 	UnitComponent* enemy,
-	UnitComponent* target
+	UnitComponent* target,
+	const int* const* mapData,
+	int mapW,
+	int mapH
 ) const
 {
 	UnitAction action;
 	action.type = UnitActionType::Move;
-	action.targetGrid = DecideMoveCloser(enemy, target);
+	action.targetGrid = DecideMoveCloser(enemy, target, mapData, mapW, mapH);
 	return action;
 }
 
 MapPosition EnemyAI::DecideMoveCloser(
     UnitComponent* enemy,
-    UnitComponent* target
+    UnitComponent* target,
+	const int* const* mapData,
+	int mapW,
+	int mapH
 ) const
 {
     MapPosition epos = enemy->GetPosition();
@@ -184,25 +190,33 @@ MapPosition EnemyAI::DecideMoveCloser(
     MapPosition best = epos;
     int bestDist = INT_MAX;
 
-    // 縦横5マス四角
-    for (int dz = -5; dz <= 5; dz++)
+    // 縦横3マス四角
+    for (int dz = -1; dz <= 1; dz++)
     {
-        for (int dx = -5; dx <= 5; dx++)
+        for (int dx = -1; dx <= 1; dx++)
         {
-            MapPosition p{
-                epos.x + dx,
-                epos.z + dz
-            };
+			if (dx == 0 && dz == 0) continue;
 
-            int dist =
-                abs(p.x - tpos.x) +
-                abs(p.z - tpos.z);
+			MapPosition p{
+				epos.x + dx,
+				epos.z + dz
+			};
 
-            if (dist < bestDist)
-            {
-                bestDist = dist;
-                best = p;
-            }
+			int tile = GetTile(mapData, p.x, p.z, mapW, mapH);
+
+			// Player / Enemy / Wall などを除外
+			if (!IsWalkableTile(tile))
+				continue;
+
+			int dist =
+				abs(p.x - tpos.x) +
+				abs(p.z - tpos.z);
+
+			if (dist < bestDist)
+			{
+				bestDist = dist;
+				best = p;
+			}
         }
     }
     return best;
