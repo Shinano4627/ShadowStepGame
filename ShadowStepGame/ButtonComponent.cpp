@@ -42,11 +42,6 @@ void ButtonComponent::Update()
         auto* anim = m_pOwner->GetComponent<UIAnimationComponent>();
         if (!anim)return;
 
-        /*if (anim)
-        {
-            anim->Play("Select");
-            std::cout << "Play Select called" << std::endl;
-        }*/
 
         if (m_IsSelected)
         {
@@ -123,23 +118,23 @@ bool ButtonComponent::CheckCursorHit() const
 // ===================================================================
 // UV切り替え
 // ===================================================================
-void ButtonComponent::UpdateUV()
-{
-    //if (!m_pOwner) return;
-
-    //// Texture2Dコンポーネントを取得
-    //Texture2D* tex = m_pOwner->GetMeshComponent<Texture2D>();
-    //if (!tex) return;
-
-    //// UV設定（横2分割）
-    //// 非選択: nu=1 → u=0~0.5
-    //// 選択:   nu=2 → u=0.5~1
-    //if (m_IsSelected)
-    //{
-    //    tex->SetUV(2, 1, 2, 1);
-    //}
-    //else
-    //{
-    //    tex->SetUV(1, 1, 2, 1);
-    //}
-}
+//void ButtonComponent::UpdateUV()
+//{
+//    if (!m_pOwner) return;
+//
+//    // Texture2Dコンポーネントを取得
+//    Texture2D* tex = m_pOwner->GetMeshComponent<Texture2D>();
+//    if (!tex) return;
+//
+//    // UV設定（横2分割）
+//    // 非選択: nu=1 → u=0~0.5
+//    // 選択:   nu=2 → u=0.5~1
+//    if (m_IsSelected)
+//    {
+//        tex->SetUV(2, 1, 2, 1);
+//    }
+//    else
+//    {
+//        tex->SetUV(1, 1, 2, 1);
+//    }
+//}

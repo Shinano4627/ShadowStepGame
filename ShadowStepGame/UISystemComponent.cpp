@@ -156,7 +156,7 @@ void UISystemComponent::MakeUIButtons(std::unique_ptr<GameObjectList>& objectLis
     setupButton(buttonMove, ButtonComponent::UIButtonType::Move, row3Y);
 
     // 初期状態は攻撃・配置非表示、移動表示
-    if (buttonAttack) buttonAttack->SetActive(false);
+    if (buttonAttack) buttonAttack->SetActive(true);
     if (buttonBuild)  buttonBuild->SetActive(false);
     if (buttonMove)   buttonMove->SetActive(true);
 

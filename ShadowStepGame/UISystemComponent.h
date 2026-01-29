@@ -39,11 +39,6 @@ public:
     // ===================================================================
     void Update() override
     {
-        if (!test)
-        {
-            ButtonChange(UnitComponent::UnitModel::UnitAttacker);
-            test = true;
-        }
 
         if (!m_pOwner) return;
 

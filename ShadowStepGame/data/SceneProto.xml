@@ -157,7 +157,7 @@
         <ObjectType Value="2D"/>
         <Tag Value="UIStatusJob"/>
         <FileName Value=""/>
-        <Texture Value="asset/texture/iconAttack.png"/>
+        <Texture Value="asset/texture/icon/Attack_Icon.png"/>
         <Posision X="0" Y="0" Z="0"/>
         <Rotation X="0" Y="0" Z="0"/>
         <Scale X="400" Y="400" Z="0"/>
@@ -169,7 +169,7 @@
         <ObjectType Value="2D"/>
         <Tag Value="UIStatusJob"/>
         <FileName Value=""/>
-        <Texture Value="asset/texture/iconBuild.png"/>
+        <Texture Value="asset/texture/icon/Shadow_Icon.png"/>
         <Posision X="0" Y="0" Z="0"/>
         <Rotation X="0" Y="0" Z="0"/>
         <Scale X="400" Y="400" Z="0"/>
