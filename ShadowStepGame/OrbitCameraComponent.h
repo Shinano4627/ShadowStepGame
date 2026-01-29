@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Component.h"
 #include "Camera.h"
 #include "IOManager.h"
@@ -16,41 +16,69 @@ public:
 
     void SetRotationSpeed(float speed) { m_RotSpeed = speed; }
 
-    void Update() override
+    void Update()
     {
         if (!m_Camera) return;
 
-        // -----------------------------
-        // �^�[�Q�b�g�ݒ�
-        // -----------------------------
-        Vector3 target(0, 0, 0); // �f�t�H���g
+        // -------------------------------------------------
+        // 戦術視点かどうか（GameSystemに完全依存）
+        // -------------------------------------------------
+        bool isTacticalView =
+            (m_GameSystem && m_GameSystem->IsSelectingPosition());
 
-        //if (m_GameSystem)
-        //{
-        //    auto state = m_GameSystem->GetBattleState();
-        //    if (state == GameSystemComponent::BattleState::UnitActionSelect ||
-        //        state == GameSystemComponent::BattleState::UnitActing ||
-        //        state == GameSystemComponent::BattleState::UnitEnd ||
-        //        state == GameSystemComponent::BattleState::UnitSelect)
-        //    {
-        //        // TODO: Unit ������� currentUnit �̈ʒu���擾
-        //        target = Vector3(20, 20, 20);
-        //        // auto* currentUnit = m_GameSystem->GetCurrentTimeline()->unit;
-        //        // if (currentUnit) target = currentUnit->GetPosition();
-        //    }
-        //}
+        // -------------------------------------------------
+        // 戦術視点に「入った瞬間」だけスナップ
+        // -------------------------------------------------
+        bool enterTacticalView =
+            isTacticalView && !m_WasTacticalView;
 
-        // -----------------------------
-        // �J�����ʒu�ƃI�t�Z�b�g
-        // -----------------------------
+        if (enterTacticalView)
+        {
+            Vector3 unitPos(0.0f, 0.0f, 0.0f);
+
+            if (m_GameSystem)
+            {
+                MapPosition mapPos = m_GameSystem->GetUnitPosition();
+                unitPos.x = mapPos.x * 5.0f;
+                unitPos.z = mapPos.z * 5.0f;
+            }
+
+            Vector3 tacticalDir(0.0f, 1.0f, -1.2f);
+            tacticalDir.Normalize();
+
+            float tacticalDistance = 50.0f;
+            Vector3 camPos = unitPos + tacticalDir * tacticalDistance;
+
+            m_Camera->SetTarget(unitPos);
+            m_Camera->SetPosition(camPos);
+        }
+
+        // -------------------------------------------------
+        // 戦術視点中は回転処理を完全にスキップ
+        // -------------------------------------------------
+        if (isTacticalView)
+        {
+            m_WasTacticalView = true;
+            return; // ← OrbitCamera処理を止める
+        }
+        else
+        {
+            m_WasTacticalView = false;
+        }
+
+        // -------------------------------------------------
+        // 通常の OrbitCamera 処理
+        // -------------------------------------------------
+        Vector3 target = m_Camera->GetTarget();
         Vector3 camPos = m_Camera->GetPosition();
+
         Vector3 offset = camPos - target;
         float distance = offset.Length();
         if (distance < 0.001f) distance = 1.0f;
         offset.Normalize();
 
         // -----------------------------
-        // �㉺��] (W/S)
+        // 上下回転 (W / S)
         // -----------------------------
         if (IO_MANAGER.GetKeyPressKeyBord('W'))
         {
@@ -68,7 +96,7 @@ public:
         }
 
         // -----------------------------
-        // ���E��] (A/D)
+        // 左右回転 (A / D)
         // -----------------------------
         if (IO_MANAGER.GetKeyPressKeyBord('A'))
         {
@@ -82,12 +110,14 @@ public:
         }
 
         // -----------------------------
-        // �J�����ʒu�X�V
+        // カメラ位置反映
         // -----------------------------
         camPos = target + offset * distance;
         m_Camera->SetPosition(camPos);
         m_Camera->SetTarget(target);
     }
+
+
 
     void SetGameSystem(GameSystemComponent* gs) { m_GameSystem = gs; }
 
@@ -95,4 +125,15 @@ private:
     Camera* m_Camera = nullptr;
     GameSystemComponent* m_GameSystem = nullptr;
     float m_RotSpeed = 0.02f;
+
+    bool    m_IsLocked = false;
+    Vector3 m_LockTarget;
+    Vector3 m_LockOffset;
+    float   m_LockDistance;
+    bool m_WasTacticalView = false;   // 戦術視点だったか（進入検出用）
+
+
+    GameSystemComponent::BattleState m_PrevState =
+        GameSystemComponent::BattleState::Init;
+
 };

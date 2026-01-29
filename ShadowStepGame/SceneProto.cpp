@@ -43,6 +43,7 @@ void SceneProto::Init()
         // マップシステム
         auto* mapSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<MapSystemComponent>("TestMap.csv");
         mapSystem->MakeMap(m_GameObjectList);    // マップの読み込み
+        mapSystem->MakeSelectMap(m_GameObjectList); // セレクトマップの作製
         int heightMap = mapSystem->GetMapSizeHeight();
         int widthMap = mapSystem->GetMapSizeWidth();
 
@@ -72,13 +73,19 @@ void SceneProto::Init()
         // プレイヤー
         auto* playerObj = m_GameObjectList->FindGameObjectWithTag("Player");
         auto* playerUnit = playerObj->AddComponent<UnitComponent>();
-        // playerUnit->SetCamp(UnitComponent::UnitCamp::UnitPlayer);
+        UnitStatus pl_1 = { 1000,UnitType::Player,UnitModel::Attack,MapPosition{0,0},10,10,false };
+        playerUnit->SetStatus(pl_1);
 
         //エネミー
         auto* enemyObj = m_GameObjectList->FindGameObjectWithTag("Enemy");
         auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
-        // enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
+        UnitStatus en_1 = { 1000,UnitType::Enemy,UnitModel::Attack,MapPosition{1,0},10,5,false };
+        enemyUnit->SetStatus(en_1);
 
+
+        // ユニットをシステムに格納
+        unitSystem->RegisterUnit(playerUnit);
+        unitSystem->RegisterUnit(enemyUnit);
     }  
 
     // Init Camera
