@@ -191,8 +191,7 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
     // ============================
     // プレイヤー or 敵で分岐
     // ============================
-    if (unit->GetType() == UnitType::Player
-        || unit->GetType() == UnitType::Enemy)
+    if (unit->GetType() == UnitType::Player)
     {
         // Select関係変数
         m_SelectAction = false;
@@ -208,7 +207,7 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
         
         ChangeState(BattleState::UnitActionSelect); // プレイヤー入力待ち
     }
-    else
+    else if(unit->GetType() == UnitType::Enemy)
     {
         ChangeState(BattleState::UnitActing); // 敵AI行動
     }
@@ -236,21 +235,8 @@ void GameSystemComponent::UpdateUnitActionSelect()
     // ============================
     // Action入力（常に受け付ける）
     // ============================
-
-    if (IO_MANAGER.GetKeyDownKeyBord(VK_T))
-    {
-        m_SelectType = UnitActionType::Move;
-    }
-    else if (IO_MANAGER.GetKeyDownKeyBord(VK_G) &&
-        m_UnitModel == UnitModel::Attack)
-    {
-        m_SelectType = UnitActionType::Attack;
-    }
-    else if (IO_MANAGER.GetKeyDownKeyBord(VK_B) &&
-        m_UnitModel == UnitModel::Place)
-    {
-        m_SelectType = UnitActionType::Place;
-    }
+    // UIシステムから取得
+    m_SelectType = m_uISystem->GetSelectedButton();
 
     // Actionが初めて選ばれた瞬間
     if (m_SelectType != UnitActionType::None &&
@@ -258,8 +244,6 @@ void GameSystemComponent::UpdateUnitActionSelect()
     {
         m_SelectPhase = SelectPhase::Position;
     }
-
-
 
     // まだポジション選択していない
     if (m_SelectPhase == SelectPhase::Position)

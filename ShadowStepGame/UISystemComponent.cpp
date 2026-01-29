@@ -130,7 +130,7 @@ void UISystemComponent::MakeUIButtons(std::unique_ptr<GameObjectList>& objectLis
     float buttonWidth = areaScale.x - padding * 2;
 
     // ボタン共通設定
-    auto setupButton = [&](GameObject* btn, ButtonComponent::UIButtonType type, float posY)
+    auto setupButton = [&](GameObject* btn, float posY)
         {
             if (!btn) return;
             btn->GetTransform().SetPosition(Vector3(areaPos.x, posY, 0.f));
@@ -142,7 +142,6 @@ void UISystemComponent::MakeUIButtons(std::unique_ptr<GameObjectList>& objectLis
             if (!btn->GetComponent<ButtonComponent>())
             {
                 auto* btnComp = btn->AddComponent<ButtonComponent>(btn->GetTransform().GetScale());
-                btnComp->SetButtonType(type);
             }
 
             if (!btn->GetComponent<UIAnimationComponent>())
@@ -151,9 +150,26 @@ void UISystemComponent::MakeUIButtons(std::unique_ptr<GameObjectList>& objectLis
             }
         };
 
-    setupButton(buttonAttack, ButtonComponent::UIButtonType::Attack, row2Y);
-    setupButton(buttonBuild, ButtonComponent::UIButtonType::Build, row2Y);
-    setupButton(buttonMove, ButtonComponent::UIButtonType::Move, row3Y);
+    setupButton(buttonAttack, row2Y);
+    setupButton(buttonBuild, row2Y);
+    setupButton(buttonMove, row3Y);
+
+    // UnitActionTypeとボタンの紐付けを登録
+    if (buttonBuild)
+    {
+        auto* btnComp = buttonBuild->GetComponent<ButtonComponent>();
+        if (btnComp) RegisterActionButton(UnitActionType::Place, btnComp);
+    }
+    if (buttonMove)
+    {
+        auto* btnComp = buttonMove->GetComponent<ButtonComponent>();
+        if (btnComp) RegisterActionButton(UnitActionType::Move, btnComp);
+    }
+    if (buttonAttack)
+    {
+        auto* btnComp = buttonAttack->GetComponent<ButtonComponent>();
+        if (btnComp) RegisterActionButton(UnitActionType::Attack, btnComp);
+    }
 
     // 初期状態は攻撃・配置非表示、移動表示
     if (buttonAttack) buttonAttack->SetActive(true);
@@ -162,9 +178,6 @@ void UISystemComponent::MakeUIButtons(std::unique_ptr<GameObjectList>& objectLis
 
     std::cout << "[SceneGame] Buttons arranged in UIAreaButtons" << std::endl;
 }
-
-
-
 
 void UISystemComponent::MakeUITimeLine(std::unique_ptr<GameObjectList>& objectList)
 {
@@ -401,24 +414,28 @@ void UISystemComponent::MakeUISunRoute(std::unique_ptr<GameObjectList>& objectLi
     std::cout << "[SceneGame] SunRoute window created" << std::endl;
 }
 
-ButtonComponent::UIButtonType UISystemComponent::GetSelectedButton() const
+// ===================================================================
+// UnitActionTypeとボタンの紐付けを登録
+// ===================================================================
+void UISystemComponent::RegisterActionButton(UnitActionType type, ButtonComponent* button)
 {
-    if(!m_pUIObjects) return ButtonComponent::UIButtonType::None;
-
-    //UI上の全ボタンを取得
-    auto buttons = m_pUIObjects->FindGameObjectsWithTag("Button");
-
-    for (auto* btnObj : buttons)
+    if (button)
     {
-        auto* buttonComp = btnObj->GetComponent<ButtonComponent>();
-        if (!buttonComp) continue;
-
-        if (buttonComp->IsSelected())
-        {
-            return buttonComp->GetButtonType();
-        }
+        m_ActionButtonMap[type] = button;
     }
-    return ButtonComponent::UIButtonType::None;
+}
+
+// ===================================================================
+// UnitActionTypeからボタンを取得
+// ===================================================================
+ButtonComponent* UISystemComponent::GetButtonByAction(UnitActionType type) const
+{
+    auto it = m_ActionButtonMap.find(type);
+    if (it != m_ActionButtonMap.end())
+    {
+        return it->second;
+    }
+    return nullptr;
 }
 
 void UISystemComponent::UpdateDisplayButton(UnitModel model)

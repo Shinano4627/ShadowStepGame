@@ -12,6 +12,7 @@
 #include "GameObjectList.h"
 #include "UnitComponent.h"
 #include "UnitCommon.h"
+#include <map>
 
 // 前方宣言
 class GameObjectList;
@@ -19,8 +20,9 @@ class GameObjectList;
 class UISystemComponent : public Component
 {
 private:
-    ButtonComponent::UIButtonType m_CurrentHover = ButtonComponent::UIButtonType::None;
+    UnitActionType m_CurrentSellected = UnitActionType::None;
     GameObjectList* m_pUIObjects = nullptr; //UIオブジェクト一覧
+    std::map<UnitActionType, ButtonComponent*> m_ActionButtonMap; // UnitActionTypeとボタンの紐付け
 public:
     // ===================================================================
     // コンストラクタ
@@ -40,30 +42,28 @@ public:
     // ===================================================================
     void Update() override
     {
-
         if (!m_pOwner) return;
 
-
-        // Button タグのオブジェクト取得
-        std::vector<GameObject*> buttons =
-            m_pUIObjects->FindGameObjectsWithTag("Button");
-
-        ButtonComponent::UIButtonType hover =
-            ButtonComponent::UIButtonType::None;
-
-        // どれか1つでもカーソルに触れていたらそれを採用
-        for (auto* obj : buttons)
+        // キーで検索
+        for (auto buttonPair : m_ActionButtonMap)
         {
-            auto* btn = obj->GetComponent<ButtonComponent>();
-            if (!btn) continue;
-
-            if (btn->IsSelected())
+            if (buttonPair.second->IsSelected())
             {
-                hover = btn->GetButtonType();
-                break;
+                UnitActionType currentSellected = buttonPair.first; // キーを設定
+                if (currentSellected != m_CurrentSellected)
+                {
+                    std::cout << "[UI] Hovered Button: "
+                        << UIButtonTypeToString(GetSelectedButton())
+                        << std::endl;
+                }
+                m_CurrentSellected = currentSellected;
+                return; // 一つのみを検知
             }
         }
 
+        // どのボタンも選択されていない
+        m_CurrentSellected = UnitActionType::None;
+        
         //// 状態が変わったときだけログ
         //if (hover != m_CurrentHover)
         //{
@@ -84,24 +84,19 @@ public:
         //        break;
         //    }
         //}
-        if (hover != m_CurrentHover)
-        {
-            std::cout << "[UI] Hovered Button: "
-                << UIButtonTypeToString(GetSelectedButton())
-                << std::endl;
-        }
     }
 
-    ButtonComponent::UIButtonType GetSelectedButton()const;
+    UnitActionType GetSelectedButton()const { return m_CurrentSellected; };
     // UIButtonType を文字列に変換するヘルパー関数
-    const char* UIButtonTypeToString(ButtonComponent::UIButtonType type)
+    const char* UIButtonTypeToString(UnitActionType type)
     {
         switch (type)
         {
-        case ButtonComponent::UIButtonType::None:   return "None";
-        case ButtonComponent::UIButtonType::Build:  return "Build";
-        case ButtonComponent::UIButtonType::Move:   return "Move";
-        case ButtonComponent::UIButtonType::Attack: return "Attack";
+        case UnitActionType::None:   return "None";
+        case UnitActionType::Place:  return "Build";        // TODO：設置の名称を統一したい
+        case UnitActionType::Move:   return "Move";
+        case UnitActionType::Attack: return "Attack";
+        case UnitActionType::ShadowMove: return "ShadowMove";
         default: return "Unknown";
         }
     }
@@ -111,6 +106,12 @@ public:
     // ===================================================================
     void SetUIObject(std::unique_ptr<GameObjectList>& objectList);     // UIの初期設定
     void UpdateDisplayButton(UnitModel model);
+
+    // ===================================================================
+    // UnitActionTypeとボタンの紐付け管理
+    // ===================================================================
+    void RegisterActionButton(UnitActionType type, ButtonComponent* button);  // 紐付けを登録
+    ButtonComponent* GetButtonByAction(UnitActionType type) const;            // UnitActionTypeからボタンを取得
 private:
     bool test = false;
 

@@ -15,13 +15,7 @@
 class ButtonComponent : public Component
 {
 public:
-    enum class UIButtonType
-    {
-        None,
-        Build,
-        Move,
-        Attack
-    };
+
 private:
     // ===================================================================
     // メンバ変数
@@ -29,8 +23,6 @@ private:
     bool m_SelectedPre = false;     // 前回の選択状態
     bool m_IsSelected = false;      // 選択状態
     DirectX::SimpleMath::Vector3 m_RangeHitScale;
-
-    UIButtonType m_ButtonType;
 public:
     // ===================================================================
     // コンストラクタ・デストラクタ
@@ -52,16 +44,6 @@ public:
     // ===================================================================
     bool IsSelected() const { return m_IsSelected; }
     void SetSelected(bool selected);
-
-    void SetButtonType(UIButtonType type)
-    {
-        m_ButtonType = type;
-    }
-
-    UIButtonType GetButtonType() const
-    {
-        return m_ButtonType;
-    }
 
 private:
     // ===================================================================
