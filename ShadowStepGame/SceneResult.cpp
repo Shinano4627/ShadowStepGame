@@ -7,6 +7,7 @@
 #include "IOManager.h"
 #include "ResourceManager.h"
 #include "Game.h"
+#include "SoundManager.h"
 
 // コンポーネント
 #include "CameraRelativeMoverComponent.h"      // カメラ相対移動用
@@ -55,6 +56,9 @@ void SceneResult::Init()
     m_Camera.Init();
     m_UiCamera.Init();
 
+    // BGMの開始
+    SOUND_MANAGER.PlayBGM(SOUND_LABEL::SOUND_LABEL_BGM_GAME);
+
     m_nextScene = SCENE_NONE;
 
     // 初期化完了
@@ -86,6 +90,9 @@ void SceneResult::UnInit()
     // カメラ終了処理
     m_Camera.Uninit();
     m_UiCamera.Init();
+
+    // BGMの停止
+    SOUND_MANAGER.Stop(SOUND_LABEL::SOUND_LABEL_BGM_GAME);
 
     m_isInitialized = false;
 }

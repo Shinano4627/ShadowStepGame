@@ -14,6 +14,7 @@
 #include <string>
 #include "SimplePlaneRendererComponent.h"
 #include "CursorManager.h"
+#include "SoundManager.h"
 
 using namespace std;
 
@@ -54,6 +55,9 @@ void SceneGame::Init()
     // カメラ初期化
     m_Camera.Init();
 
+    // BGMの開始
+    SOUND_MANAGER.PlayBGM(SOUND_LABEL::SOUND_LABEL_BGM_GAME);
+
     m_nextScene = SCENE_NONE;
 
     // 初期化完了
@@ -78,6 +82,9 @@ void SceneGame::UnInit()
 
     // カメラ終了処理
     m_Camera.Uninit();
+
+    // BGMの停止
+    SOUND_MANAGER.Stop(SOUND_LABEL::SOUND_LABEL_BGM_GAME);
 
     m_isInitialized = false;
 }

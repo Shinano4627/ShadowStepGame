@@ -5,6 +5,7 @@
 #include "SceneSelect.h"
 #include "SceneManager.h"
 #include "IOManager.h"
+#include "SoundManager.h"
 #include <iostream>
 
 // Components
@@ -41,6 +42,9 @@ void SceneSelect::Init()
     // Init Camera
     m_Camera.Init();
 
+    // BGMの開始
+    SOUND_MANAGER.PlayBGM(SOUND_LABEL::SOUND_LABEL_BGM_TITLE);
+
     // Init Data
     m_nextScene = SCENE_NONE;
 
@@ -59,6 +63,9 @@ void SceneSelect::UnInit()
 
     // UnInit Camera
     m_Camera.Uninit();
+
+    // BGMの停止
+    SOUND_MANAGER.Stop(SOUND_LABEL::SOUND_LABEL_BGM_TITLE);
 
     // Complete
     m_isInitialized = false;

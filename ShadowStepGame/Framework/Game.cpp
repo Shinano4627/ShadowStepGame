@@ -1,6 +1,6 @@
-//=======================================
+ï»¿//=======================================
 // Game.cpp
-// ƒQ[ƒ€ƒ‹[ƒvŽÀ‘•
+// ã‚²ãƒ¼ãƒ ãƒ«ãƒ¼ãƒ—å®Ÿè£…
 //=======================================
 #include "Game.h"
 #include "Renderer.h"
@@ -13,124 +13,124 @@
 #include "CursorManager.h"
 
 //=======================================
-// ƒOƒ[ƒoƒ‹•Ï”
+// ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 //=======================================
 static float g_DeltaTime = 0.0f;
 static float g_TotalTime = 0.0f;
 static float g_CurrentFPS = 0.0f;
 
 //=======================================
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 //=======================================
 
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 Game::Game()
 {
 
 }
 
-// ƒfƒXƒgƒ‰ƒNƒ^
+// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 Game::~Game()
 {
 
 }
 
 //=======================================
-// ƒ‰ƒCƒtƒTƒCƒNƒ‹
+// ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«
 //=======================================
 
-// ‰Šú‰»
+// åˆæœŸåŒ–
 void Game::Init()
 {
-	// •`‰æI—¹ˆ—
+	// æç”»çµ‚äº†å‡¦ç†
 	Renderer::Init();
 
-	// ƒ}ƒl[ƒWƒƒ[ƒNƒ‰ƒX‰Šú‰»ˆ—
+	// ãƒžãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‚¯ãƒ©ã‚¹åˆæœŸåŒ–å‡¦ç†
+	SOUND_MANAGER.Init();
 	PHYSICS_MANAGER.Init();
 	SCENE_MANAGER.Init();
 	DATA_MANAGER.Init();
 	M_RESOURCE.Init();
-	SOUND_MANAGER.Init();
 	IO_MANAGER.Init();
 	CURSOR_MANAGER.Init();
 
-	// ƒ^ƒCƒ}[‰Šú‰»
+	// ã‚¿ã‚¤ãƒžãƒ¼åˆæœŸåŒ–
 	m_Timer.Reset();
 }
 
-// XV
+// æ›´æ–°
 void Game::Update()
 {
-	// ƒ^ƒCƒ}[XV
+	// ã‚¿ã‚¤ãƒžãƒ¼æ›´æ–°
 	m_Timer.Update();
 	
-	// ƒOƒ[ƒoƒ‹•Ï”‚É•Û‘¶
+	// ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°ã«ä¿å­˜
 	g_DeltaTime = m_Timer.GetDeltaTime();
 	g_TotalTime = m_Timer.GetTotalTime();
 	g_CurrentFPS = m_Timer.GetFPS();
 
-	// ƒV[ƒ“•ÏX
+	// ã‚·ãƒ¼ãƒ³å¤‰æ›´
 	SCENE_MANAGER.ChangeScene();
 
-	// “ü—ÍXV
+	// å…¥åŠ›æ›´æ–°
 	IO_MANAGER.Update();
 
-	// •¨—‰‰ŽZEÕ“Ë”»’è
+	// ç‰©ç†æ¼”ç®—ãƒ»è¡çªåˆ¤å®š
 	PHYSICS_MANAGER.Update();
 
-	// ƒ}ƒl[ƒWƒƒ[ƒNƒ‰ƒXXVˆ—
+	// ãƒžãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‚¯ãƒ©ã‚¹æ›´æ–°å‡¦ç†
 	SCENE_MANAGER.Update();
 }
 
-// •`‰æ
+// æç”»
 void Game::Draw()
 {
-	// •`‰æ‘Oˆ—
+	// æç”»å‰å‡¦ç†
 	Renderer::DrawStart();
 
-	// ƒV[ƒ“•`‰æ
+	// ã‚·ãƒ¼ãƒ³æç”»
 	SCENE_MANAGER.Draw();
 
-	// •`‰æŒãˆ—
+	// æç”»å¾Œå‡¦ç†
 	Renderer::DrawEnd();
 }
 
-// I—¹ˆ—
+// çµ‚äº†å‡¦ç†
 void Game::Uninit()
 {
-	// ƒ}ƒl[ƒWƒƒ[ƒNƒ‰ƒXI—¹ˆ—
+	// ãƒžãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‚¯ãƒ©ã‚¹çµ‚äº†å‡¦ç†
 	IO_MANAGER.UnInit();
-	SOUND_MANAGER.UnInit();
 	M_RESOURCE.UnInit();
 	DATA_MANAGER.UnInit();
 	SCENE_MANAGER.UnInit();
 	PHYSICS_MANAGER.UnInit();
 	CURSOR_MANAGER.UnInit();
+	SOUND_MANAGER.UnInit();
 
-	// •`‰æI—¹ˆ—
+	// æç”»çµ‚äº†å‡¦ç†
 	Renderer::Uninit();
 
-	// ƒVƒ“ƒOƒ‹ƒgƒ“ƒNƒ‰ƒX‚ÌI—¹ˆ—@iƒCƒ“ƒXƒ^ƒ“ƒXíœj
+	// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚¯ãƒ©ã‚¹ã®çµ‚äº†å‡¦ç†ã€€ï¼ˆã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å‰Šé™¤ï¼‰
 	SingletonFinalizer::finalize();
 }
 
 // ===================================================================
-// Ã“IŠÖ”‚ÌŽÀ‘•
+// é™çš„é–¢æ•°ã®å®Ÿè£…
 // ===================================================================
 
-// ƒfƒ‹ƒ^ƒ^ƒCƒ€Žæ“¾
+// ãƒ‡ãƒ«ã‚¿ã‚¿ã‚¤ãƒ å–å¾—
 float Game::GetDeltaTime()
 {
 	return g_DeltaTime;
 }
 
-// ‘Œo‰ßŽžŠÔŽæ“¾
+// ç·çµŒéŽæ™‚é–“å–å¾—
 float Game::GetTotalTime()
 {
 	return g_TotalTime;
 }
 
-// FPSŽæ“¾
+// FPSå–å¾—
 float Game::GetFPS()
 {
 	return g_CurrentFPS;

@@ -5,6 +5,7 @@
 #include "SceneTitle.h"
 #include "SceneManager.h"
 #include "IOManager.h"
+#include "SoundManager.h"
 
 // コンポーネント
 
@@ -36,6 +37,9 @@ void SceneTitle::Init()
     // カメラ初期化
     m_Camera.Init();
 
+    // BGMの開始
+    SOUND_MANAGER.PlayBGM(SOUND_LABEL::SOUND_LABEL_BGM_TITLE);
+
     m_nextScene = SCENE_NONE;
 
     // 初期化完了
@@ -58,6 +62,9 @@ void SceneTitle::UnInit()
 
     // カメラ終了処理
     m_Camera.Uninit();
+
+    // BGMの停止
+    SOUND_MANAGER.Stop(SOUND_LABEL::SOUND_LABEL_BGM_TITLE);
 
     m_isInitialized = false;
 }

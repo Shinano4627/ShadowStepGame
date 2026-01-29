@@ -6,6 +6,7 @@
 #include "SceneManager.h"
 #include "IOManager.h"
 #include "CursorManager.h"
+#include "SoundManager.h"
 #include <iostream>
 
 // Components
@@ -95,6 +96,9 @@ void SceneProto::Init()
     // Init Data
     m_nextScene = SCENE_NONE;
 
+    // BGMの開始
+    SOUND_MANAGER.PlayBGM(SOUND_LABEL::SOUND_LABEL_BGM_GAME);
+
     // Complete
     m_isInitialized = true;
 
@@ -111,6 +115,9 @@ void SceneProto::UnInit()
     // UnInit Camera
     m_Camera.Uninit();
     m_UiCamera.Uninit();
+
+    // BGMの停止
+    SOUND_MANAGER.Stop(SOUND_LABEL::SOUND_LABEL_BGM_GAME);
 
     // Complete
     m_isInitialized = false;
