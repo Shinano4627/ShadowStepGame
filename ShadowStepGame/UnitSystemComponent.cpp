@@ -103,3 +103,35 @@ bool UnitSystemComponent::IsEnemyAllDead() const
 			return false;
 	return true;
 }
+
+std::vector<UnitComponent*> UnitSystemComponent::GetPlayerUnits() const
+{
+	std::vector<UnitComponent*> result;
+
+	for (auto* unit : m_UnitList)
+	{
+		if (!unit) continue;
+
+		if (unit->GetType() == UnitType::Player)
+		{
+			result.push_back(unit);
+		}
+	}
+	return result;
+}
+
+std::vector<UnitComponent*> UnitSystemComponent::GetEnemyUnits() const
+{
+	std::vector<UnitComponent*> result;
+
+	for (auto* unit : m_UnitList)
+	{
+		if (!unit) continue;
+
+		if (unit->GetType() == UnitType::Enemy)
+		{
+			result.push_back(unit);
+		}
+	}
+	return result;
+}

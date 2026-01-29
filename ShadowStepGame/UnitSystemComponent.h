@@ -55,9 +55,11 @@ public:
     const std::vector<UnitComponent*> GetAllUnits() const;
     std::vector<UnitComponent*> GetAliveUnits() const;
 
-    // std::vector<UnitComponent*> GetUnitsByTeam(int teamId) const;
-    // std::vector<UnitComponent*> GetEnemyUnits(int teamId) const;
-
+    // Player ユニット取得
+    std::vector<UnitComponent*> GetPlayerUnits() const;
+    // Enemy ユニット取得（今後用・対称性）
+    std::vector<UnitComponent*> GetEnemyUnits() const;
+    
     // -------- ターン関連 --------
     // 速度順並べ替えList取得
     std::vector<UnitComponent*> GetUnitsSortedBySpeed() const;

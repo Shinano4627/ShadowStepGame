@@ -291,6 +291,12 @@
     <ClInclude Include="Framework\SimplePlaneRendererComponent.h">
       <Filter>ソース ファイル\Component\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="UIAnimationComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyAICompoment.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\AABBCollider.cpp">
@@ -463,6 +469,15 @@
     </ClCompile>
     <ClCompile Include="Framework\SimplePlaneRendererComponent.cpp">
       <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowSystemComponent.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="UIAnimationComponent.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyAICompoment.cpp">
+      <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

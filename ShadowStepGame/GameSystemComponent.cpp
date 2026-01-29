@@ -12,6 +12,7 @@
 #include "ShadowSystemComponent.h"
 #include "UISystemComponent.h"
 #include "UnitComponent.h"
+#include "EnemyAICompoment.h"
 
 void GameSystemComponent::InitGame(std::unique_ptr<GameObjectList>& gameObjectList)
 {
@@ -207,8 +208,38 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
         
         ChangeState(BattleState::UnitActionSelect); // プレイヤー入力待ち
     }
+
     else if(unit->GetType() == UnitType::Enemy)
     {
+        // EnemyAI
+        EnemyAI enemyAI;
+
+        // Map 情報取得
+        const int* const* mapData = m_mapSystem->GetRawMapData();
+        int mapW = m_mapSystem->GetMapSizeHeight();
+        int mapH = m_mapSystem->GetMapSizeWidth();
+
+        // 太陽方向（SunManage などから）
+        MapPosition sunDir = m_sunSystem->GetDirection();
+
+        // Player 一覧
+        const auto& players = m_unitSystem->GetPlayerUnits();
+
+        UnitAction action = enemyAI.DecideAction(
+            m_CurrentUnit,
+            players,
+            sunDir,
+            mapData,
+            mapW,
+            mapH
+        );
+
+        // Unitに行動をセット
+        m_CurrentUnit->SetAction(action);
+
+        // 行動を実行
+        m_CurrentUnit->ExcuteAction();
+
         ChangeState(BattleState::UnitActing); // 敵AI行動
     }
 }

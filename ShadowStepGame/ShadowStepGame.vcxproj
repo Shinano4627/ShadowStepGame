@@ -148,6 +148,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ButtonComponent.h" />
+    <ClInclude Include="EnemyAICompoment.h" />
     <ClInclude Include="Framework\AABBCollider.h" />
     <ClInclude Include="Framework\Application.h" />
     <ClInclude Include="Framework\AssimpPerse.h" />
@@ -232,6 +233,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ButtonComponent.cpp" />
+    <ClCompile Include="EnemyAICompoment.cpp" />
     <ClCompile Include="Framework\AABBCollider.cpp" />
     <ClCompile Include="Framework\Application.cpp" />
     <ClCompile Include="Framework\AssimpPerse.cpp" />
