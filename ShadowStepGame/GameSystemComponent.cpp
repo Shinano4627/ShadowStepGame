@@ -236,7 +236,10 @@ void GameSystemComponent::UpdateUnitActionSelect()
     // Action入力（常に受け付ける）
     // ============================
     // UIシステムから取得
-    m_SelectType = m_uISystem->GetSelectedButton();
+    if (IO_MANAGER.GetKeyDownKeyBord(VK_LBUTTON))   // 左クリックで更新
+    {
+        m_SelectType = m_uISystem->GetSelectedButton();
+    }    
 
     // Actionが初めて選ばれた瞬間
     if (m_SelectType != UnitActionType::None &&
