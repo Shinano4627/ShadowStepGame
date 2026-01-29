@@ -1,631 +1,118 @@
-#include "UnitComponent.h"
-#include "IOManager.h"
+ï»¿#include "UnitComponent.h"
 #include "GameObject.h"
-#include "Transform.h"
-#include "GameSystemComponent.h"
-#include "UnitSystemComponent.h"
-#include <iostream>
 
-std::vector<UnitComponent*> UnitComponent::s_allUnits;
-
-// ===================================================================
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-// ===================================================================
-UnitComponent::UnitComponent()
-{
-	//‰ŠúƒXƒe[ƒ^ƒX
-	m_status.camp = UnitCamp::UnitPlayer;
-	m_status.model = UnitModel::UnitAttacker;
-	m_status.hp = 5;
-
-	//ƒ†ƒjƒbƒgŠÇ—ƒŠƒXƒg“o˜^
-	s_allUnits.push_back(this);
-}
-// ===================================================================
-// ƒfƒXƒgƒ‰ƒNƒ^
-// ===================================================================
-UnitComponent::~UnitComponent()
-{
-	s_allUnits.erase(
-		std::remove(s_allUnits.begin(), s_allUnits.end(), this),
-		s_allUnits.end()
-		);
-}
-
-// ===================================================================
-// XV
-// ===================================================================
 void UnitComponent::Update()
 {
-	//ƒvƒŒƒCƒ„[‚Ì‚İ“ü—Íó•t
-	if (m_status.camp != UnitCamp::UnitPlayer)
-	{
-		return;
-	}
-	m_input.Update();
+    if (!m_isActing) return;
 
-	// ===================================================================
-    // ƒfƒoƒbƒOFƒ^[ƒ“ƒŠƒZƒbƒg
-    // ===================================================================
-	if (m_input.GetKeyTrigger(VK_RETURN))
-	{
-		ResetTurn();
-		return;
-	}
+    switch (m_action.type)
+    {
+    case UnitActionType::Move:
+        Move();
+        break;
 
-	//s“®•s‰Â‚È‚ç‰½‚à‚µ‚È‚¢
-	if (!CanAct())
-		return;
+    case UnitActionType::Attack:
+        Attack();
+        break;
 
-	// ===================================================================
-	// ó‘Ô•Êˆ—
-	// ===================================================================
-	if (m_isPlacing)
-	{
-		UpdatePlacing();
-		return;
-	}
-
-	if (m_isMoveSelecting)
-	{
-		UpdateMoveSelecting();
-		return;
-	}
-
-	if (m_isAttacking)
-	{
-		UpdateAttacking();
-		return;
-	}
-
-
-	// ===================================================================
-    // ’Êíó‘Ô(ƒRƒ}ƒ“ƒh“ü—Í‘Ò‚¿)
-    // ===================================================================
-	//--MƒL[‚ÅˆÚ“®--//
-	if (m_input.GetKeyTrigger(VK_M))
-	{
-		BeginMove();
-		return;
-	}
-
-	//--PƒL[‚Å”z’u--//
-	if (m_input.GetKeyTrigger(VK_P))
-	{
-		BeginPlace();
-		return;
-	}
-
-	//--KƒL[‚ÅUŒ‚--//
-	if (m_input.GetKeyTrigger(VK_K))
-	{
-		BeginAttack();
-		return;
-	}
+    case UnitActionType::Place:
+        Place();
+        break;
+    default:
+        // ä½•ã‚‚ã—ãªã„
+        break;
+    }
 }
 
-// ===================================================================
-// s“®‰Â”Û”»’è
-// ===================================================================
-bool UnitComponent::CanAct() const
+// ã‚¿ãƒ¼ãƒ³é–‹å§‹
+void UnitComponent::StartTurn()
 {
-	//‚»‚Ìƒ^[ƒ“‚É‚Ü‚¾s“®‚µ‚Ä‚¢‚È‚¢
-	return !m_hasActed && IsAlive() && !m_isDown;
+    m_isMyTurn = true;
+    m_actionConfirmed = false;
+    m_turnFinished = false;
+    m_isActing = false;
+    m_action = {};
 }
 
-
-// ===================================================================
-// ˆÚ“®ˆ—
-// ===================================================================
-void UnitComponent::BeginMove()
+// ã‚¿ãƒ¼ãƒ³çµ‚äº†
+void UnitComponent::EndTurn()
 {
-	if (!CanAct())
-		return;
-
-	m_isMoveSelecting = true;
-	m_moveTarget = m_gridPos;
-
-#ifdef _DEBUG
-	std::cout << "[BeginMove]" << std::endl;
-#endif
+    m_isMyTurn = false;
+    m_turnFinished = true;
 }
 
-void UnitComponent::UpdateMoveSelecting()
+// è¡Œå‹•ã‚»ãƒƒãƒˆ
+void UnitComponent::SetAction(const UnitAction& action)
 {
-	//ƒLƒƒƒ“ƒZƒ‹ƒL[(C)‚ÅˆÚ“®‘I‘ğI—¹
-	if (m_input.GetKeyTrigger(VK_C))
-	{
-		m_isMoveSelecting = false;
-#ifdef _DEBUG
-		std::cout << "[MoveMode Cancelled]" << std::endl;
-#endif
-		return;
-	}
+    if (!m_isMyTurn) return;
 
-	bool moved = false;
-
-	//ƒJ[ƒ\ƒ‹ˆÚ“®(–îˆóƒL[)
-	if (m_input.GetKeyTrigger(VK_UP))
-	{
-		m_moveTarget.posZ += 1;
-		moved = true;
-	}
-	else if (m_input.GetKeyTrigger(VK_DOWN))
-	{
-		m_moveTarget.posZ -= 1;
-		moved = true;
-	}
-	else if (m_input.GetKeyTrigger(VK_LEFT))
-	{
-		m_moveTarget.posX -= 1;
-		moved = true;
-	}
-	else if (m_input.GetKeyTrigger(VK_RIGHT))
-	{
-		m_moveTarget.posX += 1;
-		moved = true;
-	}
-
-	if (moved)
-	{
-#ifdef _DEBUG
-		std::cout << "[Move Target] ("
-			<< m_moveTarget.posX << "," << m_moveTarget.posZ << ")" << std::endl;
-#endif
-	}
-
-	//ƒXƒy[ƒX‚ÅˆÚ“®Šm’è
-	if (m_input.GetKeyTrigger(VK_SPACE))
-	{
-		// ˆÚ“®æ‚É’N‚©‚¢‚½‚çˆÚ“®•s‰Â
-		if (IsOccupied(m_moveTarget))
-		{
-#ifdef _DEBUG
-			std::cout << "[Move Failed] Occupied ("
-				<< m_moveTarget.posX << ","
-				<< m_moveTarget.posZ << ")" << std::endl;
-#endif
-			return;
-		}
-
-		int dx = abs(m_moveTarget.posX - m_gridPos.posX);
-		int dz = abs(m_moveTarget.posZ - m_gridPos.posZ);
-
-		//ã‰º¶‰E1ƒ}ƒX‚Ì‚İˆÚ“®‰Â”\
-		if (dx + dz == 1)
-		{
-			Move(m_moveTarget);
-			m_isMoveSelecting = false;
-		}
-		else
-		{
-#ifdef _DEBUG
-			std::cout << "[Cannot move there]" << std::endl;
-#endif
-		}
-	}
-}
-void UnitComponent::Move(const MapPosition& target)
-{
-	//s“®Ï‚İ‚È‚ç‰½‚à‚µ‚È‚¢
-	if (!CanAct())
-		return;
-
-	std::cout
-		<< "[Move Before]("
-		<< m_gridPos.posX << ","
-		<< m_gridPos.posZ << ")"
-		<< std::endl;
-
-	//À•WXV
-	m_gridPos = target;
-
-	//ƒOƒŠƒbƒh¨ƒ[ƒ‹ƒh•ÏŠ·
-	Vector3 worldPos = GridToWorld(m_gridPos);
-	GetOwner()->GetTransform().SetPosition(worldPos);
-
-	GetOwner()->GetTransform().SetRotation(Vector3(0.0f, 0.0f, 0.0f));
-
-	//s“®Ï‚İ‚É‚·‚é
-	m_hasActed = true;
-
-#ifdef _DEBUG
-	std::cout
-		<< "[Move after] ("
-		<< target.posX << ","
-		<< target.posZ << ")"
-		<< std::endl;
-#endif
-}
-// ===================================================================
-// ‰eˆÚ“®
-// ===================================================================
-void UnitComponent::ShadowMove(const MapPosition& target)
-{
-	if (!CanAct())
-		return;
-
-	m_gridPos = target;
-
-	m_hasActed = true;
-
-#ifdef _DEBUG
-	std::cout
-		<< "[ShadowMove] pos = ("
-		<< target.posX << ","
-		<< target.posZ << ")"
-		<< std::endl;
-#endif
+    m_action = action;
+    m_actionConfirmed = true;   // è¡Œå‹•ç¢ºå®šå®Œäº†
 }
 
-// ===================================================================
-// ‰e‚ğ“¥‚Ü‚ê‚é
-// ===================================================================
-void UnitComponent::Kill()
+// è¡Œå‹•å®Ÿè¡Œ
+void UnitComponent::ExcuteAction()
 {
-	m_status.hp = 0;
-	m_isDown = false;
-	m_hasActed = true;
+    if (!m_isMyTurn) return;    // ç§ã®ã‚¿ãƒ¼ãƒ³ã‹
+    if (!m_actionConfirmed) return; // è¡Œå‹•ç¢ºå®šã—ã¦ã‚‹ã‹
+    if (m_isActing) return;
 
-#ifdef _DEBUG
-	std::cout << "[Kill]" << std::endl;
-#endif
+    m_isActing = true;
+
+    // è¡Œå‹•é–‹å§‹æ™‚ã®åˆæœŸåŒ–ã ã‘
+    Transform& transform = m_pOwner->GetTransform();
+    Vector3 pos = transform.GetPosition();
+    switch (m_action.type)
+    {
+    case UnitActionType::Move:
+        // ç§»å‹•é–‹å§‹æº–å‚™ï¼ˆé–‹å§‹ä½ç½®ä¿å­˜ãªã©ï¼‰
+        // ç°¡æ˜“ç§»å‹•
+        pos.x = m_action.targetGrid.x * 5.0f;
+        pos.z = m_action.targetGrid.z * 5.0f;
+        transform.SetPosition(pos);
+        break;
+    case UnitActionType::Attack:
+        // æ”»æ’ƒãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³é–‹å§‹
+        break;
+    case UnitActionType::Place:
+        // è¨­ç½®é–‹å§‹
+        break;
+    }
 }
 
-// ===================================================================
-// UŒ‚
-// ===================================================================
-void UnitComponent::Attack(UnitComponent* target)
+//=======================================
+// å„ã‚¢ã‚¯ã‚·ãƒ§ãƒ³
+//=======================================
+void UnitComponent::Move()
 {
-	if (!CanAct()||!target) return;
-
-
-	//‰¼ƒ_ƒ[ƒW
-	const int damage = 5;
-
-#ifdef _DEBUG
-	std::cout
-		<< "[Attack] From ID:" << GetUnitId()
-		<< "To ID:" << target->GetUnitId()
-		<< std::endl;
-#endif
-
-	target->TakeDamage(damage);
-	m_hasActed = true;
+    if (true)
+    {
+        m_status.pos = m_action.targetGrid;
+        m_isActing = false;
+        m_turnFinished = true; // â† GameSystem ãŒç¢ºå®šã™ã‚‹ãªã‚‰ä¸è¦
+        
+    }
 }
 
-void UnitComponent::BeginAttack()
+void UnitComponent::Attack()
 {
-	if (!CanAct()) return;
-
-	m_isAttacking = true;
-	m_attackTarget = nullptr;
-
-	m_attackCursorPos = m_gridPos;
-
-#ifdef _DEBUG
-	std::cout << "[AttackMode Begin] Cursor("
-		<< m_attackCursorPos.posX << ","
-		<< m_attackCursorPos.posZ << ")" << std::endl;
-#endif
-}
-//UŒ‚ƒ‚[ƒhXV
-void UnitComponent::UpdateAttacking()
-{
-	//ƒLƒƒƒ“ƒZƒ‹
-	if (m_input.GetKeyTrigger(VK_C))
-	{
-		m_isAttacking = false;
-#ifdef _DEBUG
-		std::cout << "[AttackMode Cancelled]" << std::endl;
-#endif
-		return;
-	}
-
-	bool attacked = false;
-
-	if (m_input.GetKeyTrigger(VK_UP))    m_attackCursorPos.posZ += 1,attacked = true;
-	else if (m_input.GetKeyTrigger(VK_DOWN)) m_attackCursorPos.posZ -= 1, attacked = true;
-	else if (m_input.GetKeyTrigger(VK_LEFT)) m_attackCursorPos.posX -= 1, attacked = true;
-	else if (m_input.GetKeyTrigger(VK_RIGHT)) m_attackCursorPos.posX += 1, attacked = true;
-
-	if (attacked) {
-		//“Gƒ`ƒFƒbƒN
-		UnitComponent* enemy = FindEnemyAt(m_attackCursorPos);
-		if (enemy)
-		{
-			m_attackTarget = enemy;
-#ifdef _DEBUG
-			std::cout << "[Attack Target Found] ("
-				<< m_attackCursorPos.posX << "," << m_attackCursorPos.posZ << ")" << std::endl;
-#endif
-		}
-		else
-		{
-			m_attackTarget = nullptr;
-#ifdef _DEBUG
-			std::cout << "[No Enemy At]("
-				<< m_attackCursorPos.posX << "," << m_attackCursorPos.posZ << ")" << std::endl;
-#endif
-		}
-	}
-
-	//ƒXƒy[ƒX‚ÅUŒ‚Šm’è
-	if (m_input.GetKeyTrigger(VK_SPACE) && m_attackTarget != nullptr)
-	{
-		Attack(m_attackTarget);
-		m_isAttacking = false;
-	}
+    // æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ»SEã®ãƒˆãƒªã‚¬ãƒ¼ç”¨
+    // å®Ÿéš›ã®ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚„æ­»äº¡åˆ¤å®šã¯
+    // MapSystem / ShadowSystem æ›´æ–°å¾Œã«å‡¦ç†ã•ã‚Œã‚‹æƒ³å®š
+    if (true)
+    {
+        m_isActing = false;
+        m_turnFinished = true; // â† GameSystem ãŒç¢ºå®šã™ã‚‹ãªã‚‰ä¸è¦
+    }
 }
 
-
-// ===================================================================
-// ”íƒ_ƒ
-// ===================================================================
-void UnitComponent::TakeDamage(int damage)
+void UnitComponent::Place()
 {
-	if (!IsAlive())
-		return;
-
-	m_status.hp -= damage;
-
-	if (m_status.hp <= 0)
-	{
-		m_status.hp = 0;
-		Down();
-	}
-
-#ifdef _DEBUG
-	std::cout
-		<< "[TakeDamage]HP = "
-		<< m_status.hp
-		<< std::endl;
-#endif 
-
-}
-// ===================================================================
-// ƒ_ƒEƒ“ó‘Ô
-// ===================================================================
-void UnitComponent::Down()
-{
-	if (m_isDown)
-		return;
-
-	m_isDown = true;
-	m_hasActed = true;
-
-#ifdef _DEBUG
-	std::cout << "[Down]" << std::endl;
-#endif
-}
-// ===================================================================
-// ”z’u
-// ===================================================================
-
-
-void UnitComponent::BeginPlace()
-{
-	if (!CanAct())
-		return;
-
-	m_isPlacing = true;
-
-	// ‰ŠúŒó•âF©•ª‚Ì1ƒ}ƒXã
-	m_placeTarget = m_gridPos;
-	m_placeTarget.posZ += 1;
-
-#ifdef _DEBUG
-	std::cout << "[PlaceMode Begin]" << std::endl;
-	std::cout << "Self   : (" << m_gridPos.posX << "," << m_gridPos.posZ << ")" << std::endl;
-	std::cout << "Target : (" << m_placeTarget.posX << "," << m_placeTarget.posZ << ")" << std::endl;
-#endif
-}
-
-void UnitComponent::UpdatePlacing()
-{
-	//ƒLƒƒƒ“ƒZƒ‹ƒL[(C)‚Å”z’uƒ‚[ƒhI—¹
-	if (m_input.GetKeyTrigger(VK_C))
-	{
-		m_isPlacing = false;
-#ifdef _DEBUG
-		std::cout << "[PlaceMode Cancelled]" << std::endl;
-#endif
-		return;
-	}
-
-	bool placed = false;
-
-	if (m_input.GetKeyTrigger(VK_UP))        m_placeTarget = { m_gridPos.posX,m_gridPos.posZ + 1 }, placed = true;
-	else if (m_input.GetKeyTrigger(VK_DOWN)) m_placeTarget = { m_gridPos.posX,m_gridPos.posZ - 1 },placed = true;
-	else if (m_input.GetKeyTrigger(VK_LEFT)) m_placeTarget = { m_gridPos.posX-1,m_gridPos.posZ  }, placed = true;
-	else if (m_input.GetKeyTrigger(VK_RIGHT))m_placeTarget = { m_gridPos.posX+1,m_gridPos.posZ  }, placed = true;
-
-	if (placed) {
-		//©•ª‚ÌˆÊ’u‚É‚Í’u‚¯‚È‚¢
-		if (m_placeTarget.posX == m_gridPos.posX && m_placeTarget.posZ == m_gridPos.posZ)
-		{
-#ifdef _DEBUG
-			std::cout << "Invalid Place Target] ("
-				<< m_placeTarget.posX << "," << m_placeTarget.posZ << ")" << std::endl;
-#endif
-		}
-		else
-		{
-#ifdef _DEBUG
-			std::cout << "[Place Target]("
-				<< m_placeTarget.posX << "," << m_placeTarget.posZ << ")" << std::endl;
-#endif
-		}
-	}
-
-	if (m_input.GetKeyTrigger(VK_SPACE))
-	{
-		//©•ª‚Ìƒ}ƒX‚âÎ‚ß‚Í’u‚¯‚È‚¢ƒ‹[ƒ‹
-		int dx = abs(m_placeTarget.posX - m_gridPos.posX);
-		int dz = abs(m_placeTarget.posZ - m_gridPos.posZ);
-
-		if (dx + dz == 1)
-		{
-			PlaceObstacle();
-			m_isPlacing = false;
-			m_hasActed = true;
-		}
-		else
-		{
-#ifdef _DEBUG
-			std::cout << "Cannot place here]" << std::endl;
-#endif
-		}
-	}
-}
-void UnitComponent::TryPlaceObstacle()
-{
-	int dx = abs(m_placeTarget.posX - m_gridPos.posX);
-	int dz = abs(m_placeTarget.posZ - m_gridPos.posZ);
-
-	//©•ª‚Ìƒ}ƒX‚Í‹Ö~
-	if (dx == 0 && dz == 0)
-		return;
-
-	//ã‰º¶‰E1ƒ}ƒX‚Ì‚İ
-	if (dx + dz != 1)
-		return;
-
-	PlaceObstacle();
-	m_isPlacing = false;
-	m_hasActed = true;
-}
-
-// ===================================================================
-// ƒIƒuƒWƒFƒNƒg¶¬
-// ===================================================================
-void UnitComponent::PlaceObstacle()
-{
-	//TODO:ƒIƒuƒWƒFƒNƒg¶¬
-	//ƒV[ƒ“ŠÇ—ƒNƒ‰ƒX‚Ås‚¤H
-	//¡‚ÍƒƒO‚Ì‚İ(Self:©ƒRƒ}ˆÊ’u@Target:İ’uˆÊ’u)
-
-#ifdef _DEBUG
-	std::cout
-		<< "[PlaceObstacle]" << std::endl
-		<< "Self :(" << m_gridPos.posX << "," << m_gridPos.posZ << ")" << std::endl
-		<< "Target :(" << m_placeTarget.posX << "," << m_placeTarget.posZ << ")" << std::endl;
-#endif
-}
-
-// ===================================================================
-// •Ç”j‰ó
-// ===================================================================
-void UnitComponent::BreakWall(const MapPosition& target)
-{
-	if (!CanAct()) return;
-
-	if (m_status.model != UnitModel::UnitGiant)
-		return;
-
-	m_hasActed = true;
-
-#ifdef _DEBUG
-	std::cout
-		<< "[BreakWall] pos = ("
-		<< target.posX << ","
-		<< target.posZ << ")"
-		<< std::endl;
-#endif
-}
-
-// ===================================================================
-// ó‘Ôæ“¾
-// ===================================================================
-bool UnitComponent::IsAlive() const
-
-{
-	return m_status.hp > 0;
-}
-
-bool UnitComponent::IsDown()const
-{
-	return m_isDown;
-}
-
-
-// ===================================================================
-// ƒ^[ƒ“ƒŠƒZƒbƒg(ƒfƒoƒbƒO—p)
-// ===================================================================
-void UnitComponent::ResetTurn()
-{
-	m_hasActed = false;
-
-	m_isMoveSelecting = false;
-	m_isPlacing = false;
-	m_isAttacking = false;
-
-#ifdef _DEBUG
-	std::cout<< "[Turn Reset]" << std::endl;
-#endif
-}
-
-Vector3 UnitComponent::GridToWorld(const MapPosition& grid) const
-{
-	const float CELL_SIZE = 1.0f;
-
-	return Vector3(
-		grid.posX * CELL_SIZE,
-		0.0f,
-		grid.posZ * CELL_SIZE
-	);
-
-
-}
-// ===================================================================
-// “Gƒ†ƒjƒbƒgŒŸõ(ŠÈˆÕ)
-// ===================================================================
-UnitComponent* UnitComponent::FindEnemyAt(const MapPosition& pos)
-{
-#ifdef _DEBUG
-	std::cout << "[FindEnemyAt] Check Pos("
-		<< pos.posX << "," << pos.posZ << ")\n";
-	std::cout << " AllUnits Count:" << s_allUnits.size() << std::endl;
-#endif
-
-	for (UnitComponent* unit : s_allUnits)
-	{
-		if (!unit) continue;
-
-#ifdef _DEBUG
-		std::cout << "  Unit ID:" << unit->GetUnitId()
-			<< " Pos(" << unit->GetGridPos().posX
-			<< "," << unit->GetGridPos().posZ << ")"
-			<< " Camp:" << static_cast<int>(unit->GetCamp())
-			<< std::endl;
-#endif
-
-		if (unit == this) continue;
-		if (!unit->IsAlive()) continue;
-		if (unit->GetCamp() == m_status.camp) continue;
-
-		const auto& uPos = unit->GetGridPos();
-		if (uPos.posX == pos.posX && uPos.posZ == pos.posZ)
-			return unit;
-	}
-	return nullptr;
-}
-
-// ===================================================================
-// w’èƒOƒŠƒbƒh‚ª‘¼ƒ†ƒjƒbƒg‚Éè—L‚³‚ê‚Ä‚¢‚é‚©
-// ===================================================================
-bool UnitComponent::IsOccupied(const MapPosition& pos) const
-{
-	for (UnitComponent* unit : s_allUnits)
-	{
-		if (!unit->IsAlive()) continue;
-
-		const auto& uPos = unit->GetGridPos();
-		if (uPos.posX == pos.posX &&
-			uPos.posZ == pos.posZ)
-		{
-			return true;
-		}
-	}
-	return false;
+    // è¨­ç½®ãã®ã‚‚ã®ã¯ MapSystem ãŒè¡Œã†
+    // ã“ã“ã§ã¯ã€Œè¨­ç½®è¡Œå‹•ã‚’ã—ãŸã€ã¨ã„ã†äº‹å®Ÿã®ã¿
+    if (true)
+    {
+        m_isActing = false;
+        m_turnFinished = true; // â† GameSystem ãŒç¢ºå®šã™ã‚‹ãªã‚‰ä¸è¦
+    }
 }

@@ -1,4 +1,4 @@
-//=======================================
+ï»¿//=======================================
 // UnitCommon.h
 //=======================================
 #pragma once
@@ -24,12 +24,26 @@ struct MapPosition
 
 struct UnitStatus
 {
-	int id;		// GameObject ID‚Æˆê’v‚³‚¹‚é
+	int id;		// GameObject IDã¨ä¸€è‡´ã•ã›ã‚‹
 	UnitType type;	// Player / Enemy
-	UnitModel model;	// ƒ†ƒjƒbƒgí•Ê
-	MapPosition pos;	// ƒ}ƒbƒvÀ•W
+	UnitModel model;	// ãƒ¦ãƒ‹ãƒƒãƒˆç¨®åˆ¥
+	MapPosition pos;	// ãƒãƒƒãƒ—åº§æ¨™
 	int hp;
 	int speed;
-	bool isDown = false;	// s“®•s”\
+	bool isDown = false;	// è¡Œå‹•ä¸èƒ½
 };
 
+enum class UnitActionType
+{
+	None,
+	Move,
+	Attack,
+	Place,
+	ShadowMove,
+};
+
+struct UnitAction
+{
+	UnitActionType type = UnitActionType::None;
+	MapPosition targetGrid;
+};

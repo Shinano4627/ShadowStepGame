@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Component.h"
 #include "UnitCommon.h"
 #include "GameSystemComponent.h"
@@ -6,168 +6,113 @@
 #include "input.h"
 #include <vector>
 // ===================================================================
-// UnitComponent
-// ƒ†ƒjƒbƒg1‘Ì•ª‚Ìó‘ÔEs“®ŠÇ—
+// ãƒ¦ãƒ‹ãƒƒãƒˆã‚³ãƒ³ãƒãƒãƒ³ãƒˆ
+// ãƒ¦ãƒ‹ãƒƒãƒˆä¸€ä½“åˆ†ã®çŠ¶æ…‹ãƒ»ã‚¿ãƒ¼ãƒ³ç®¡ç†
 // ===================================================================
 
 class UnitComponent :public Component
 {
 public:
-    // ===================================================================
-    //Œ^’è‹`
-    // ===================================================================
-    //w‰c
-    enum class UnitCamp
-    {
-        UnitPlayer, //ƒvƒŒƒCƒ„[
-        UnitEnemy,  //ƒGƒlƒ~[
-    };
-
-    ////ó‘Ô
-    //enum class UnitState
-    //{
-    //    UnitWait,   //‘Ò‹@
-    //    UnitActive, //s“®’†
-    //    UnitDown,   //ƒ_ƒEƒ“
-    //    UnitDelete, //Á–Å
-    //};
-
-    //í—Ş
-    enum UnitModel
-    {
-        UnitAttacker,     //UŒ‚
-        UnitPlacementer,  //”z’u
-        UnitGiant,        //‹l
-    };
-
-    //ƒ}ƒbƒvã‚ÌƒOƒŠƒbƒhÀ•W
-    struct MapPosition
-    {
-        int posX;
-        int posZ;
-    };
-
-    //ƒ†ƒjƒbƒgî•ñ
-    struct UnitStatus
-    {
-        int id = -1;        //ƒIƒuƒWƒFƒNƒgID
-        MapPosition pos;    //ƒ}ƒbƒvã‚ÌˆÊ’u
-        int hp = 5;         //HP
-        int speed = 5;      //‘f‘‚³
-        UnitCamp camp;      //w‰c
-        UnitModel model;    //í—Ş
-    };
+    
 private:
-    Input m_input;
-
-
+    // ãƒ¦ãƒ‹ãƒƒãƒˆæƒ…å ±
     UnitStatus m_status;
-    MapPosition m_gridPos;  //Œ»İ‚ÌÀ•W
+    // ã‚¢ã‚¯ã‚·ãƒ§ãƒ³æƒ…å ±
+    UnitAction m_action;
 
-    bool m_isAlive = true;  //¶‘¶‚µ‚Ä‚¢‚é‚©
-    bool m_isDown = false;  //ƒ_ƒEƒ“’†‚©
+    int downTurn = 0;
 
-    bool m_hasActed = false;   //s“®Ï‚İ‚©
-
-    //--ˆÚ“®--//
-    bool m_isMoveSelecting = false; //ˆÚ“®‘I‘ğ’†‚©
-    MapPosition m_moveTarget;       //ˆÚ“®ƒ‚[ƒh—pŒó•âƒ}ƒX
-
-    //--”z’u--//
-    bool m_isPlacing = false;   //”z’uƒ‚[ƒh’†‚©
-    MapPosition m_placeTarget;      //”z’uŒó•âƒ}ƒX
-
-    //--UŒ‚--//
-    bool m_isAttacking = false;
-    MapPosition m_attackCursorPos;
-    UnitComponent* m_attackTarget = nullptr;
-
-    static std::vector<UnitComponent*> s_allUnits;  //ƒ†ƒjƒbƒgŠÇ—(ƒfƒoƒbƒO—pŠÈˆÕ) 
-
-    UnitComponent* FindEnemyAt(const MapPosition& pos);
+    // -------- å„Flug --------
+    bool m_isMyTurn = false;        // è‡ªåˆ†ã®ã‚¿ãƒ¼ãƒ³ã‹
+    bool m_actionConfirmed = false; // è¡Œå‹•ç¢ºå®šæ¸ˆã¿ã‹
+    bool m_isActing = false;        // è¡Œå‹•ä¸­ã‹
+    bool m_turnFinished = false;    // ã‚¿ãƒ¼ãƒ³çµ‚äº†æ¸ˆã¿ã‹
 
 public:
  
-    // ===================================================================
-    // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-    // ===================================================================
-    UnitComponent();
-    // ===================================================================
-    // ƒfƒXƒgƒ‰ƒNƒ^
-    // ===================================================================
-    ~UnitComponent();
+    //=======================================
+    // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+    //=======================================
+    UnitComponent(){}
+    ~UnitComponent(){}
 
+    //=======================================
+    // ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«
+    //=======================================
+    void Init() override {};
+    void Update() override;
+    void Uninit() override {};
 
-    // ===================================================================
-    // XV
-    // ===================================================================
-    void Update();
+    //=======================================
+    // å®Ÿè¡Œé–¢æ•°
+    //=======================================
+    // -------- ã‚¿ãƒ¼ãƒ³åˆ¶å¾¡ --------
+    void StartTurn();
+    void EndTurn();
 
+    // -------- è¡Œå‹•å—ä»˜ --------
+    void SetAction(const UnitAction& action);
+    bool IsActionConfired() const
+    {
+        return m_actionConfirmed;
+    }
 
-    // ===================================================================
-    // s“®ŠJn
-    // ===================================================================
-    void BeginMove();                            //ˆÚ“®‘I‘ğŠJn
-    void BeginAttack();                          //UŒ‚ŠJn
-    void BeginPlace();                           //”z’u‘I‘ğ
+    // -------- å®Ÿè¡Œ --------
+    void ExcuteAction();
 
-    // ===================================================================
-    // s“®ˆ—
-    // ===================================================================
-    void Move(const MapPosition& target);        //ˆÚ“®
-    void Attack(UnitComponent* target);          //UŒ‚
+    // -------- çŠ¶æ…‹å–å¾— --------
+    bool IsTurnDinished() const
+    {
+        return m_turnFinished;
+    }
+    int GetSpeed() const
+    {
+        return m_status.speed;
+    }
+    bool IsDown() const
+    {
+        return m_status.isDown;
+    }
+    UnitType GetType() const
+    {
+        return m_status.type;
+    }
+    int GetId() const
+    {
+        return m_status.id;
+    }
+    MapPosition GetPosition() const
+    {
+        return m_status.pos;
+    }
+    UnitModel GetModel() const
+    {
+        return m_status.model;
+    }
 
-    void ShadowMove(const MapPosition& target);  //‰eˆÚ“®
-    void Kill();                                 //€–S(‰e‚ğ“¥‚Ü‚ê‚é)
-    void TakeDamage(int damage);                 //”íƒ_ƒ
-    void Down();                                 //ƒ_ƒEƒ“ó‘Ô
+    void SetStatus(UnitStatus status) { m_status = status; }
 
-    void TryPlaceObstacle();                     //”z’uŠm’è—pŠÖ”
-    void PlaceObstacle();                        //ƒIƒuƒWƒFƒNƒg¶¬
+    void SetDown(int turn)
+    {
+        m_status.isDown = true;
+        downTurn = turn;
 
-    void BreakWall(const MapPosition& target);   //•Ç”j‰ó   
+        std::cout << "Down!\n";
+    }
 
-    // ===================================================================
-    // ó‘Ô
-    // ===================================================================
-    bool CanAct() const;    //s“®‰Â”Û
-    bool IsAlive() const;   //¶‘¶”»’è
-    bool IsDown() const;    //ƒ_ƒEƒ“”»’è
-    void ResetTurn();       //ƒ^[ƒ“ƒŠƒZƒbƒg(ƒfƒoƒbƒO—p)
+    void RecoverDown()
+    {
+        downTurn--;
+        if (downTurn <= 0)
+        {
+            m_status.isDown = false;
+            downTurn = 0;
+        }
+    }
 
-    bool IsOccupied(const MapPosition& pos)const;
+private:
+    void Move();
+    void Attack();
+    void Place();
 
-    // ===================================================================
-    // À•W
-    // ===================================================================
-    Vector3 GridToWorld(const MapPosition& grid) const;   //À•W•ÔŠÒ
-
-    
-    
-
-    
-
-    
-
-    // ===================================================================
-    // Getter / Setter
-    // ===================================================================
-    UnitCamp GetCamp() const { return m_status.camp; }
-    //UnitState GetState() const { return m_status.state; }
-    int GetHP() const { return m_status.hp; }
-    void SetCamp(UnitCamp camp) { m_status.camp = camp; }
-
-    const MapPosition& GetGridPos() const { return m_gridPos; }
-    void SetGridPos(const MapPosition& pos) { m_gridPos = pos; }
-
-    void SetUnitId(int id) { m_status.id = id; }
-    int GetUnitId()const { return m_status.id; }
-
- private:
-    // ===================================================================
-    // “à•”XV
-    // ===================================================================
-    void UpdateMoveSelecting();                  //ˆÚ“®‘I‘ğ’†
-    void UpdateAttacking();                      //UŒ‚‘I‘ğ’†
-    void UpdatePlacing();                        //”z’uƒ‚[ƒh
 };

@@ -285,6 +285,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClCompile Include="MapSystemComponent.cpp" />
     <ClCompile Include="SceneProto.cpp" />
     <ClCompile Include="UISystemComponent.cpp" />
+    <ClCompile Include="UnitComponent.cpp" />
     <ClCompile Include="UnitSystemComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
