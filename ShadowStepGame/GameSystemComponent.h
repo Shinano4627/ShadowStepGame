@@ -17,7 +17,7 @@ class MapSystemComponent;
 class UnitSystemComponent;
 class SunManageComponent;
 class ShadowSystemComponent;
-class UnitComponent;
+class Unit;
 class UISystemComponent;
 
 class GameSystemComponent : public Component
@@ -50,15 +50,9 @@ public:
 
 	struct Timeline
 	{
-		UnitComponent* unit = nullptr;
+		UnitStatus* unit = nullptr;
 		TimelineActorType actorType;
 		int speed;	// 行動順決定用
-	};
-
-	enum class SelectPhase
-	{
-		Action,     // 1:アクション選択
-		Position,   // 2:ポジション選択
 	};
 
 public:
@@ -92,13 +86,6 @@ public:
 	void UpdateGame(std::unique_ptr<GameObjectList>& gameObjectList);
 
 	BattleState GetBattleState() { return m_State; }
-	MapPosition GetUnitPosition() { return m_Unitposition; }
-	bool IsSelectingPosition() const
-	{
-		return m_State == BattleState::UnitActionSelect &&
-			m_SelectPhase == SelectPhase::Position;
-	}
-
 private:
 	//=======================================
 	// 状態管理関数
@@ -142,12 +129,6 @@ private:
 	bool IsPlayerAllDead() const;
 	bool IsEnemyAllDead() const;
 
-	//=======================================
-	// 入力関数
-	//=======================================
-	void Input_Select();
-
-
 private:
 	//=======================================
 	// システムコンポーネント参照
@@ -180,29 +161,11 @@ private:
 	std::vector<Timeline> m_Timeline;
 	int m_TimelineIndex;
 
-	UnitComponent* m_CurrentUnit = nullptr;
-
-	//=======================================
-	// Select関係変数
-	//=======================================
-	bool m_SelectAction = false;	// アクション選択したか
-	bool m_SelectPosition = false;	// ポジション選択したか
-
-	MapPosition m_SelectMapPosition;	// 今選んでいるマップポジション
-	MapPosition m_Unitposition;			// ユニット位置
-	UnitType m_UnitType;
-	UnitActionType m_SelectType;	// 今選んでいるアクション選択
-	UnitModel m_UnitModel;
-
-	SelectPhase m_SelectPhase = SelectPhase::Action;
+	UnitStatus* m_CurrentUnit = nullptr;
 
 	//=======================================
 	// デバッグ用
 	//=======================================
 	static const char* BattleStateToString(BattleState state);
 
-
-	bool m_RequestStartSelectMap = false;
-	UnitComponent* m_RequestUnit = nullptr;
-	MapPosition m_RequestPos;
 };

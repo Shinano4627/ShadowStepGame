@@ -12,8 +12,8 @@
 #include "SimplePlaneRendererComponent.h"
 #include "MapSystemComponent.h"
 #include "UnitComponent.h"
-#include "GameSystemComponent.h"
 #include "OrbitCameraComponent.h"
+#include "GameSystemComponent.h"
 #include "SunManageComponent.h"
 #include "ShadowSystemComponent.h"
 #include "UnitSystemComponent.h"
@@ -43,9 +43,8 @@ void SceneProto::Init()
         // マップシステム
         auto* mapSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<MapSystemComponent>("TestMap.csv");
         mapSystem->MakeMap(m_GameObjectList);    // マップの読み込み
-        mapSystem->MakeSelectMap(m_GameObjectList); // セレクトマップの作製
-        float heightMap = mapSystem->GetMapSizeHeight();
-        float widthMap = mapSystem->GetMapSizeWidth();
+        int heightMap = mapSystem->GetMapSizeHeight();
+        int widthMap = mapSystem->GetMapSizeWidth();
 
         // 太陽
         auto* sun = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<SunManageComponent>(
@@ -70,33 +69,16 @@ void SceneProto::Init()
         orbitCamera->SetGameSystem(gameSystem);
         orbitCamera->SetRotationSpeed(0.02f);
 
-
-        // ここで SunManageComponent をセット
-        // ※m_sunSystem は現状 private なので、public setter または friend でアクセス推奨
-        // gameSystem->SetSunSystem(sun); // setter を作ると良い
-
-
-
-
-
-
-        
         // プレイヤー
         auto* playerObj = m_GameObjectList->FindGameObjectWithTag("Player");
         auto* playerUnit = playerObj->AddComponent<UnitComponent>();
-        UnitStatus pl_1 = { 1000,UnitType::Player,UnitModel::Attack,MapPosition{0,0},10,10,false };
-        playerUnit->SetStatus(pl_1);
+        // playerUnit->SetCamp(UnitComponent::UnitCamp::UnitPlayer);
 
         //エネミー
         auto* enemyObj = m_GameObjectList->FindGameObjectWithTag("Enemy");
         auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
-        UnitStatus en_1 = { 1000,UnitType::Enemy,UnitModel::Attack,MapPosition{1,0},10,5,false };
-        enemyUnit->SetStatus(en_1);
+        // enemyUnit->SetCamp(UnitComponent::UnitCamp::UnitEnemy);
 
-
-        // ユニットをシステムに格納
-        unitSystem->RegisterUnit(playerUnit);
-        unitSystem->RegisterUnit(enemyUnit);
     }  
 
     // Init Camera

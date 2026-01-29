@@ -1,4 +1,4 @@
-Ôªø// ===================================================================
+// ===================================================================
 // UnitSystemComponent.cpp
 // ===================================================================
 #include "UnitSystemComponent.h"
@@ -14,76 +14,74 @@ void UnitSystemComponent::Uninit()
 
 }
 
-void UnitSystemComponent::RegisterUnit(UnitComponent* unit)
+void UnitSystemComponent::RegisterUnit(const UnitStatus& status)
 {
-	if (!unit) return;
-	// UnitComponent„ÅÆÁôªÈå≤
-	if (std::find(m_UnitList.begin(), m_UnitList.end(), unit) == m_UnitList.end())
-	{
-		m_UnitList.push_back(unit);
-	}
+	m_UnitList.push_back(std::make_unique<UnitStatus>(status));
 }
 
-void UnitSystemComponent::UnRegisterUnit(UnitComponent* unit)
+void UnitSystemComponent::KillUnit(int id)
 {
 	m_UnitList.erase(
-		std::remove(m_UnitList.begin(), m_UnitList.end(), unit),
+		std::remove_if(m_UnitList.begin(), m_UnitList.end(),
+			[id](const std::unique_ptr<UnitStatus>& u)
+			{
+				return u->id == id;
+			}),
 		m_UnitList.end());
 }
 
-const std::vector<UnitComponent*> UnitSystemComponent::GetAllUnits() const
+void UnitSystemComponent::DamageUnit(int id, int damage)
 {
-	return m_UnitList;
+	auto* unit = FindUnit(id);
+	if (!unit) return;
+
+	unit->hp -= damage;
+
+	if (unit->hp <= 0)
+	{
+		KillUnit(id);
+	}
 }
 
-std::vector<UnitComponent*> UnitSystemComponent::GetAliveUnits() const
+std::vector<UnitStatus*> UnitSystemComponent::GetAllUnits() const
 {
-	std::vector<UnitComponent*> result;
+	std::vector<UnitStatus*> result;
+	result.reserve(m_UnitList.size());
 
-	for (auto* unit : m_UnitList)
+	for (const auto& u : m_UnitList)
 	{
-		
-			result.push_back(unit);
-		
+		result.push_back(u.get());
 	}
+
+	return result; // ílï‘ÇµÅiÉRÉsÅ[ÇÕÉ|ÉCÉìÉ^ÇÃÇ›Åj
+}
+
+
+std::vector<UnitStatus*> UnitSystemComponent::GetUnitsSortedBySpeed() const
+{
+	std::vector<UnitStatus*> result;
+
+	for (auto& u : m_UnitList)
+	{
+		if (!u->isDown)
+			result.push_back(u.get());
+	}
+
+	std::sort(result.begin(), result.end(),
+		[](UnitStatus* a, UnitStatus* b)
+		{
+			return a->speed > b->speed;
+		});
+
 	return result;
 }
 
-std::vector<UnitComponent*> UnitSystemComponent::GetUnitsSortedBySpeed() const
-{
-	auto units = GetAliveUnits();
-
-	std::sort(units.begin(), units.end(),
-		[](UnitComponent* a, UnitComponent* b)
-		{
-			return a->GetSpeed() > b->GetSpeed();
-		});
-
-	return units;
-}
-
-
-UnitComponent* UnitSystemComponent::FindUnit(int id)
+UnitStatus* UnitSystemComponent::FindUnit(int id)
 {
 	for (auto& u : m_UnitList)
 	{
-		if (u->GetId() == id)
-			return u;
-	}
-	return nullptr;
-}
-
-UnitComponent* UnitSystemComponent::FindUnitAtPosition(const MapPosition& pos) const
-{
-	for (auto* unit : m_UnitList)
-	{
-		if (!unit) continue;
-		
-		MapPosition uPos = unit->GetPosition();
-		if (uPos.x == pos.x && uPos.z == pos.z)
-		{
-			return unit;
-		}
+		if (u->id == id)
+			return u.get();
 	}
 	return nullptr;
 }
@@ -91,7 +89,7 @@ UnitComponent* UnitSystemComponent::FindUnitAtPosition(const MapPosition& pos) c
 bool UnitSystemComponent::IsPlayerAllDead() const
 {
 	for (auto& u : m_UnitList)
-		if (u->GetType() == UnitType::Player)
+		if (u->type == UnitType::Player)
 			return false;
 	return true;
 }
@@ -99,7 +97,7 @@ bool UnitSystemComponent::IsPlayerAllDead() const
 bool UnitSystemComponent::IsEnemyAllDead() const
 {
 	for (auto& u : m_UnitList)
-		if (u->GetType() == UnitType::Enemy)
+		if (u->type == UnitType::Enemy)
 			return false;
 	return true;
 }
