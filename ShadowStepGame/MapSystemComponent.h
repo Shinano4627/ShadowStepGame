@@ -44,6 +44,7 @@ private:
     float m_SizePiece = 5.f;
     float m_DrawStartPosX = 0.f;
     float m_DrawStartPosZ = 0.f;
+    float m_DrawStartPosY = 0.2f;
 
     // SelectMap用
     int** m_SelectMapData = nullptr;  //
@@ -55,7 +56,6 @@ private:
 
     // SelectMap が有効かどうか
     bool m_IsSelectMapActive = false;
-
 
 public:
     // ===================================================================
@@ -147,4 +147,11 @@ public:
     int GetMapHeight() const { return m_MapHeight; }
     int GetMapWidth() const { return m_MapWidth; }
     const int* const* GetRawMapData() const;
+    float GetSizePiece() const { return m_SizePiece; }
+    float GetDrawStartPosX() const { return m_DrawStartPosX; }
+    float GetDrawStartPosZ() const { return m_DrawStartPosZ; }
+    Vector3 GetPositionToMap(MapPosition map) const     // マップのセル位置が描画上のどの位置になるかを取得する
+    {
+        return Vector3(m_DrawStartPosX + map.x * m_SizePiece, m_DrawStartPosY, m_DrawStartPosZ + map.z * m_SizePiece);
+    }    
 };

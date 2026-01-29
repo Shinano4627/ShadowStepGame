@@ -16,10 +16,115 @@ enum class UnitModel
 	Giant
 };
 
+enum class EMapTile
+{
+	Empty = 0,  // 何もない
+	Wall = 1,   // 壁
+	Player = 2, // プレイヤー
+	Enemy = 3,  // 敵
+	Tree = 4,   // 樹
+	Shadow = 5, // 影
+};
+
 struct MapPosition
 {
 	int x;
 	int z;
+
+	// コンストラクタ
+	MapPosition() = default;
+	MapPosition(int _x, int _z)
+		: x(_x)
+		, z(_z)
+	{}
+
+	// オペレーターオーバーロード
+	MapPosition& operator=(const MapPosition& pos)
+	{
+		x = pos.x;
+		z = pos.z;
+		return *this;
+	}
+	MapPosition operator+(const MapPosition& pos) const
+	{
+		return MapPosition{ x + pos.x,z + pos.z };
+	}
+	MapPosition& operator+=(const MapPosition& pos)
+	{
+		x += pos.x;
+		z += pos.z;
+		return *this;
+	}
+	MapPosition operator-(const MapPosition& pos) const
+	{
+		return MapPosition{ x - pos.x,z - pos.z };
+	}
+	MapPosition& operator-=(const MapPosition& pos)
+	{
+		x -= pos.x;
+		z -= pos.z;
+		return *this;
+	}
+	MapPosition operator*(const MapPosition& pos) const
+	{
+		return MapPosition{ x * pos.x, z * pos.z };
+	}
+	MapPosition& operator*=(const MapPosition& pos)
+	{
+		x *= pos.x;
+		z *= pos.z;
+		return *this;
+	}
+	MapPosition operator/(const MapPosition& pos) const
+	{
+		return MapPosition{ x / pos.x, z / pos.z };
+	}
+	MapPosition& operator/=(const MapPosition& pos)
+	{
+		x /= pos.x;
+		z /= pos.z;
+		return *this;
+	}
+	MapPosition operator+(const int& n) const
+	{
+		return MapPosition{ x + n, z + n };
+	}
+	MapPosition& operator+=(const int& n)
+	{
+		x += n;
+		z += n;
+		return *this;
+	}
+	MapPosition operator-(const int& n)const
+	{
+		return MapPosition{ x - n, z - n };
+	}
+	MapPosition& operator-=(const int& n)
+	{
+		x -= n;
+		z -= n;
+		return *this;
+	}
+	MapPosition operator*(const int& n)const
+	{
+		return MapPosition{ x * n, z * n };
+	}
+	MapPosition& operator*=(const int& n)
+	{
+		x *= n;
+		z *= n;
+		return *this;
+	}
+	MapPosition operator/(const int& n)const
+	{
+		return MapPosition{ x / n, z / n };
+	}
+	MapPosition& operator/=(const int& n)
+	{
+		x /= n;
+		z /= n;
+		return *this;
+	}
 };
 
 struct UnitStatus

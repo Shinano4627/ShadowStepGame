@@ -49,7 +49,7 @@ void SceneProto::Init()
 
         // 太陽
         auto* sun = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<SunManageComponent>(
-            widthMap, heightMap, mapSystem->GetMapHeight(), mapSystem->GetMapWidth());
+            widthMap, heightMap, m_MaxSunMoveTurn);
 
         // シャドウシステム
         auto* shadowSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<ShadowSystemComponent>();
@@ -63,7 +63,7 @@ void SceneProto::Init()
 
         // ゲームシステム
         auto* gameSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<GameSystemComponent>();
-
+        gameSystem->InitGame(m_GameObjectList); // ゲームシステム開始
 
         // カメラ
         auto* orbitCamera = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<OrbitCameraComponent>(&m_Camera);
@@ -90,6 +90,7 @@ void SceneProto::Init()
 
     // Init Camera
     m_Camera.Init();
+    m_UiCamera.Init();
 
     // Init Data
     m_nextScene = SCENE_NONE;
@@ -109,6 +110,7 @@ void SceneProto::UnInit()
 
     // UnInit Camera
     m_Camera.Uninit();
+    m_UiCamera.Uninit();
 
     // Complete
     m_isInitialized = false;
@@ -118,9 +120,14 @@ void SceneProto::Update()
 {
     // 1. カメラ更新
     m_Camera.Update();
+    m_UiCamera.Update();
 
     // ゲーム用カーソルアップデート
     CURSOR_MANAGER.Update();
+
+    // システムアップデート
+    auto* gameSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<GameSystemComponent>();
+    gameSystem->UpdateGame(m_GameObjectList);   // リスト権限を渡して各種アップデート
 
     // 2. 全GameObject更新
     m_GameObjectList->UpdateObjectList();
@@ -135,8 +142,8 @@ void SceneProto::Draw()
     Draw(&m_Camera);
 
     // Ui
-    m_GameObjectList->DrawLayer(&m_Camera, RenderLayer::UI);
-    m_GameObjectList->DrawLayer(nullptr, RenderLayer::UI_2);
+    m_GameObjectList->DrawLayer(&m_UiCamera, RenderLayer::UI);
+    m_GameObjectList->DrawLayer(&m_UiCamera, RenderLayer::UI_2);
 
     // カーソルを最前面に描画
     CURSOR_MANAGER.Draw();

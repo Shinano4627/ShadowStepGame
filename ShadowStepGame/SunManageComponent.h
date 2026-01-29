@@ -7,12 +7,23 @@
 #include "GameObject.h"
 #include "IOManager.h"
 #include "Game.h"
+#include "UnitCommon.h"
+#include "SimpleCubeRendererComponent.h"
+
+// 太陽の種類と移動方向
+enum SunType
+{
+    SunSouth = 0,       // 南からのぼる太陽
+    SunNorth,       // 北から
+    SunWest,        // 西から
+    SunEast,        // 東から
+};
 
 struct SunData
 {
+    SunType type;
+    MapPosition lightDirection = {0,0};  // 基本方向(のぼるときの方向）  高度0のときは距離が２倍、真上は0
     float distance = 0;            // 移動に使用する幅（ターン数にも使用）
-    int startX = 0;
-    int startZ = 0;
     int axis = 0;               // 0: X軸移動, 1: Z軸移動
     int direction = 1;          // 1: 正方向, -1: 負方向
     float otherAxisPos = 0;     // 固定軸の座標
@@ -24,97 +35,23 @@ class SunManageComponent : public Component
 private:
     std::vector<SunData> m_SunList;
     int m_CurIdx = 0;
-    int m_CurPosX = 0;          // マップ升目上のX座標（左上が0）
-    int m_CurPosZ = 0;          // マップ升目上のZ座標（左上が0）
-    int m_MapSizeWidth = 0;
-    int m_MapSizeHeight = 0;
-    int m_MapWidth = 0;
-    int m_MapHeight = 0;
+    float m_MapSizeWidth = 0;
+    float m_MapSizeHeight = 0;
+
+    // 光の方向
+    MapPosition m_Direction = MapPosition(0, 0);
+
+    // ターン管理
     int m_TurnProgress = 0;     // 経過ターン数
+    int m_MaxTurn = 0;
+
+    // 表示用
     float m_Offset = 10.f;      // オフセット値（仮）
-public:
+private:
     // ===================================================================
-    // コンストラクタ
-    // ===================================================================
-    SunManageComponent(float widthMapSize, float heightMapSize, int widthMap, int heightMap)
-        : m_MapSizeWidth(widthMapSize)
-        , m_MapSizeHeight(heightMapSize)
-        , m_MapWidth(widthMap)
-        , m_MapHeight(heightMap)
-    {
-        float CenterMapX = 0;
-        float CenterMapZ = 0;
-
-        // -z → z（南から北へ移動）
-        // heightターンかけて -(height+offset) から (height+offset) へ移動
-        {
-            SunData newdata;
-            newdata.distance = heightMapSize + m_Offset * 2;
-            newdata.axis = 1;           // Z軸移動
-            newdata.direction = 1;      // 正方向（-z → z）
-            newdata.otherAxisPos = CenterMapX;
-            newdata.color = DirectX::SimpleMath::Color(1.f, 1.f, 0.f, 1.f);
-            newdata.startX = m_MapWidth / 2;
-            newdata.startZ = 0;
-            m_SunList.push_back(newdata);
-        }
-
-        // z → -z（北から南へ移動）
-        // heightターンかけて (height+offset) から -(height+offset) へ移動
-        {
-            SunData newdata;
-            newdata.distance = heightMapSize + m_Offset * 2;
-            newdata.axis = 1;           // Z軸移動
-            newdata.direction = -1;     // 負方向（z → -z）
-            newdata.otherAxisPos = CenterMapX;
-            newdata.color = DirectX::SimpleMath::Color(1.f, 0.f, 1.f, 1.f);
-            newdata.startX = m_MapWidth / 2;
-            newdata.startZ = m_MapHeight - 1;
-            m_SunList.push_back(newdata);
-        }
-
-        // -x → x（西から東へ移動）
-        // widthターンかけて -(width+offset) から (width+offset) へ移動
-        {
-            SunData newdata;
-            newdata.distance = widthMapSize + m_Offset * 2;
-            newdata.axis = 0;           // X軸移動
-            newdata.direction = 1;      // 正方向（-x → x）
-            newdata.otherAxisPos = CenterMapZ;
-            newdata.color = DirectX::SimpleMath::Color(0.f, 1.f, 1.f, 1.f);
-            newdata.startX = 0;
-            newdata.startZ = m_MapHeight / 2;
-            m_SunList.push_back(newdata);
-        }
-
-        // x → -x（東から西へ移動）
-        // widthターンかけて (width+offset) から -(width+offset) へ移動
-        {
-            SunData newdata;
-            newdata.distance = widthMapSize + m_Offset * 2;
-            newdata.axis = 0;           // X軸移動
-            newdata.direction = -1;     // 負方向（x → -x）
-            newdata.otherAxisPos = CenterMapZ;
-            newdata.color = DirectX::SimpleMath::Color(0.f, 1.f, 0.f, 1.f);
-            newdata.startX = m_MapWidth - 1;
-            newdata.startZ = m_MapHeight / 2;
-            m_SunList.push_back(newdata);
-        }
-    }
-
-    // ===================================================================
-    // 初期化処理
-    // ===================================================================
-    void Init() override
-    {
-        // 初期位置を設定
-        SetSunPosition(0);
-    }
-
-    // ===================================================================
-    // 太陽の位置を計算・設定
-    // ===================================================================
-    void SetSunPosition(int turnProgress)
+// 太陽の位置を計算・設定
+// ===================================================================
+    void UpdateSunPosition(int turnProgress)
     {
         if (!m_pOwner) return;
 
@@ -128,12 +65,12 @@ public:
         {
             // X軸移動
 
-            movePerTurn = (data.direction * distance) / m_MapWidth;
+            movePerTurn = (data.direction * distance) / m_MaxTurn;
         }
         else
         {
             // Z軸移動
-            movePerTurn = (data.direction * distance) / m_MapHeight;
+            movePerTurn = (data.direction * distance) / m_MaxTurn;
         }
 
         // 開始位置
@@ -167,9 +104,6 @@ public:
             newPos.x = axisPos;
             newPos.y = heightY;
             newPos.z = data.otherAxisPos;
-
-            // マップ升目座標を更新
-            UpdateMapPosition(data.direction, 0);
         }
         else
         {
@@ -177,29 +111,117 @@ public:
             newPos.x = data.otherAxisPos;
             newPos.y = heightY;
             newPos.z = axisPos;
-
-            // マップ升目座標を更新
-            UpdateMapPosition(0, data.direction);
         }
 
         m_pOwner->GetTransform().SetPosition(newPos);
     }
-
-    // ===================================================================
-    // マップ升目座標を更新
-    // ===================================================================
-    void UpdateMapPosition(int addX, int addZ)
+    void UpdateLightDirection(int turnProgress)
     {
-        m_CurPosX += addX;
-        m_CurPosZ += addZ;
+        if (!m_pOwner) return;
 
-        // マップ範囲内にクランプ
-        if (m_CurPosX < 0) m_CurPosX = 0;
-        if (m_CurPosX >= m_MapWidth) m_CurPosX = m_MapWidth - 1;
-        if (m_CurPosZ < 0) m_CurPosZ = 0;
-        if (m_CurPosZ >= m_MapHeight) m_CurPosZ = m_MapHeight - 1;
+        const SunData& data = m_SunList[m_CurIdx];
 
-        std::cout << "Sun Posision X: " << m_CurPosX << " Z: " << m_CurPosZ << std::endl;
+        // 真上が存在する場合、真上のときは距離なし
+        if (m_MaxTurn % 2 == 0 && turnProgress - m_MaxTurn / 2)
+        {
+            m_Direction = { 0, 0 };
+        }
+        // 高度0のとき距離が２倍
+        else if (turnProgress == 0 || turnProgress == m_MaxTurn)
+        {
+            m_Direction = data.lightDirection * 2;
+        }
+        // 半分以上ターン経過で向きを反転
+        else if (turnProgress > (m_MaxTurn / 2))
+        {
+            m_Direction = data.lightDirection *  (- 1);
+        }
+        else
+        {
+            m_Direction = data.lightDirection;
+        }
+    }
+
+public:
+    // ===================================================================
+    // コンストラクタ
+    // ===================================================================
+    SunManageComponent(float widthMapSize, float heightMapSize, int maxTurn = 9)
+        : m_MapSizeWidth(widthMapSize)
+        , m_MapSizeHeight(heightMapSize)
+        , m_MaxTurn(maxTurn)
+    {
+        float CenterMapX = 0;
+        float CenterMapZ = 0;
+
+        // -z → z（南から北へ移動）
+        // heightターンかけて -(height+offset) から (height+offset) へ移動
+        {
+            SunData newdata;
+            newdata.type = SunSouth;
+            newdata.lightDirection = { 0, -1 };
+            newdata.distance = heightMapSize + m_Offset * 2;
+            newdata.axis = 1;           // Z軸移動
+            newdata.direction = 1;      // 正方向（-z → z）
+            newdata.otherAxisPos = CenterMapX;
+            newdata.color = DirectX::SimpleMath::Color(1.f, 1.f, 0.f, 1.f); // オレンジ
+            m_SunList.push_back(newdata);
+        }
+
+        // z → -z（北から南へ移動）
+        // heightターンかけて (height+offset) から -(height+offset) へ移動
+        {
+            SunData newdata;
+            newdata.type = SunNorth;
+            newdata.lightDirection = { 0, 1 };
+            newdata.distance = heightMapSize + m_Offset * 2;
+            newdata.axis = 1;           // Z軸移動
+            newdata.direction = -1;     // 負方向（z → -z）
+            newdata.otherAxisPos = CenterMapX;
+            newdata.color = DirectX::SimpleMath::Color(1.f, 0.f, 1.f, 1.f); // 紫
+            m_SunList.push_back(newdata);
+        }
+
+        // -x → x（西から東へ移動）
+        // widthターンかけて -(width+offset) から (width+offset) へ移動
+        {
+            SunData newdata;
+            newdata.type = SunWest;
+            newdata.lightDirection = { -1, 0 };
+            newdata.distance = widthMapSize + m_Offset * 2;
+            newdata.axis = 0;           // X軸移動
+            newdata.direction = 1;      // 正方向（-x → x）
+            newdata.otherAxisPos = CenterMapZ;
+            newdata.color = DirectX::SimpleMath::Color(0.f, 1.f, 1.f, 1.f); // 黄色
+            m_SunList.push_back(newdata);
+        }
+
+        // x → -x（東から西へ移動）
+        // widthターンかけて (width+offset) から -(width+offset) へ移動
+        {
+            SunData newdata;
+            newdata.type = SunEast;
+            newdata.lightDirection = { 1, 0 };
+            newdata.distance = widthMapSize + m_Offset * 2;
+            newdata.axis = 0;           // X軸移動
+            newdata.direction = -1;     // 負方向（x → -x）
+            newdata.otherAxisPos = CenterMapZ;
+            newdata.color = DirectX::SimpleMath::Color(0.f, 1.f, 0.f, 1.f); // 緑
+            m_SunList.push_back(newdata);
+        }
+    }
+
+    // ===================================================================
+    // 初期化処理
+    // ===================================================================
+    void Init() override
+    {
+        m_CurIdx = 0;
+
+        // 初期位置を設定
+        UpdateSunPosition(m_CurIdx);
+        UpdateLightDirection(m_CurIdx);
+        m_pOwner->GetMeshComponent<SimpleCubeRendererComponent>()->SetColor(m_SunList[m_CurIdx].color);
     }
 
     // ===================================================================
@@ -209,40 +231,13 @@ public:
     {
         if (!m_pOwner) return;
 
-        if (!IO_MANAGER.GetKeyDown(TYPE_OK))
+#ifdef DEBUG
+        if(IO_MANAGER.GetKeyDownKeyBord(VK_RETURN)) // エンターキーで進行
         {
-            return;
-        }
+            AdvanceTurn();
+        }        
+#endif // DEBUG
 
-        m_TurnProgress++;
-
-        const SunData& data = m_SunList[m_CurIdx];
-
-        if (data.axis == 0)   // X軸
-        {
-            // ターン数が端に達したら次の太陽パターンへ
-            if (m_TurnProgress >= m_MapWidth)
-            {
-                m_CurIdx = (m_CurIdx + 1) % static_cast<int>(m_SunList.size());
-                m_TurnProgress = 0;
-            }
-
-            m_CurPosX = m_SunList[m_CurIdx].startX;
-            m_CurPosZ = m_SunList[m_CurIdx].startZ;
-        }
-        else if (data.axis == 1)   // Z軸
-        {
-            // ターン数が端に達したら次の太陽パターンへ
-            if (m_TurnProgress >= m_MapHeight)
-            {
-                m_CurIdx = (m_CurIdx + 1) % static_cast<int>(m_SunList.size());
-                m_TurnProgress = 0;
-            }
-
-            m_CurPosX = m_SunList[m_CurIdx].startX;
-            m_CurPosZ = m_SunList[m_CurIdx].startZ;
-        }
-        SetSunPosition(m_TurnProgress);
     }
 
     void AdvanceTurn()
@@ -250,37 +245,43 @@ public:
         m_TurnProgress++;
 
         const SunData& data = m_SunList[m_CurIdx];
-        int maxProgress = (data.axis == 0) ? m_MapWidth : m_MapHeight;
 
-        // パターン切り替え
-        if (m_TurnProgress >= maxProgress)
+        if (data.axis == 0)   // X軸
         {
-            m_CurIdx = (m_CurIdx + 1) % static_cast<int>(m_SunList.size());
-            m_TurnProgress = 0;
+            // ターン数が端に達したら次の太陽パターンへ
+            if (m_TurnProgress >= m_MaxTurn)
+            {
+                m_CurIdx = (m_CurIdx + 1) % static_cast<int>(m_SunList.size());
+                m_TurnProgress = 0;
+            }
         }
-
-        SetSunPosition(m_TurnProgress);
+        else if (data.axis == 1)   // Z軸
+        {
+            // ターン数が端に達したら次の太陽パターンへ
+            if (m_TurnProgress >= m_MaxTurn)
+            {
+                m_CurIdx = (m_CurIdx + 1) % static_cast<int>(m_SunList.size());
+                m_TurnProgress = 0;
+            }
+        }
+        UpdateSunPosition(m_TurnProgress);
+        UpdateLightDirection(m_TurnProgress);
+        m_pOwner->GetMeshComponent<SimpleCubeRendererComponent>()->SetColor(m_SunList[m_CurIdx].color);
     }
 
     // ===================================================================
-    // 現在の太陽データを取得
+    // データ取得
     // ===================================================================
     const SunData& GetCurrentSunData() const
     {
-        return m_SunList[m_CurIdx];
+        return m_SunList[m_CurIdx];     // 現在の太陽データを取得
     }
-
-    // ===================================================================
-    // 現在のターン経過を取得
-    // ===================================================================
     int GetTurnProgress() const
     {
-        return m_TurnProgress;
+        return m_TurnProgress;      // 現在のターン経過を取得
     }
-
-    // ===================================================================
-    // 現在のマップ升目座標を取得
-    // ===================================================================
-    int GetCurPosX() const { return m_CurPosX; }
-    int GetCurPosZ() const { return m_CurPosZ; }
+    MapPosition GetDirection() const
+    {
+        return m_Direction;      // 現在の方向を取得
+    }
 };

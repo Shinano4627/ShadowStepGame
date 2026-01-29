@@ -12,6 +12,7 @@
 #include "UnitCommon.h"
 
 // 各システムの前方宣言
+class GameObjectList;
 class MapSystemComponent;
 class UnitSystemComponent;
 class SunManageComponent;
@@ -35,6 +36,8 @@ public:
 		TurnEnd,	// 全ユニット行動終了
 		Judge,	// 勝敗判定
 		End,	// 終了
+
+		StateCount,
 	};
 
 	// タイムライン
@@ -72,13 +75,21 @@ public:
 	//=======================================
 	// 初期化処理
 	//=======================================
-	void Init() override;
+	void Init() override
+	{
+		return;
+	}
 
+	void InitGame(std::unique_ptr<GameObjectList>& gameObjectList);
 	//=======================================
 	// 更新処理
 	//=======================================
-	void Update() override;
+	void Update() override
+	{
+		return;
+	}
 
+	void UpdateGame(std::unique_ptr<GameObjectList>& gameObjectList);
 
 	BattleState GetBattleState() { return m_State; }
 	MapPosition GetUnitPosition() { return m_Unitposition; }
@@ -93,18 +104,23 @@ private:
 	// 状態管理関数
 	//=======================================
 	void ChangeState(BattleState next);	// 引数に進行状態変更
-	void UpdateState();
+	void UpdateState(GameObjectList* gameObjectList);
 
 	void UpdateInit();
 	void UpdateTurnStart();
-	void UpdateUnitSelect();
+	void UpdateUnitSelect(GameObjectList* gameObjectList);
 	void UpdateUnitActionSelect();
 	void UpdateUnitActing();
-	void UpdateUnitEnd();
+	void UpdateUnitEnd(GameObjectList* gameObjectList);
 	void UpdateTurnEnd();
-	void UpdateSunMove();
-	void UpdateJudge();
+	void UpdateSunMove(GameObjectList* gameObjectList);
+	void UpdateJudge(GameObjectList* gameObjectList);
 	void UpdateEnd();
+
+	//=======================================
+	// 各種システムアップデート
+	//=======================================
+	void UpdateShadow(GameObjectList* gameObjectList);
 
 	//=======================================
 	// タイムライン管理関数
@@ -118,7 +134,7 @@ private:
 	Timeline* GetCurrentTimeline();
 
 	// 次のタイムラインへ
-	void NextTimeline();
+	void NextTimeline(GameObjectList* gameObjectList);
 
 	//=======================================
 	// 勝敗ジャッジ（UnitSystemに問い合わせる形の予定）
