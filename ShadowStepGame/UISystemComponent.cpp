@@ -588,53 +588,26 @@ void UISystemComponent::ButtonChange(UnitComponent::UnitModel model)
         if (buttonBuild)  buttonBuild->SetActive(false);
         if (buttonAttack) buttonAttack->SetActive(false);
     }
+
+    // ---------------------------------------------------------------
+    // ジョブアイコン(UIStatusJob)切替
+    // ---------------------------------------------------------------
+    auto jobAttack = m_pUIObjects->FindGameObjectWithName("UIStatusJobAttack");
+    auto jobBuild = m_pUIObjects->FindGameObjectWithName("UIStatusJobBuild");
+
+    if (model == UnitComponent::UnitModel::UnitPlacementer)
+    {
+        if (jobBuild)  jobBuild->SetActive(true);
+        if (jobAttack) jobAttack->SetActive(false);
+    }
+    else if (model == UnitComponent::UnitModel::UnitAttacker)
+    {
+        if (jobBuild)  jobBuild->SetActive(false);
+        if (jobAttack) jobAttack->SetActive(true);
+    }
+    else
+    {
+        if (jobBuild)  jobBuild->SetActive(false);
+        if (jobAttack) jobAttack->SetActive(false);
+    }
 }
-
-
-//void UISystemComponent::ButtonChange(UnitComponent::UnitModel model)
-//{
-//    if (!m_pUIObjects)return;
-//
-//    //UI上のボタン取得
-//    auto buttons = m_pUIObjects->FindGameObjectsWithTag("Button");
-//
-//    for (auto* btn : buttons)
-//    {
-//        const std::string& name = btn->GetName();
-//
-//        //Moveは常に表示
-//        if (name == "ButtonMove")
-//        {
-//            btn->SetActive(true);
-//            std::cout << btn->GetName()
-//                << "active=" << btn->IsActive()
-//                << std::endl;
-//            continue;
-//        }
-//
-//        //配置ユニット
-//        if (model == UnitComponent::UnitModel::UnitPlacementer)
-//        {
-//            btn->SetActive(name == "ButtonBuild");
-//            std::cout << btn->GetName()
-//                << "active=" << btn->IsActive()
-//                << std::endl;
-//        }
-//        //攻撃ユニット
-//        else if (model == UnitComponent::UnitModel::UnitAttacker)
-//        {
-//            btn->SetActive(name == "ButtonAttack");
-//            std::cout << btn->GetName()
-//                << "active=" << btn->IsActive()
-//                << std::endl;
-//        }
-//        else
-//        {
-//            btn->SetActive(false);
-//        }
-//    }
-//
-//    std::cout << "[UI] ButtonChange model="
-//        << (model == UnitComponent::UnitModel::UnitAttacker ? "Attacker" : "Placementer")
-//        << std::endl;
-//}

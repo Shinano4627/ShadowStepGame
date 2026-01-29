@@ -41,7 +41,7 @@ public:
     {
         if (!test)
         {
-            ButtonChange(UnitComponent::UnitModel::UnitPlacementer);
+            ButtonChange(UnitComponent::UnitModel::UnitAttacker);
             test = true;
         }
 
