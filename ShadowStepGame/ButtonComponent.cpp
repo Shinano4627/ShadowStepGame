@@ -3,6 +3,8 @@
 // ボタンコンポーネント実装
 // ===================================================================
 #include "ButtonComponent.h"
+#include "UIAnimationComponent.h"
+#include "UISystemComponent.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -14,8 +16,14 @@ void ButtonComponent::Init()
     m_IsSelected = false;
     m_SelectedPre = false;
 
+    auto* anim = m_pOwner->GetComponent<UIAnimationComponent>();
+    if (anim)
+    {
+        anim->Play("Deselect");
+    }
+
     // 初期UV設定（非選択状態）
-    UpdateUV();
+    //UpdateUV();
 }
 
 // ===================================================================
@@ -23,20 +31,42 @@ void ButtonComponent::Init()
 // ===================================================================
 void ButtonComponent::Update()
 {
-    // カーソルとの当たり判定
     bool hit = CheckCursorHit();
+    m_IsSelected = hit;
 
-    if (hit)
-    {
-        m_IsSelected = true;
-    }
 
-    // 選択状態が変化した場合のみUV更新
     if (m_IsSelected != m_SelectedPre)
     {
         m_SelectedPre = m_IsSelected;
-        UpdateUV();
+
+        auto* anim = m_pOwner->GetComponent<UIAnimationComponent>();
+        if (!anim)return;
+
+
+        if (m_IsSelected)
+        {
+            anim->Play("Select");
+        }
+        else
+        {
+            anim->Play("Deselect");
+        }
     }
+
+    //// カーソルとの当たり判定
+    //bool hit = CheckCursorHit();
+
+    //if (hit)
+    //{
+    //    m_IsSelected = true;
+    //}
+
+    //// 選択状態が変化した場合のみUV更新
+    //if (m_IsSelected != m_SelectedPre)
+    //{
+    //    m_SelectedPre = m_IsSelected;
+    //    UpdateUV();
+    //}
 }
 
 // ===================================================================
@@ -88,23 +118,23 @@ bool ButtonComponent::CheckCursorHit() const
 // ===================================================================
 // UV切り替え
 // ===================================================================
-void ButtonComponent::UpdateUV()
-{
-    if (!m_pOwner) return;
-
-    // Texture2Dコンポーネントを取得
-    Texture2D* tex = m_pOwner->GetMeshComponent<Texture2D>();
-    if (!tex) return;
-
-    // UV設定（横2分割）
-    // 非選択: nu=1 → u=0~0.5
-    // 選択:   nu=2 → u=0.5~1
-    if (m_IsSelected)
-    {
-        tex->SetUV(2, 1, 2, 1);
-    }
-    else
-    {
-        tex->SetUV(1, 1, 2, 1);
-    }
-}
+//void ButtonComponent::UpdateUV()
+//{
+//    if (!m_pOwner) return;
+//
+//    // Texture2Dコンポーネントを取得
+//    Texture2D* tex = m_pOwner->GetMeshComponent<Texture2D>();
+//    if (!tex) return;
+//
+//    // UV設定（横2分割）
+//    // 非選択: nu=1 → u=0~0.5
+//    // 選択:   nu=2 → u=0.5~1
+//    if (m_IsSelected)
+//    {
+//        tex->SetUV(2, 1, 2, 1);
+//    }
+//    else
+//    {
+//        tex->SetUV(1, 1, 2, 1);
+//    }
+//}

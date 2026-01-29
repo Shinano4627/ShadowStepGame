@@ -251,13 +251,13 @@ void LoadingScreen::Draw()
 	// ===================================================================
 	// アニメーション描画
 	// ===================================================================
-	m_AnimVertexBuffer.SetGPU();
+	/*m_AnimVertexBuffer.SetGPU();
 	m_AnimIndexBuffer.SetGPU();
 	m_AnimTexture->SetGPU();
 
 	deviceContext->DrawIndexed((UINT)m_AnimIndices.size(), 0, 0);
 
-	m_AnimTexture->UnbindGPU();
+	m_AnimTexture->UnbindGPU();*/
 }
 
 // ===================================================================

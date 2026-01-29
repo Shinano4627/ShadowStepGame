@@ -71,6 +71,17 @@ void SceneProto::Init()
         orbitCamera->SetGameSystem(gameSystem);
         orbitCamera->SetRotationSpeed(0.02f);
 
+
+    // ここで SunManageComponent をセット
+    // ※m_sunSystem は現状 private なので、public setter または friend でアクセス推奨
+    // gameSystem->SetSunSystem(sun); // setter を作ると良い
+
+
+
+
+
+
+        
         // プレイヤー
         auto* playerObj = m_GameObjectList->FindGameObjectWithTag("Player");
         auto* playerUnit = playerObj->AddComponent<UnitComponent>();

@@ -5,7 +5,7 @@
         <ObjectType Value="2D"/>
         <Tag Value="BackGround"/>
         <FileName Value=""/>
-        <Texture Value="asset/texture/BackGround/Loding_BG.png"/>
+        <Texture Value="asset/texture/BackGround/Loading_BG.png"/>
         <Posision X="0" Y="0" Z="0"/>
         <Rotation X="0" Y="0" Z="0"/>
         <Scale X="1280" Y="720" Z="0"/>
