@@ -211,11 +211,8 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClInclude Include="Framework\utility.h" />
     <ClInclude Include="Framework\VertexBuffer.h" />
     <ClInclude Include="Framework\XmlRW.h" />
-<<<<<<< HEAD
-    <ClInclude Include="UnitComponent.h" />
-=======
+    <ClInclude Include="UIAnimationComponent.h" />
     <ClInclude Include="RadioButtonComponent.h" />
->>>>>>> origin/develop
     <ClInclude Include="SceneDebug.h" />
     <ClInclude Include="SceneGame.h" />
     <ClInclude Include="SceneResult.h" />
@@ -229,6 +226,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClInclude Include="SunManageComponent.h" />
     <ClInclude Include="UISystemComponent.h" />
     <ClInclude Include="UnitCommon.h" />
+    <ClInclude Include="UnitComponent.h" />
     <ClInclude Include="ShadowSystemComponent.h" />
     <ClInclude Include="UnitSystemComponent.h" />
   </ItemGroup>
@@ -277,11 +275,9 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClCompile Include="Framework\Timer.cpp" />
     <ClCompile Include="Framework\utility.cpp" />
     <ClCompile Include="Framework\XmlRW.cpp" />
-<<<<<<< HEAD
+    <ClCompile Include="UIAnimationComponent.cpp" />
     <ClCompile Include="UnitComponent.cpp" />
-=======
     <ClCompile Include="RadioButtonComponent.cpp" />
->>>>>>> origin/develop
     <ClCompile Include="SceneDebug.cpp" />
     <ClCompile Include="SceneGame.cpp" />
     <ClCompile Include="SceneResult.cpp" />

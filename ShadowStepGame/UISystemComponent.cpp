@@ -421,7 +421,7 @@ ButtonComponent::UIButtonType UISystemComponent::GetSelectedButton() const
     return ButtonComponent::UIButtonType::None;
 }
 
-void UISystemComponent::UpdateDisplayButton(UnitComponent::UnitModel model)
+void UISystemComponent::UpdateDisplayButton(UnitModel model)
 {
     if (!m_pUIObjects) return;
 
@@ -433,12 +433,12 @@ void UISystemComponent::UpdateDisplayButton(UnitComponent::UnitModel model)
     if (buttonMove) buttonMove->SetActive(true);
 
     // 攻撃／配置切替
-    if (model == UnitComponent::UnitModel::UnitPlacementer)
+    if (model == UnitModel::Place)
     {
         if (buttonBuild)  buttonBuild->SetActive(true);
         if (buttonAttack) buttonAttack->SetActive(false);
     }
-    else if (model == UnitComponent::UnitModel::UnitAttacker)
+    else if (model == UnitModel::Attack)
     {
         if (buttonBuild)  buttonBuild->SetActive(false);
         if (buttonAttack) buttonAttack->SetActive(true);
@@ -455,12 +455,12 @@ void UISystemComponent::UpdateDisplayButton(UnitComponent::UnitModel model)
     auto jobAttack = m_pUIObjects->FindGameObjectWithName("UIStatusJobAttack");
     auto jobBuild = m_pUIObjects->FindGameObjectWithName("UIStatusJobBuild");
 
-    if (model == UnitComponent::UnitModel::UnitPlacementer)
+    if (model == UnitModel::Place)
     {
         if (jobBuild)  jobBuild->SetActive(true);
         if (jobAttack) jobAttack->SetActive(false);
     }
-    else if (model == UnitComponent::UnitModel::UnitAttacker)
+    else if (model == UnitModel::Attack)
     {
         if (jobBuild)  jobBuild->SetActive(false);
         if (jobAttack) jobAttack->SetActive(true);

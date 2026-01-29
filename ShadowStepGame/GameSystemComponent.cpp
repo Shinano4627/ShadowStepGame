@@ -12,7 +12,7 @@
 #include "ShadowSystemComponent.h"
 #include "UISystemComponent.h"
 
-void GameSystemComponent::Init()
+void GameSystemComponent::InitGame(std::unique_ptr<GameObjectList>& gameObjectList)
 {
     // 同じ GameObject にある他の SystemComponent を取得
     m_mapSystem = m_pOwner->GetComponent<MapSystemComponent>();
@@ -44,9 +44,19 @@ void GameSystemComponent::Init()
     }
 
     // 初期処理実行
+    // 影の設定
     int map_w = m_mapSystem->GetMapWidth();
     int map_h = m_mapSystem->GetMapHeight();
-    m_shadowSystem->SetUp(map_w, map_h);
+    m_shadowSystem->SetUp(
+        map_w,
+        map_h,
+        m_mapSystem->GetSizePiece(),
+        m_mapSystem->GetDrawStartPosX(),
+        m_mapSystem->GetDrawStartPosZ(),
+        m_mapSystem->GetRawMapData(),
+        gameObjectList.get()
+    );
+    UpdateShadow(gameObjectList.get());
 
     // 状態データ初期化
     m_TurnCount = 0;
@@ -56,14 +66,19 @@ void GameSystemComponent::Init()
     ChangeState(BattleState::Init);
 }
 
-void GameSystemComponent::Update()
+void GameSystemComponent::UpdateGame(std::unique_ptr<GameObjectList>& gameObjectList)
 {
+#ifdef DEBUG
     // VK_E が押されたら状態更新（テスト用）
-    if (IO_MANAGER.GetKeyDownKeyBord(VK_E))
+    if (IO_MANAGER.GetKeyDownKeyBord(VK_E)) 
     {
+        int next = (int)m_State + 1;
+        next %= (int)BattleState::StateCount;
+        ChangeState((BattleState)next);
         // ターン状態に合わせた関数を呼び出し
-        UpdateState();
+        UpdateState(gameObjectList.get());
     }
+#endif // DEBUG
 }
 
 void GameSystemComponent::ChangeState(BattleState next)
@@ -81,20 +96,20 @@ void GameSystemComponent::ChangeState(BattleState next)
 }
 
 
-void GameSystemComponent::UpdateState()
+void GameSystemComponent::UpdateState(GameObjectList* gameObjectList)
 {
     // 現在のターン状態に合わせて関数を呼び出し
     switch (m_State)
     {
     case BattleState::Init:          UpdateInit(); break;
     case BattleState::TurnStart:     UpdateTurnStart(); break;
-    case BattleState::UnitSelect:    UpdateUnitSelect(); break;
+    case BattleState::UnitSelect:    UpdateUnitSelect(gameObjectList); break;
     case BattleState::UnitActionSelect: UpdateUnitActionSelect(); break;
     case BattleState::UnitActing:    UpdateUnitActing(); break;
-    case BattleState::UnitEnd:       UpdateUnitEnd(); break;
+    case BattleState::UnitEnd:       UpdateUnitEnd(gameObjectList); break;
     case BattleState::TurnEnd:       UpdateTurnEnd(); break;
-    case BattleState::SunMove:       UpdateSunMove(); break;
-    case BattleState::Judge:         UpdateJudge(); break;
+    case BattleState::SunMove:       UpdateSunMove(gameObjectList); break;
+    case BattleState::Judge:         UpdateJudge(gameObjectList); break;
     case BattleState::End:           UpdateEnd(); break;
     }
 }
@@ -130,7 +145,7 @@ void GameSystemComponent::UpdateTurnStart()
 // BattleState:UnitSelect
 // タイムラインから次に動くユニットを決定
 //=======================================
-void GameSystemComponent::UpdateUnitSelect()
+void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
 {
     // 現在のタイムラインを取得
     Timeline* cur = GetCurrentTimeline();
@@ -159,7 +174,7 @@ void GameSystemComponent::UpdateUnitSelect()
     // ユニットがいるかのチェック
     if (!unit || unit->isDown == true)
     {
-        NextTimeline();
+        NextTimeline(gameObjectList);
         return;
     }
 
@@ -202,11 +217,11 @@ void GameSystemComponent::UpdateUnitActing()
 // BattleState:UnitEnd
 // 現在タイムラインのユニット行動終了
 //=======================================
-void GameSystemComponent::UpdateUnitEnd()
+void GameSystemComponent::UpdateUnitEnd(GameObjectList* gameObjectList)
 {
     m_CurrentUnit = nullptr;
     // タイムラインを確認し全てのユニット操作完了か調べる
-    NextTimeline();
+    NextTimeline(gameObjectList);
 }
 
 //=======================================
@@ -218,24 +233,13 @@ void GameSystemComponent::UpdateTurnEnd()
     ChangeState(BattleState::SunMove);
 }
 
-void GameSystemComponent::UpdateSunMove()
+void GameSystemComponent::UpdateSunMove(GameObjectList* gameObjectList)
 {
     // 太陽進行
     m_sunSystem->AdvanceTurn();
 
     // 影計算
-    ShadowParam param =
-        m_shadowSystem->CalcShadowParm(
-            m_sunSystem->GetCurPosX(),
-            m_sunSystem->GetCurPosZ(),
-            m_mapSystem->GetMapWidth(),
-            m_mapSystem->GetMapSizeHeight()
-        );
-
-    m_shadowSystem->UpdateShadowMap(
-        m_mapSystem->GetRawMapData(),
-        param
-    );
+    UpdateShadow(gameObjectList);
 
     // マップ更新
     m_mapSystem->UpdateMap(
@@ -247,7 +251,7 @@ void GameSystemComponent::UpdateSunMove()
     ChangeState(BattleState::Judge);
 }
 
-void GameSystemComponent::UpdateJudge()
+void GameSystemComponent::UpdateJudge(GameObjectList* gameObjectList)
 {
 
     // 勝敗確定
@@ -264,7 +268,7 @@ void GameSystemComponent::UpdateJudge()
     else
     {
         // UnitEnd から来た
-        NextTimeline();
+        NextTimeline(gameObjectList);
         ChangeState(BattleState::UnitSelect);
     }
 }
@@ -272,6 +276,22 @@ void GameSystemComponent::UpdateJudge()
 void GameSystemComponent::UpdateEnd()
 {
 
+}
+
+void GameSystemComponent::UpdateShadow(GameObjectList* gameObjectList)
+{
+    ShadowParam param =
+        m_shadowSystem->CalcShadowParm(
+            m_sunSystem->GetDirection(),
+            m_mapSystem->GetMapWidth(),
+            m_mapSystem->GetMapSizeHeight()
+        );
+
+    m_shadowSystem->UpdateShadowMap(
+        m_mapSystem->GetRawMapData(),
+        param,
+        gameObjectList
+    );
 }
 
 void GameSystemComponent::BuildTimeline()
@@ -319,24 +339,14 @@ GameSystemComponent::GetCurrentTimeline()
 }
 
 // Indexを進める→TurnEnd
-void GameSystemComponent::NextTimeline()
+void GameSystemComponent::NextTimeline(GameObjectList* gameObjectList)
 {
     //=======================================
     // Map/Shadow更新
     //=======================================
-    // 影計算
-    ShadowParam param =
-        m_shadowSystem->CalcShadowParm(
-            m_sunSystem->GetCurPosX(),
-            m_sunSystem->GetCurPosZ(),
-            m_mapSystem->GetMapWidth(),
-            m_mapSystem->GetMapSizeHeight()
-        );
-    // 影マップ更新
-    m_shadowSystem->UpdateShadowMap(
-        m_mapSystem->GetRawMapData(),
-        param
-    );
+    // 影更新
+    UpdateShadow(gameObjectList);
+
     // マップ更新
     m_mapSystem->UpdateMap(
         m_unitSystem->GetAllUnits(),

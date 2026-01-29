@@ -11,6 +11,7 @@
 #include "ButtonComponent.h"
 #include "GameObjectList.h"
 #include "UnitComponent.h"
+#include "UnitCommon.h"
 
 // 前方宣言
 class GameObjectList;
@@ -109,7 +110,7 @@ public:
     // 内部処理
     // ===================================================================
     void SetUIObject(std::unique_ptr<GameObjectList>& objectList);     // UIの初期設定
-    void UpdateDisplayButton(UnitComponent::UnitModel model);
+    void UpdateDisplayButton(UnitModel model);
 private:
     bool test = false;
 
