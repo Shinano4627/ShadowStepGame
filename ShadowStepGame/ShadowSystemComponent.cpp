@@ -195,65 +195,65 @@ void ShadowSystemComponent::UpdateShadowObjects(const int* const* mapData, const
     {
         for (int x = 0; x < m_MapWidth; ++x)
         {
-            // オブジェクトありの場合
-            if (mapData[z][x] != 0)
+            // 非生成オブジェクト
+            if (mapData[z][x] == (int)EMapTile::Empty || mapData[z][x] == (int)EMapTile::Shadow || mapData[z][x] == (int)EMapTile::None)
+                continue;
+
+            // 影がオブジェクトが足りない場合は追加
+            if (shadowObjects.size() < shadowCnt)
             {
-                // 影がオブジェクトが足りない場合は追加
-                if (shadowObjects.size() < shadowCnt)
-                {
-                    // オブジェクト生成（初期状態では基本サイズ）
-                    auto obj = std::make_unique<GameObject>(
-                        Vector3(0.f, m_ShadowHeight, 0.f),  // 位置はあとで変えるので仮
-                        Vector3::Zero,
-                        Vector3(m_SizePiece, 1.0f, m_SizePiece)
-                    );
-                    GameObject* newObject = obj.get();
-                    newObject->SetID(m_LastObjectId++);
-                    newObject->SetName("Shadow");
-                    newObject->SetTag("Shadow");
+                // オブジェクト生成（初期状態では基本サイズ）
+                auto obj = std::make_unique<GameObject>(
+                    Vector3(0.f, m_ShadowHeight, 0.f),  // 位置はあとで変えるので仮
+                    Vector3::Zero,
+                    Vector3(m_SizePiece, 1.0f, m_SizePiece)
+                );
+                GameObject* newObject = obj.get();
+                newObject->SetID(m_LastObjectId++);
+                newObject->SetName("Shadow");
+                newObject->SetTag("Shadow");
 
-                    // レンダラー追加（SimplePlaneRendererComponentは3D用）
-                    Color shadowColor = Color(0.0f, 0.0f, 0.0f, 0.5f);
-                    newObject->AddMeshComponent<SimplePlaneRendererComponent>(shadowColor, m_ShadowTexturePath);
-                }
-
-                GameObject* shadowObj = shadowObjects[shadowCnt];
-
-                // 表示
-                shadowObj->SetActive(true);
-
-                // 元オブジェクトの描画位置
-                float baseX = m_DrawStartPosX + x * m_SizePiece;
-                float baseZ = m_DrawStartPosZ + z * m_SizePiece;
-
-                float sizeShadow = m_SizePiece * 0.5f;
-
-                // スケール計算（伸びる方向にLength分拡大）
-                float scaleX = sizeShadow;
-                float scaleZ = sizeShadow;
-
-                if (shadowDirX != 0)
-                {
-                    scaleX = sizeShadow * param.length;
-                }
-                if (shadowDirZ != 0)
-                {
-                    scaleZ = sizeShadow * param.length;
-                }
-
-                // 位置計算（影の中心を伸びる方向にオフセット）
-                float offsetX = shadowDirX * (param.length * sizeShadow / 2.0f);
-                float offsetZ = shadowDirZ * (param.length * sizeShadow / 2.0f);
-
-                float posX = baseX + offsetX;
-                float posZ = baseZ + offsetZ;
-
-                // Transform更新
-                shadowObj->GetTransform().SetPosition(Vector3(posX, m_ShadowHeight, posZ));
-                shadowObj->GetTransform().SetScale(Vector3(scaleX, 1.0f, scaleZ));
-
-                shadowCnt++;
+                // レンダラー追加（SimplePlaneRendererComponentは3D用）
+                Color shadowColor = Color(0.0f, 0.0f, 0.0f, 0.5f);
+                newObject->AddMeshComponent<SimplePlaneRendererComponent>(shadowColor, m_ShadowTexturePath);
             }
+
+            GameObject* shadowObj = shadowObjects[shadowCnt];
+
+            // 表示
+            shadowObj->SetActive(true);
+
+            // 元オブジェクトの描画位置
+            float baseX = m_DrawStartPosX + x * m_SizePiece;
+            float baseZ = m_DrawStartPosZ + z * m_SizePiece;
+
+            float sizeShadow = m_SizePiece * 0.5f;
+
+            // スケール計算（伸びる方向にLength分拡大）
+            float scaleX = sizeShadow;
+            float scaleZ = sizeShadow;
+
+            if (shadowDirX != 0)
+            {
+                scaleX = sizeShadow * param.length;
+            }
+            if (shadowDirZ != 0)
+            {
+                scaleZ = sizeShadow * param.length;
+            }
+
+            // 位置計算（影の中心を伸びる方向にオフセット）
+            float offsetX = shadowDirX * (param.length * sizeShadow / 2.0f);
+            float offsetZ = shadowDirZ * (param.length * sizeShadow / 2.0f);
+
+            float posX = baseX + offsetX;
+            float posZ = baseZ + offsetZ;
+
+            // Transform更新
+            shadowObj->GetTransform().SetPosition(Vector3(posX, m_ShadowHeight, posZ));
+            shadowObj->GetTransform().SetScale(Vector3(scaleX, 1.0f, scaleZ));
+
+            shadowCnt++;
         }
     }
 }
