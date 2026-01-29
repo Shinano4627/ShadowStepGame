@@ -86,12 +86,12 @@ public:
         if (hover != m_CurrentHover)
         {
             std::cout << "[UI] Hovered Button: "
-                << UIButtonTypeToString(GetHoverButton())
+                << UIButtonTypeToString(GetSelectedButton())
                 << std::endl;
         }
     }
 
-    ButtonComponent::UIButtonType GetHoverButton()const;
+    ButtonComponent::UIButtonType GetSelectedButton()const;
     // UIButtonType を文字列に変換するヘルパー関数
     const char* UIButtonTypeToString(ButtonComponent::UIButtonType type)
     {
@@ -109,7 +109,7 @@ public:
     // 内部処理
     // ===================================================================
     void SetUIObject(std::unique_ptr<GameObjectList>& objectList);     // UIの初期設定
-    void ButtonChange(UnitComponent::UnitModel model);
+    void UpdateDisplayButton(UnitComponent::UnitModel model);
 private:
     bool test = false;
 
