@@ -234,7 +234,7 @@ public:
 #ifdef DEBUG
         if(IO_MANAGER.GetKeyDownKeyBord(VK_RETURN)) // エンターキーで進行
         {
-            AdvanceTurn();
+            //AdvanceTurn();
         }        
 #endif // DEBUG
 

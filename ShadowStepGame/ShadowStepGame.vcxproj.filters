@@ -93,16 +93,7 @@
     <ClInclude Include="Framework\Mesh.h">
       <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\MeshComponent.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\MeshComponentWrapper.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
     <ClInclude Include="Framework\MeshRenderer.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\MeshRendererComponent.h">
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\PhysicsCommon.h">
@@ -210,32 +201,8 @@
     <ClInclude Include="MapSystemComponent.h">
       <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\SimpleCubeRendererComponent.h">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\SimplePlaneRendererComponent.h">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\Texture2D.h">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="UnitSystemComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="UnitComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ShadowSystemComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="UnitCommon.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Framework\LoadingScreen.h">
       <Filter>ソース ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="SunManageComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameSystemComponent.h">
       <Filter>ソース ファイル\Component</Filter>
@@ -283,13 +250,46 @@
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="ButtonComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
     <ClInclude Include="RadioButtonComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowSystemComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="SunManageComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
     <ClInclude Include="UISystemComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitCommon.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitSystemComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\MeshRendererComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\MeshComponent.h">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\MeshComponentWrapper.h">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Texture2D.h">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SimpleCubeRendererComponent.h">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SimplePlaneRendererComponent.h">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -407,18 +407,6 @@
     <ClCompile Include="MapSystemComponent.cpp">
       <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\SimpleCubeRendererComponent.cpp">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="Framework\SimplePlaneRendererComponent.cpp">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="Framework\Texture2D.cpp">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="UnitSystemComponent.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\LoadingScreen.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
@@ -446,23 +434,35 @@
     <ClCompile Include="Framework\CursorManager.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\MeshRendererComponent.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\GameObjectList.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
     <ClCompile Include="ButtonComponent.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\MeshRendererComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
     <ClCompile Include="RadioButtonComponent.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
     <ClCompile Include="UISystemComponent.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
     <ClCompile Include="UnitComponent.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitSystemComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Texture2D.cpp">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SimpleCubeRendererComponent.cpp">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\SimplePlaneRendererComponent.cpp">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
