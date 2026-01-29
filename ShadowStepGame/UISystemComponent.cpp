@@ -28,14 +28,10 @@ void UISystemComponent::SetUIObject(std::unique_ptr<GameObjectList>& objectList)
         
 }
 
-// ===================================================================
-// ボタン整列処理
-// ===================================================================
 void UISystemComponent::MakeUIButtons(std::unique_ptr<GameObjectList>& objectList)
 {
     // UIAreaButtonsの範囲を取得
     GameObject* buttonArea = objectList->FindGameObjectWithName("UIAreaButtons");
-
     if (!buttonArea)
     {
         std::cout << "[SceneGame] UIAreaButtons not found!" << std::endl;
@@ -45,15 +41,9 @@ void UISystemComponent::MakeUIButtons(std::unique_ptr<GameObjectList>& objectLis
     Vector3 areaPos = buttonArea->GetTransform().GetPosition();
     Vector3 areaScale = buttonArea->GetTransform().GetScale();
 
-    // パディング（仮値）
     const float padding = 5.f;
-
-    // 行数: ButtonSub(1行) + Button(2行) = 3行
     const int rowCount = 3;
     float rowHeight = (areaScale.y - padding * (rowCount + 1)) / rowCount;
-
-    // 各行のY座標を計算（上から順に）
-    // エリアの上端からスタート
     float topY = areaPos.y + areaScale.y / 2.f;
 
     // ---------------------------------------------------------------
@@ -61,7 +51,6 @@ void UISystemComponent::MakeUIButtons(std::unique_ptr<GameObjectList>& objectLis
     // ---------------------------------------------------------------
     std::vector<GameObject*> buttonSubs = objectList->FindGameObjectsWithTag("ButtonSub");
     int subCount = static_cast<int>(buttonSubs.size());
-
     if (subCount > 0)
     {
         float row1Y = topY - padding - rowHeight / 2.f;
@@ -73,18 +62,16 @@ void UISystemComponent::MakeUIButtons(std::unique_ptr<GameObjectList>& objectLis
             float posX = startX + i * (subWidth + padding);
             buttonSubs[i]->GetTransform().SetPosition(Vector3(posX, row1Y, 0.f));
             buttonSubs[i]->GetTransform().SetScale(Vector3(subWidth, rowHeight, 1.f));
-            // UVを設定
+
             auto* tex = buttonSubs[i]->GetMeshComponent<Texture2D>();
             tex->SetUV(1, 1, 2, 1);
-            // ボタンコンポーネント追加
-            buttonSubs[i]->AddComponent<ButtonComponent>(buttonSubs[i]->GetTransform().GetScale());
 
-            //一旦非アクティブ
+            buttonSubs[i]->AddComponent<ButtonComponent>(buttonSubs[i]->GetTransform().GetScale());
             buttonSubs[i]->SetActive(false);
         }
     }
 
-    // ラジオボタンコンポーネントつきオブジェクト作成
+    // ラジオボタンコンポーネント（ButtonSub用）
     std::unique_ptr<GameObject> radioSubButton = std::make_unique<GameObject>();
     radioSubButton->SetName("RadioSubButton");
     radioSubButton->SetTag("RadioButton");
@@ -92,95 +79,232 @@ void UISystemComponent::MakeUIButtons(std::unique_ptr<GameObjectList>& objectLis
     objectList->AddObject(std::move(radioSubButton));
 
     // ---------------------------------------------------------------
-    // 2行目・3行目: Button（ButtonBuild, ButtonMove）
+    // 2行目: 攻撃ボタン / 配置ボタン（同位置に重ねる）
     // ---------------------------------------------------------------
-    // 表示するボタン名のリスト
-    std::vector<std::string> buttonNames = { "ButtonBuild", "ButtonMove" };
+    GameObject* buttonAttack = nullptr;
+    GameObject* buttonBuild = nullptr;
+    GameObject* buttonMove = nullptr;
 
-    // TagがButtonのオブジェクトから該当するものを取得
     std::vector<GameObject*> buttons = objectList->FindGameObjectsWithTag("Button");
-    std::vector<GameObject*> targetButtons;
 
-    for (const auto& name : buttonNames)
-    {
-        for (auto* btn : buttons)
-        {
-            if (btn->GetName() == name)
-            {
-                targetButtons.push_back(btn);
-                break;
-            }
-        }
-    }
-
+    // ボタンをオブジェクトリストから取得 or 作成
     for (auto* btn : buttons)
     {
-        bool isTarget = false;
-
-        for (auto* target : targetButtons)
-        {
-            if (btn == target)
-            {
-                isTarget = true;
-                break;
-            }
-        }
-        if (!isTarget)
-        {
-            // 不要なButtonは非アクティブに
-            btn->SetActive(false);
-        }
+        const std::string& name = btn->GetName();
+        if (name == "ButtonAttack") buttonAttack = btn;
+        else if (name == "ButtonBuild") buttonBuild = btn;
+        else if (name == "ButtonMove") buttonMove = btn;
     }
 
-    // ボタンを配置（2行目、3行目）
-    float buttonWidth = areaScale.x - padding * 2;
-    for (int i = 0; i < static_cast<int>(targetButtons.size()); i++)
+    if (!buttonAttack)
     {
-        // 行インデックス（1行目はButtonSubなので、i+1）
-        int rowIndex = i + 1;
-        float rowY = topY - padding - rowHeight / 2.f - rowIndex * (rowHeight + padding);
-        float posX = areaPos.x;
-
-        targetButtons[i]->GetTransform().SetPosition(Vector3(posX, rowY, 0.f));
-        targetButtons[i]->GetTransform().SetScale(Vector3(buttonWidth, rowHeight, 1.f));
-
-        // UVを設定
-        auto* tex = targetButtons[i]->GetMeshComponent<Texture2D>();
-        tex->SetUV(1, 1, 3, 3);
-
-        //アニメーションコンポネント追加
-        targetButtons[i]->AddComponent<UIAnimationComponent>();
-        // ボタンコンポーネント追加
-        auto* btnComp=targetButtons[i]->AddComponent<ButtonComponent>(targetButtons[i]->GetTransform().GetScale());
-
-        if (btnComp)
-        {
-            if (targetButtons[i]->GetName() == "ButtonBuild")
-            {
-                btnComp->SetButtonType(ButtonComponent::UIButtonType::Build);
-            }
-            else if(targetButtons[i]->GetName() == "ButtonMove")
-            {
-                btnComp->SetButtonType(ButtonComponent::UIButtonType::Move);
-            }
-            else if (targetButtons[i]->GetName() == "ButtonAttack")
-            {
-                btnComp->SetButtonType(ButtonComponent::UIButtonType::Attack);
-            }
-        }
+        auto attackBtn = std::make_unique<GameObject>();
+        attackBtn->SetName("ButtonAttack");
+        attackBtn->SetTag("Button");
+        objectList->AddObject(std::move(attackBtn));
+        buttonAttack = objectList->FindGameObjectWithName("ButtonAttack");
     }
 
-    // ラジオボタンコンポーネントつきオブジェクト作成
-    std::unique_ptr<GameObject> radioButton = std::make_unique<GameObject>();
-    int id = objectList->GetLastID();
-    radioButton->SetID(id);
-    radioButton->SetName("RadioButton");
-    radioButton->SetTag("RadioButton");
-    radioButton->AddComponent<RadioButtonComponent>(buttons);
-    objectList->AddObject(std::move(radioButton));
+    if (!buttonBuild)
+    {
+        auto buildBtn = std::make_unique<GameObject>();
+        buildBtn->SetName("ButtonBuild");
+        buildBtn->SetTag("Button");
+        objectList->AddObject(std::move(buildBtn));
+        buttonBuild = objectList->FindGameObjectWithName("ButtonBuild");
+    }
+
+    if (!buttonMove)
+    {
+        auto moveBtn = std::make_unique<GameObject>();
+        moveBtn->SetName("ButtonMove");
+        moveBtn->SetTag("Button");
+        objectList->AddObject(std::move(moveBtn));
+        buttonMove = objectList->FindGameObjectWithName("ButtonMove");
+    }
+
+    // 2行目のY座標
+    float row2Y = topY - padding - rowHeight / 2.f - 1 * (rowHeight + padding);
+    // 3行目のY座標
+    float row3Y = topY - padding - rowHeight / 2.f - 2 * (rowHeight + padding);
+    float buttonWidth = areaScale.x - padding * 2;
+
+    // ボタン共通設定
+    auto setupButton = [&](GameObject* btn, ButtonComponent::UIButtonType type, float posY)
+        {
+            if (!btn) return;
+            btn->GetTransform().SetPosition(Vector3(areaPos.x, posY, 0.f));
+            btn->GetTransform().SetScale(Vector3(buttonWidth, rowHeight, 1.f));
+
+            auto* tex = btn->GetMeshComponent<Texture2D>();
+            if (tex) tex->SetUV(1, 1, 7, 1);
+
+            if (!btn->GetComponent<ButtonComponent>())
+            {
+                auto* btnComp = btn->AddComponent<ButtonComponent>(btn->GetTransform().GetScale());
+                btnComp->SetButtonType(type);
+            }
+
+            if (!btn->GetComponent<UIAnimationComponent>())
+            {
+                btn->AddComponent<UIAnimationComponent>();
+            }
+        };
+
+    setupButton(buttonAttack, ButtonComponent::UIButtonType::Attack, row2Y);
+    setupButton(buttonBuild, ButtonComponent::UIButtonType::Build, row2Y);
+    setupButton(buttonMove, ButtonComponent::UIButtonType::Move, row3Y);
+
+    // 初期状態は攻撃・配置非表示、移動表示
+    if (buttonAttack) buttonAttack->SetActive(false);
+    if (buttonBuild)  buttonBuild->SetActive(false);
+    if (buttonMove)   buttonMove->SetActive(true);
 
     std::cout << "[SceneGame] Buttons arranged in UIAreaButtons" << std::endl;
 }
+
+
+//// ===================================================================
+//// ボタン整列処理
+//// ===================================================================
+//void UISystemComponent::MakeUIButtons(std::unique_ptr<GameObjectList>& objectList)
+//{
+//    // UIAreaButtonsの範囲を取得
+//    GameObject* buttonArea = objectList->FindGameObjectWithName("UIAreaButtons");
+//
+//    if (!buttonArea)
+//    {
+//        std::cout << "[SceneGame] UIAreaButtons not found!" << std::endl;
+//        return;
+//    }
+//
+//    Vector3 areaPos = buttonArea->GetTransform().GetPosition();
+//    Vector3 areaScale = buttonArea->GetTransform().GetScale();
+//
+//    // パディング（仮値）
+//    const float padding = 5.f;
+//
+//    // 行数: ButtonSub(1行) + Button(2行) = 3行
+//    const int rowCount = 3;
+//    float rowHeight = (areaScale.y - padding * (rowCount + 1)) / rowCount;
+//
+//    // 各行のY座標を計算（上から順に）
+//    // エリアの上端からスタート
+//    float topY = areaPos.y + areaScale.y / 2.f;
+//
+//    // ---------------------------------------------------------------
+//    // 1行目: ButtonSub（横並び）
+//    // ---------------------------------------------------------------
+//    std::vector<GameObject*> buttonSubs = objectList->FindGameObjectsWithTag("ButtonSub");
+//    int subCount = static_cast<int>(buttonSubs.size());
+//
+//    if (subCount > 0)
+//    {
+//        float row1Y = topY - padding - rowHeight / 2.f;
+//        float subWidth = (areaScale.x - padding * (subCount + 1)) / subCount;
+//        float startX = areaPos.x - areaScale.x / 2.f + padding + subWidth / 2.f;
+//
+//        for (int i = 0; i < subCount; i++)
+//        {
+//            float posX = startX + i * (subWidth + padding);
+//            buttonSubs[i]->GetTransform().SetPosition(Vector3(posX, row1Y, 0.f));
+//            buttonSubs[i]->GetTransform().SetScale(Vector3(subWidth, rowHeight, 1.f));
+//            // UVを設定
+//            auto* tex = buttonSubs[i]->GetMeshComponent<Texture2D>();
+//            tex->SetUV(1, 1, 2, 1);
+//            // ボタンコンポーネント追加
+//            buttonSubs[i]->AddComponent<ButtonComponent>(buttonSubs[i]->GetTransform().GetScale());
+//
+//            //一旦非アクティブ
+//            buttonSubs[i]->SetActive(false);
+//        }
+//    }
+//
+//    // ラジオボタンコンポーネントつきオブジェクト作成
+//    std::unique_ptr<GameObject> radioSubButton = std::make_unique<GameObject>();
+//    radioSubButton->SetName("RadioSubButton");
+//    radioSubButton->SetTag("RadioButton");
+//    radioSubButton->AddComponent<RadioButtonComponent>(buttonSubs);
+//    objectList->AddObject(std::move(radioSubButton));
+//
+//    // ---------------------------------------------------------------
+//    // 2行目・3行目: Button（ButtonBuild, ButtonMove）
+//    // ---------------------------------------------------------------
+//    // 表示するボタン名のリスト
+//    std::vector<std::string> buttonNames = { "ButtonAttack","ButtonMove","ButtonBuild", };
+//
+//
+//    // TagがButtonのオブジェクトから該当するものを取得
+//    std::vector<GameObject*> buttons = objectList->FindGameObjectsWithTag("Button");
+//    std::vector<GameObject*> targetButtons;
+//
+//    for (auto& name:buttonNames)
+//    {
+//        for (auto* btn : buttons)
+//        {
+//            if (std::string(btn->GetName()) == name)
+//            {
+//                targetButtons.push_back(btn);
+//                break;
+//            }
+//        }
+//    }
+//
+//
+//    // ボタンを配置（2行目、3行目）
+//    float buttonWidth = areaScale.x - padding * 2;
+//    for (int i = 0; i < static_cast<int>(targetButtons.size()); i++)
+//    {
+//        // 行インデックス（1行目はButtonSubなので、i+1）
+//        int rowIndex = i + 1;
+//        float rowY = topY - padding - rowHeight / 2.f - rowIndex * (rowHeight + padding);
+//        float posX = areaPos.x;
+//
+//        auto* btn = targetButtons[i];
+//        btn->GetTransform().SetPosition(Vector3(posX, rowY, 0.f));
+//        btn->GetTransform().SetScale(Vector3(buttonWidth, rowHeight, 1.f));
+//
+//        // UVを設定
+//        auto* tex = btn->GetMeshComponent<Texture2D>();
+//        tex->SetUV(1, 1, 3, 3);
+//
+//        //アニメーションコンポネント追加
+//        btn->AddComponent<UIAnimationComponent>();
+//        // ボタンコンポーネント追加
+//        auto* btnComp=btn->AddComponent<ButtonComponent>(btn->GetTransform().GetScale());
+//
+//        if (btnComp)
+//        {
+//            if (std::string(btn->GetName()) == "ButtonBuild")
+//            {
+//                btnComp->SetButtonType(ButtonComponent::UIButtonType::Build);
+//            }
+//            else if(std::string(btn->GetName()) == "ButtonMove")
+//            {
+//                btnComp->SetButtonType(ButtonComponent::UIButtonType::Move);
+//            }
+//            else if (std::string(btn->GetName()) == "ButtonAttack")
+//            {
+//                btnComp->SetButtonType(ButtonComponent::UIButtonType::Attack);
+//            }
+//        }
+//
+//        if (std::string(btn->GetName()) == "ButtonMove")btn->SetActive(true);
+//        else btn->SetActive(false);
+//    }
+//
+//
+//    // ラジオボタンコンポーネントつきオブジェクト作成
+//    std::unique_ptr<GameObject> radioButton = std::make_unique<GameObject>();
+//    int id = objectList->GetLastID();
+//    radioButton->SetID(id);
+//    radioButton->SetName("RadioButton");
+//    radioButton->SetTag("RadioButton");
+//    radioButton->AddComponent<RadioButtonComponent>(buttons);
+//    objectList->AddObject(std::move(radioButton));
+//
+//    std::cout << "[SceneGame] Buttons arranged in UIAreaButtons" << std::endl;
+//}
 
 void UISystemComponent::MakeUITimeLine(std::unique_ptr<GameObjectList>& objectList)
 {
@@ -436,3 +560,81 @@ ButtonComponent::UIButtonType UISystemComponent::GetHoverButton() const
     }
     return ButtonComponent::UIButtonType::None;
 }
+
+void UISystemComponent::ButtonChange(UnitComponent::UnitModel model)
+{
+    if (!m_pUIObjects) return;
+
+    auto buttonAttack = m_pUIObjects->FindGameObjectWithName("ButtonAttack");
+    auto buttonBuild = m_pUIObjects->FindGameObjectWithName("ButtonBuild");
+    auto buttonMove = m_pUIObjects->FindGameObjectWithName("ButtonMove");
+
+    // 移動ボタンは常に表示
+    if (buttonMove) buttonMove->SetActive(true);
+
+    // 攻撃／配置切替
+    if (model == UnitComponent::UnitModel::UnitPlacementer)
+    {
+        if (buttonBuild)  buttonBuild->SetActive(true);
+        if (buttonAttack) buttonAttack->SetActive(false);
+    }
+    else if (model == UnitComponent::UnitModel::UnitAttacker)
+    {
+        if (buttonBuild)  buttonBuild->SetActive(false);
+        if (buttonAttack) buttonAttack->SetActive(true);
+    }
+    else
+    {
+        if (buttonBuild)  buttonBuild->SetActive(false);
+        if (buttonAttack) buttonAttack->SetActive(false);
+    }
+}
+
+
+//void UISystemComponent::ButtonChange(UnitComponent::UnitModel model)
+//{
+//    if (!m_pUIObjects)return;
+//
+//    //UI上のボタン取得
+//    auto buttons = m_pUIObjects->FindGameObjectsWithTag("Button");
+//
+//    for (auto* btn : buttons)
+//    {
+//        const std::string& name = btn->GetName();
+//
+//        //Moveは常に表示
+//        if (name == "ButtonMove")
+//        {
+//            btn->SetActive(true);
+//            std::cout << btn->GetName()
+//                << "active=" << btn->IsActive()
+//                << std::endl;
+//            continue;
+//        }
+//
+//        //配置ユニット
+//        if (model == UnitComponent::UnitModel::UnitPlacementer)
+//        {
+//            btn->SetActive(name == "ButtonBuild");
+//            std::cout << btn->GetName()
+//                << "active=" << btn->IsActive()
+//                << std::endl;
+//        }
+//        //攻撃ユニット
+//        else if (model == UnitComponent::UnitModel::UnitAttacker)
+//        {
+//            btn->SetActive(name == "ButtonAttack");
+//            std::cout << btn->GetName()
+//                << "active=" << btn->IsActive()
+//                << std::endl;
+//        }
+//        else
+//        {
+//            btn->SetActive(false);
+//        }
+//    }
+//
+//    std::cout << "[UI] ButtonChange model="
+//        << (model == UnitComponent::UnitModel::UnitAttacker ? "Attacker" : "Placementer")
+//        << std::endl;
+//}

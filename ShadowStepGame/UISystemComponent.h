@@ -10,6 +10,7 @@
 #include "Game.h"
 #include "ButtonComponent.h"
 #include "GameObjectList.h"
+#include "UnitComponent.h"
 
 // 前方宣言
 class GameObjectList;
@@ -38,6 +39,12 @@ public:
     // ===================================================================
     void Update() override
     {
+        if (!test)
+        {
+            ButtonChange(UnitComponent::UnitModel::UnitPlacementer);
+            test = true;
+        }
+
         if (!m_pOwner) return;
 
 
@@ -107,7 +114,10 @@ public:
     // 内部処理
     // ===================================================================
     void SetUIObject(std::unique_ptr<GameObjectList>& objectList);     // UIの初期設定
+    void ButtonChange(UnitComponent::UnitModel model);
 private:
+    bool test = false;
+
     // ボタン整列処理
     void MakeUIButtons(std::unique_ptr<GameObjectList>& objectList);
     void MakeUITimeLine(std::unique_ptr<GameObjectList>& objectList);
