@@ -282,7 +282,7 @@ void UISystemComponent::MakeUIStatus(std::unique_ptr<GameObjectList>& objectList
         if (!statusJobs.empty())
         {
             // 1:1の大きさ（行の高さより小さめ）
-            float jobSize = (rowHeight - padding * 2.f) * 0.8;
+            float jobSize = (rowHeight - padding * 2.f) * 0.8f;
 
             // 2段目のY座標（上から2番目）
             float row2Y = topY - rowHeight * 1.5f;

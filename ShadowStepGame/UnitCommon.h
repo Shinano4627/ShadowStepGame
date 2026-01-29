@@ -138,3 +138,17 @@ struct UnitStatus
 	bool isDown = false;	// 行動不能
 };
 
+enum class UnitActionType
+{
+	None,
+	Move,
+	Attack,
+	Place,
+	ShadowMove,
+};
+
+struct UnitAction
+{
+	UnitActionType type = UnitActionType::None;
+	MapPosition targetGrid;
+};
