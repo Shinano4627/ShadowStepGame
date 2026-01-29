@@ -126,7 +126,7 @@ void SceneProto::Update()
     CURSOR_MANAGER.Update();
 
     // システムアップデート
-    auto* gameSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<GameSystemComponent>();
+    auto* gameSystem = m_GameObjectList->FindGameObjectWithTag("System")->GetComponent<GameSystemComponent>();
     gameSystem->UpdateGame(m_GameObjectList);   // リスト権限を渡して各種アップデート
 
     // 2. 全GameObject更新

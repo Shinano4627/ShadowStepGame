@@ -13,18 +13,6 @@
 // 前方宣言
 class GameObjectList;
 
-enum class EMapTile
-{
-    Empty = 0,  // 何もない
-    Wall = 1,   // 壁
-    Player = 2, // プレイヤー
-    Enemy = 3,  // 敵
-    Tree = 4,   // 樹
-    Shadow = 5, // 影
-
-    None = 99   // マップ外
-};
-
 enum class SMapTile
 {
     Empty = 0,   // 行動範囲外

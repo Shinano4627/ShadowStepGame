@@ -111,9 +111,9 @@ private:
 	void UpdateUnitSelect(GameObjectList* gameObjectList);
 	void UpdateUnitActionSelect();
 	void UpdateUnitActing();
-	void UpdateUnitEnd(GameObjectList* gameObjectList);
+	void UpdateUnitEnd();
 	void UpdateTurnEnd();
-	void UpdateSunMove(GameObjectList* gameObjectList);
+	void UpdateSunMove();
 	void UpdateJudge(GameObjectList* gameObjectList);
 	void UpdateEnd();
 
@@ -147,6 +147,8 @@ private:
 	//=======================================
 	void Input_Select();
 
+	// 現在のユニット位置が影に被っているかチェックしてKill
+	void CheckShadowKill(UnitComponent* unit);
 
 private:
 	//=======================================

@@ -26,6 +26,8 @@ class ShadowSystemComponent : public Component
 private:
     // 影マップ（0:影なし,1:影あり）
     int** m_ShadowMapData = nullptr; 
+    // 影の元オブジェクトIDマップ（0:なし）
+    int** m_ShadowSourceMap = nullptr;
 
     int m_MapWidth = 0;
     int m_MapHeight = 0;
@@ -107,7 +109,9 @@ public:
             for (int x = 0; x < m_MapWidth; ++x)
             {
                 // オブジェクトがある場合のみ
-                if (mapData[z][x] == 0) continue;
+                if (mapData[z][x] == 0 ||
+                    mapData[z][x] == 5 ||
+                    mapData[z][x] == 99) continue;
 
                 int shadowX = x;
                 int shadowZ = z;
@@ -129,6 +133,7 @@ public:
                     if (mapData[shadowZ][shadowX] == 0)
                     {
                         m_ShadowMapData[shadowZ][shadowX] = 1;
+                        m_ShadowSourceMap[shadowZ][shadowX] = mapData[z][x]; // 元オブジェクトtypeを入れる
                     }
                 }
             }
@@ -186,6 +191,12 @@ public:
     //=======================================
     const int* const* GetShadowMap() const
     { return m_ShadowMapData;};
+    // 影の元IDを取得
+    int GetShadowSourceAt(int mapX, int mapZ) const
+    {
+        if (mapX < 0 || mapX >= m_MapWidth || mapZ < 0 || mapZ >= m_MapHeight) return 0;
+        return m_ShadowSourceMap[mapZ][mapX];
+    }
 
 private:
     //=======================================
@@ -194,9 +205,11 @@ private:
     void MakeShadowMap()
     {
         m_ShadowMapData = new int* [m_MapHeight];
+        m_ShadowSourceMap = new int* [m_MapHeight];
         for (int z = 0; z < m_MapHeight; ++z)
         {
             m_ShadowMapData[z] = new int[m_MapWidth];
+            m_ShadowSourceMap[z] = new int[m_MapWidth];
         }
         ClearShadowMap();
     }
@@ -211,6 +224,7 @@ private:
             for (int x = 0; x < m_MapWidth; ++x)
             {
                 m_ShadowMapData[z][x] = 0;
+                m_ShadowSourceMap[z][x] = 0;
             }
         }
     }
