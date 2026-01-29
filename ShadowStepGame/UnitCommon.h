@@ -24,6 +24,8 @@ enum class EMapTile
 	Enemy = 3,  // 敵
 	Tree = 4,   // 樹
 	Shadow = 5, // 影
+
+	None = 99	// マップ外
 };
 
 struct MapPosition

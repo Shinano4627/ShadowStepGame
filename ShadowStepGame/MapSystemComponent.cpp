@@ -190,13 +190,7 @@ void MapSystemComponent::UpdateMap(const std::vector<UnitStatus*>& units,
     // ShadowSystemから影情報を取得・反映
     // 空いているセルのみ反映
     //=======================================
-    /*
-        想定するShadowSystemの関数：
-        - static bool IsShadowAt(int x, int z);
-            → 座標(x,z)に影があるかどうか返す
-        - static void AddShadow(int x, int z);    // 影を登録
-        - static void ClearShadows();              // 毎フレームリセット
-    */
+    
     for (int z = 0; z < m_MapHeight; ++z)
     {
         for (int x = 0; x < m_MapWidth; ++x)

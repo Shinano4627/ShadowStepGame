@@ -11,6 +11,7 @@
 #include "SunManageComponent.h"
 #include "ShadowSystemComponent.h"
 #include "UISystemComponent.h"
+#include "UnitComponent.h"
 
 void GameSystemComponent::InitGame(std::unique_ptr<GameObjectList>& gameObjectList)
 {
@@ -45,6 +46,7 @@ void GameSystemComponent::InitGame(std::unique_ptr<GameObjectList>& gameObjectLi
 
     // 初期処理実行
     // 影の設定
+    // GameObjectList(ShadowObject用)
     int map_w = m_mapSystem->GetMapWidth();
     int map_h = m_mapSystem->GetMapHeight();
     m_shadowSystem->SetUp(
@@ -68,17 +70,15 @@ void GameSystemComponent::InitGame(std::unique_ptr<GameObjectList>& gameObjectLi
 
 void GameSystemComponent::UpdateGame(std::unique_ptr<GameObjectList>& gameObjectList)
 {
-#ifdef DEBUG
     // VK_E が押されたら状態更新（テスト用）
-    if (IO_MANAGER.GetKeyDownKeyBord(VK_E)) 
+    if (IO_MANAGER.GetKeyDownKeyBord(VK_E))
     {
-        int next = (int)m_State + 1;
-        next %= (int)BattleState::StateCount;
-        ChangeState((BattleState)next);
         // ターン状態に合わせた関数を呼び出し
-        UpdateState(gameObjectList.get());
+        // UpdateState();
     }
-#endif // DEBUG
+
+    // ターン状態に合わせた関数を呼び出し
+    UpdateState(gameObjectList.get());
 }
 
 void GameSystemComponent::ChangeState(BattleState next)
@@ -106,9 +106,9 @@ void GameSystemComponent::UpdateState(GameObjectList* gameObjectList)
     case BattleState::UnitSelect:    UpdateUnitSelect(gameObjectList); break;
     case BattleState::UnitActionSelect: UpdateUnitActionSelect(); break;
     case BattleState::UnitActing:    UpdateUnitActing(); break;
-    case BattleState::UnitEnd:       UpdateUnitEnd(gameObjectList); break;
+    case BattleState::UnitEnd:       UpdateUnitEnd(); break;
     case BattleState::TurnEnd:       UpdateTurnEnd(); break;
-    case BattleState::SunMove:       UpdateSunMove(gameObjectList); break;
+    case BattleState::SunMove:       UpdateSunMove(); break;
     case BattleState::Judge:         UpdateJudge(gameObjectList); break;
     case BattleState::End:           UpdateEnd(); break;
     }
@@ -172,19 +172,40 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
     auto* unit = cur->unit;
 
     // ユニットがいるかのチェック
-    if (!unit || unit->isDown == true)
+    if (!unit)
     {
+        NextTimeline(gameObjectList);
+        return;
+    }
+    if (unit->IsDown() == true) {
+        unit->RecoverDown();
         NextTimeline(gameObjectList);
         return;
     }
 
     m_CurrentUnit = unit;
 
+    m_CurrentUnit->StartTurn();
+
+
     // ============================
     // プレイヤー or 敵で分岐
     // ============================
-    if (unit->type == UnitType::Player)
+    if (unit->GetType() == UnitType::Player
+        || unit->GetType() == UnitType::Enemy)
     {
+        // Select関係変数
+        m_SelectAction = false;
+        m_SelectPosition = false;
+        m_SelectMapPosition = unit->GetPosition();
+        m_Unitposition = unit->GetPosition();
+        m_UnitType = unit->GetType();
+        m_UnitModel = unit->GetModel();
+        m_SelectType = UnitActionType::None;
+        m_SelectPhase = SelectPhase::Action;
+        // SelectMap起動
+        m_mapSystem->StartSelectMap(unit, m_SelectMapPosition);
+        
         ChangeState(BattleState::UnitActionSelect); // プレイヤー入力待ち
     }
     else
@@ -199,8 +220,122 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
 //=======================================
 void GameSystemComponent::UpdateUnitActionSelect()
 {
-    // TODO: プレイヤー入力待ち
-    // m_CurrentUnit->StartActionInput(); など
+    // 全体の流れ（仮決定）
+    /*
+        1:ActionSelect。
+            GameSystemで入力受付→UISystemに反映させつつ、チェックと決定。
+        2:Position選択 ←完了
+            MapSystemのSelectMap描画起動
+            →GameSystemで入力受付（十字キー）
+            →MapSystemのカーソルを反映させつつ、
+            選択されたら問題ないかチェックする
+            →問題なければUnitに指示だし
+        3:UnitActへ
+    */
+
+    // ============================
+    // Action入力（常に受け付ける）
+    // ============================
+
+    if (IO_MANAGER.GetKeyDownKeyBord(VK_T))
+    {
+        m_SelectType = UnitActionType::Move;
+    }
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_G) &&
+        m_UnitModel == UnitModel::Attack)
+    {
+        m_SelectType = UnitActionType::Attack;
+    }
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_B) &&
+        m_UnitModel == UnitModel::Place)
+    {
+        m_SelectType = UnitActionType::Place;
+    }
+
+    // Actionが初めて選ばれた瞬間
+    if (m_SelectType != UnitActionType::None &&
+        m_SelectPhase == SelectPhase::Action)
+    {
+        m_SelectPhase = SelectPhase::Position;
+    }
+
+
+
+    // まだポジション選択していない
+    if (m_SelectPhase == SelectPhase::Position)
+    {
+        // 入力管理
+        // セレクト移動（仮実装：カメラがマップを右上を正、左下を負と見ていると仮定）
+        Input_Select();
+        
+        // 選択確定(F)
+        if (IO_MANAGER.GetKeyDownKeyBord(VK_F))
+        {
+            bool ok = false;
+            // Actionに合わせてMapの位置をチェック(あとで関数化)
+            switch (m_SelectType)
+            {
+            case UnitActionType::Move:
+                ok = m_mapSystem->IsWalkableAtUnitPos(
+                    m_SelectMapPosition.x,
+                    m_SelectMapPosition.z);
+                break;
+
+            case UnitActionType::Attack:
+                ok = m_mapSystem->IsAttackableAtUnitPos(
+                    m_Unitposition.x, m_Unitposition.z,
+                    m_SelectMapPosition.x, m_SelectMapPosition.z,
+                    m_UnitType);
+
+                if (ok)
+                {
+                    UnitComponent* target =
+                        m_unitSystem->FindUnitAtPosition(m_SelectMapPosition);
+
+                    if (target)
+                    {
+                        // 仮：2ターン行動不能
+                        target->SetDown(2);
+                    }
+                }
+                break;
+
+            case UnitActionType::Place:
+                ok = m_mapSystem->IsPlacebleAtUnitPos(
+                    m_SelectMapPosition.x,
+                    m_SelectMapPosition.z);
+                break;
+            }
+
+            if (ok)
+            {
+                // UnitActionを組み立て
+                UnitAction action;
+                action.type = m_SelectType;
+                action.targetGrid = m_SelectMapPosition;
+
+                // Unitに行動をセット
+                m_CurrentUnit->SetAction(action);
+
+                // SelectMap終了
+                m_mapSystem->EndSelectMap();
+
+                // 行動を実行
+                m_CurrentUnit->ExcuteAction();
+
+                ChangeState(BattleState::UnitActing);
+
+                if (m_SelectType == UnitActionType::Move) {
+                    m_Unitposition = m_SelectMapPosition;
+                }
+            }
+            else {
+                m_SelectPhase == SelectPhase::Action;
+                ok = false;
+            }
+
+        }
+    }
 }
 
 //=======================================
@@ -209,19 +344,25 @@ void GameSystemComponent::UpdateUnitActionSelect()
 //=======================================
 void GameSystemComponent::UpdateUnitActing()
 {
-    // TODO: 敵AI行動開始
-    // m_CurrentUnit->ExecuteAIAction(); など
+    // Unit行動終了チェック
+    if (m_CurrentUnit->IsTurnDinished())
+    {
+        m_CurrentUnit->EndTurn();
+        ChangeState(BattleState::UnitEnd);
+    }
 }
 
 //=======================================
 // BattleState:UnitEnd
 // 現在タイムラインのユニット行動終了
 //=======================================
-void GameSystemComponent::UpdateUnitEnd(GameObjectList* gameObjectList)
+void GameSystemComponent::UpdateUnitEnd()
 {
+    // 影チェック
+    CheckShadowKill(m_CurrentUnit);
+
     m_CurrentUnit = nullptr;
-    // タイムラインを確認し全てのユニット操作完了か調べる
-    NextTimeline(gameObjectList);
+    ChangeState(BattleState::Judge);
 }
 
 //=======================================
@@ -230,22 +371,13 @@ void GameSystemComponent::UpdateUnitEnd(GameObjectList* gameObjectList)
 //=======================================
 void GameSystemComponent::UpdateTurnEnd()
 {
-    ChangeState(BattleState::SunMove);
+    ChangeState(BattleState::TurnStart);
 }
 
-void GameSystemComponent::UpdateSunMove(GameObjectList* gameObjectList)
+void GameSystemComponent::UpdateSunMove()
 {
     // 太陽進行
     m_sunSystem->AdvanceTurn();
-
-    // 影計算
-    UpdateShadow(gameObjectList);
-
-    // マップ更新
-    m_mapSystem->UpdateMap(
-        m_unitSystem->GetAllUnits(),
-        m_shadowSystem->GetShadowMap()
-    );
 
     // 次は勝敗判定へ
     ChangeState(BattleState::Judge);
@@ -259,17 +391,9 @@ void GameSystemComponent::UpdateJudge(GameObjectList* gameObjectList)
     {
         ChangeState(BattleState::End);
     }
-    
-    // 未決着
-    if (m_beforeState == BattleState::TurnEnd)
-    {
-        ChangeState(BattleState::TurnStart);
-    }
-    else
-    {
-        // UnitEnd から来た
+    else {
+        // タイムラインを確認し全てのユニット操作完了か調べる
         NextTimeline(gameObjectList);
-        ChangeState(BattleState::UnitSelect);
     }
 }
 
@@ -304,7 +428,7 @@ void GameSystemComponent::BuildTimeline()
     {
         Timeline t;
         t.unit = u;
-        switch (u->type)
+        switch (u->GetType())
         {
         case UnitType::Enemy:
             t.actorType = TimelineActorType::Enemy;
@@ -313,7 +437,7 @@ void GameSystemComponent::BuildTimeline()
             t.actorType = TimelineActorType::Player;
             break;
         }
-        t.speed = u->speed;
+        t.speed = u->GetSpeed();
         m_Timeline.push_back(t);
     }
 
@@ -344,6 +468,12 @@ void GameSystemComponent::NextTimeline(GameObjectList* gameObjectList)
     //=======================================
     // Map/Shadow更新
     //=======================================
+    // マップ更新
+    m_mapSystem->UpdateMap(
+        m_unitSystem->GetAllUnits(),
+        m_shadowSystem->GetShadowMap()
+    ); 
+    
     // 影更新
     UpdateShadow(gameObjectList);
 
@@ -369,7 +499,7 @@ void GameSystemComponent::NextTimeline(GameObjectList* gameObjectList)
     else
     {
         // まだ行動待ちユニットが残っている
-        ChangeState(BattleState::Judge);
+        ChangeState(BattleState::UnitSelect);
     }
 }
 
@@ -382,6 +512,32 @@ bool GameSystemComponent::IsPlayerAllDead() const
 bool GameSystemComponent::IsEnemyAllDead() const
 {
     return m_unitSystem->IsEnemyAllDead();
+}
+
+void GameSystemComponent::Input_Select()
+{
+    
+    if (IO_MANAGER.GetKeyDownKeyBord(VK_RIGHT))
+    {
+        m_SelectMapPosition.x += 1;
+        m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
+    }
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_LEFT))
+    {
+        m_SelectMapPosition.x -= 1;
+        m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
+    }
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_UP))
+    {
+        m_SelectMapPosition.z += 1;
+        m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
+    }
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_DOWN))
+    {
+        m_SelectMapPosition.z -= 1;
+        m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
+    }
+    
 }
 
 const char* GameSystemComponent::BattleStateToString(BattleState state)
@@ -400,4 +556,62 @@ const char* GameSystemComponent::BattleStateToString(BattleState state)
     case BattleState::End:               return "End";
     default:                             return "Unknown";
     }
+}
+
+// 現在のユニット位置が影に被っているかチェックしてKill
+void GameSystemComponent::CheckShadowKill(UnitComponent* unit)
+{
+    // m_Unitpositionをm_mapSystemのConvertUnitPosToMapIndexでMap配列に変換。
+    // ShadowMapSystemを使って今のPositionが影にかぶっているかチェック
+    // 被っていたらその影の発生ObjectのEMapTileを調べる。
+    // （ShadowSystemにて影Mapの更新の際、その影の元のObjectのMap配列とEMapTileの情報を保存しておく）
+    // m_UnitTypeがEnemyで影のObjctがPlayerの時、
+    // m_UnitTypeがPlayerで影のオブジェクトがEnemyの時のみ次のKill処理をする
+    // その影の元のObjectのMap配列をm_mapSystemのConvertMapIndexToUnitPosを使ってUnit座標に変換
+    // UnitSystemのFindUnitAtPositionを使ってKillしたいユニットのComponent*を取得。
+    // それを使ってUnitSystemのUnRegisterUnitでKill（削除）
+    
+    if (!unit) return;
+    int mapX, mapZ;
+    if (!m_mapSystem->ConvertUnitPosToMapIndex(
+        m_Unitposition.x, m_Unitposition.z,
+        mapX, mapZ
+    ))
+    {
+        return;
+    }
+
+    // 影の有無確認
+    int shadowSource = m_shadowSystem->GetShadowSourceAt(mapX, mapZ);
+
+    // 影の元タイプ判定
+    UnitType shadowType = UnitType::Player;
+    switch (shadowSource) {
+    case 2:// Player
+        shadowType = UnitType::Enemy;
+        break;
+    case 3:// Enemy
+        shadowType = UnitType::Player;
+        break;
+    default:// それ以外
+        return;
+        break;
+    }
+
+
+    // 自分と異なるタイプの影のみKill対象
+    if (unit->GetType() == shadowType) return;
+
+    // マップ座標 → Unit座標に変換
+    int targetUnitX, targetUnitZ;
+    m_mapSystem->ConvertMapIndexToUnitPos(mapX, mapZ, targetUnitX, targetUnitZ);
+    MapPosition targetPos{ targetUnitX, targetUnitZ };
+
+    UnitComponent* targetUnit = m_unitSystem->FindUnitAtPosition(targetPos);
+    if (!targetUnit) return;
+
+    std::cout << "[GameSystem] ShadowKill! UnitID:" << targetUnit->GetId() << std::endl;
+
+    m_unitSystem->UnRegisterUnit(targetUnit);
+
 }
