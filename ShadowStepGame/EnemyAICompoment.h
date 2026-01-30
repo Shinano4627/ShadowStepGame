@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "IOManager.h"
 #include "Game.h"
+#include "ShadowSystemComponent.h"
 
 class EnemyAI
 {
@@ -64,11 +65,12 @@ private:
 	bool CanStepOnShadow(
 		UnitComponent* enemy,
 		UnitComponent* target,
-		MapPosition sunDir,
+		const ShadowParam& param,
 		const int* const* mapData,
 		int mapW,
 		int mapH
 	) const;
+
 
 	// ３：攻撃
 	bool CanAttack(
@@ -91,12 +93,13 @@ private:
 	UnitAction MakeShadowKillAction(
 		UnitComponent* enemy,
 		UnitComponent* target,
-		MapPosition sunDir
+		const ShadowParam& param
 	) const;
+
 
 	MapPosition CalcShadowPosition(
 		UnitComponent* target,
-		MapPosition sunDir
+		const ShadowParam& param
 	) const;
 
 	// ３：攻撃

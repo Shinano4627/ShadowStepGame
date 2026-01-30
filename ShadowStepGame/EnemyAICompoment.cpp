@@ -22,9 +22,22 @@ UnitAction EnemyAI::DecideAction(
 		return none;
 	}
 
-	// ２：影を踏めるか？
-	if (CanStepOnShadow(enemy, target, SunDirection, mapData, mapWidth, mapHeight))
-		return MakeShadowKillAction(enemy, target, SunDirection);
+	// ShadowParamを計算
+	ShadowParam param{};
+	param.lightDirection = SunDirection;
+	if (SunDirection.x == 0 && SunDirection.z == 0)
+	{
+		param.length = 0;
+	}
+	else
+	{
+		int distance = abs(SunDirection.x) + abs(SunDirection.z);
+		param.length = std::clamp(distance / 2, 2, 8);
+	}
+
+	// 影を踏めるか？
+	if (CanStepOnShadow(enemy, target, param, mapData, mapWidth, mapHeight))
+		return MakeShadowKillAction(enemy, target, param);
 
 	// ３：攻撃できるか？
 	if (CanAttack(enemy, target,mapData,mapWidth,mapHeight))
@@ -89,7 +102,7 @@ UnitComponent* EnemyAI::FindNearestPlayer(
 bool EnemyAI::CanStepOnShadow(
 	UnitComponent* enemy,
 	UnitComponent* target,
-	MapPosition sunDir,
+	const ShadowParam& param,
 	const int* const* mapData,
 	int mapW,
 	int mapH
@@ -97,11 +110,10 @@ bool EnemyAI::CanStepOnShadow(
 {
 	if (!enemy || !target) return false;
 
-	MapPosition shadow = CalcShadowPosition(target, sunDir);
+	MapPosition shadow = CalcShadowPosition(target, param);
 
 	int tile = GetTile(mapData, shadow.x, shadow.z, mapW, mapH);
 
-	// 影マスに到達できるか？
 	if (!IsWalkableTile(tile))
 		return false;
 
@@ -109,6 +121,7 @@ bool EnemyAI::CanStepOnShadow(
 	return abs(epos.x - shadow.x) <= 1 &&
 		abs(epos.z - shadow.z) <= 1;
 }
+
 
 bool EnemyAI::CanAttack(
 	UnitComponent* enemy,
@@ -143,26 +156,27 @@ bool EnemyAI::CanMove(UnitComponent* enemy) const
 UnitAction EnemyAI::MakeShadowKillAction(
 	UnitComponent* enemy,
 	UnitComponent* target,
-	MapPosition sunDir
+	const ShadowParam& param
 ) const
 {
 	UnitAction action;
 	action.type = UnitActionType::Move;
-	action.targetGrid = CalcShadowPosition(target, sunDir);
+	action.targetGrid = CalcShadowPosition(target, param);
 	return action;
 }
 
+
 MapPosition EnemyAI::CalcShadowPosition(
 	UnitComponent* target,
-	MapPosition sunDir
+	const ShadowParam& param
 ) const
 {
 	MapPosition tpos = target->GetPosition();
 
-	// 太陽方向と逆に影が伸びる
 	MapPosition shadow;
-	shadow.x = tpos.x - sunDir.x;
-	shadow.z = tpos.z - sunDir.z;
+	// 太陽方向の逆に param.length 分伸ばす
+	shadow.x = tpos.x - param.lightDirection.x * param.length;
+	shadow.z = tpos.z - param.lightDirection.z * param.length;
 
 	return shadow;
 }
