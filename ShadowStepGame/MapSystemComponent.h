@@ -27,15 +27,19 @@ private:
     std::string m_DataFile;      // CSVファイル名
     int m_MapWidth = 0;     // CSVから読み取り
     int m_MapHeight = 0;    // CSVから読み取り
-    int** m_MapData = nullptr;  // CSVから読み取ったデータを数値で管理
 
     float m_SizePiece = 5.f;
     float m_DrawStartPosX = 0.f;
     float m_DrawStartPosZ = 0.f;
     float m_DrawStartPosY = 0.2f;
 
-    // SelectMap用
-    int** m_SelectMapData = nullptr;  //
+    // 結合後のマップ
+    int** m_MapData = nullptr;  // CSVから読み取ったデータを数値で管理
+
+    // レイヤーマップ
+    int** m_UnitMapData = nullptr;      // Unit/Enemy用
+    int** m_ObjectMapData = nullptr;      // 動かないオブジェクト用
+    int** m_SelectMapData = nullptr;      // SelectMap用
 
     // SelectMap 用 GameObject（全マス分）
     GameObject*** m_SelectMapObjects = nullptr;
@@ -59,27 +63,8 @@ public:
     // ===================================================================
     ~MapSystemComponent()
     {
-        // マップ
-        for (int i = 0; i < m_MapHeight; i++)
-        {
-            delete[] m_MapData[i];
-        }
-        delete[] m_MapData;
-
-        if (m_SelectMapData)
-        {
-            for (int z = 0; z < m_MapHeight; z++)
-                delete[] m_SelectMapData[z];
-            delete[] m_SelectMapData;
-        }
-
-        if (m_SelectMapObjects)
-        {
-            for (int z = 0; z < m_MapHeight; z++)
-                delete[] m_SelectMapObjects[z];
-            delete[] m_SelectMapObjects;
-        }
-
+        // マップ削除
+        DeleteMap();
     }
 
     // ===================================================================
@@ -98,6 +83,7 @@ public:
         const int* const* shadowMap);
 
     void MakeMap(std::unique_ptr<GameObjectList>& objectList);      // CSVデータ読み込みとマップオブジェクトの作成
+    void DeleteMap();    // 全データ削除
 
     // Unit(中心原点) → Map配列
     bool ConvertUnitPosToMapIndex(
