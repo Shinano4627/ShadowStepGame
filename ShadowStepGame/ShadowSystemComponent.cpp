@@ -200,15 +200,15 @@ void ShadowSystemComponent::UpdateShadowObjects(const int* const* mapData, const
                 continue;
 
             // 影がオブジェクトが足りない場合は追加
-            if (shadowObjects.size() < shadowCnt)
+            int addNum = shadowCnt - (shadowObjects.size() -1);
+            for (int i = 0; i < addNum; i++)
             {
                 // オブジェクト生成（初期状態では基本サイズ）
-                auto obj = std::make_unique<GameObject>(
+                auto newObject = std::make_unique<GameObject>(
                     Vector3(0.f, m_ShadowHeight, 0.f),  // 位置はあとで変えるので仮
                     Vector3::Zero,
                     Vector3(m_SizePiece, 1.0f, m_SizePiece)
                 );
-                GameObject* newObject = obj.get();
                 newObject->SetID(m_LastObjectId++);
                 newObject->SetName("Shadow");
                 newObject->SetTag("Shadow");
@@ -216,6 +216,14 @@ void ShadowSystemComponent::UpdateShadowObjects(const int* const* mapData, const
                 // レンダラー追加（SimplePlaneRendererComponentは3D用）
                 Color shadowColor = Color(0.0f, 0.0f, 0.0f, 0.5f);
                 newObject->AddMeshComponent<SimplePlaneRendererComponent>(shadowColor, m_ShadowTexturePath);
+                gameObjectList->AddObject(std::move(newObject));    // リスト追加
+            }
+
+            if (addNum > 0)
+            {
+                // 再取得
+                shadowObjects = gameObjectList->FindGameObjectsWithTag("Shadow");
+                std::cout << addNum << "個影オブジェクトを作成しました" << std::endl;
             }
 
             GameObject* shadowObj = shadowObjects[shadowCnt];
