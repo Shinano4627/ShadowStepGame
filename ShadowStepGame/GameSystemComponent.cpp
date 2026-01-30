@@ -505,7 +505,8 @@ void GameSystemComponent::NextTimeline(GameObjectList* gameObjectList)
     // マップ更新
     m_mapSystem->UpdateMap(
         m_unitSystem->GetAllUnits(),
-        m_shadowSystem->GetShadowMap()
+        m_shadowSystem->GetShadowMap(),
+        gameObjectList
     ); 
     
     // 影更新
@@ -514,7 +515,8 @@ void GameSystemComponent::NextTimeline(GameObjectList* gameObjectList)
     // マップ更新
     m_mapSystem->UpdateMap(
         m_unitSystem->GetAllUnits(),
-        m_shadowSystem->GetShadowMap()
+        m_shadowSystem->GetShadowMap(),
+        gameObjectList
     );
 
     //=======================================

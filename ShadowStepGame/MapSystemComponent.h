@@ -80,7 +80,8 @@ public:
     // UnitData,ShadowData,地形MapDataを元にMapDataを更新する
     // ===================================================================
     void UpdateMap(const std::vector<UnitComponent*>& units,
-        const int* const* shadowMap);
+        const int* const* shadowMap,
+        GameObjectList* objectList);
 
     void MakeMap(std::unique_ptr<GameObjectList>& objectList);      // CSVデータ読み込みとマップオブジェクトの作成
     void DeleteMap();    // 全データ削除
@@ -128,4 +129,8 @@ public:
     {
         return Vector3(m_DrawStartPosX + map.x * m_SizePiece, m_DrawStartPosY, m_DrawStartPosZ + map.z * m_SizePiece);
     }    
+
+private:
+    void MakeMapObjectData(GameObjectList* objectList, const Vector3& pos, EMapTile type);
+
 };
