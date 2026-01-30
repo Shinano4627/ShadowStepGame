@@ -19,6 +19,21 @@ void UISystemComponent::SetUIObject(std::unique_ptr<GameObjectList>& objectList)
     MakeUIStatus(objectList);
     MakeUISunRoute(objectList);
 
+    // SunOrbにSunSystemを設定
+    GameObject* sunOrb = objectList->FindGameObjectWithTag("UISunOrb");
+    if (sunOrb)
+    {
+        auto* orbComp = sunOrb->GetComponent<SunOrbUIComponent>();
+        if (orbComp && m_pOwner)
+        {
+            auto* sunSystem = m_pOwner->GetComponent<SunManageComponent>();
+            if (sunSystem)
+            {
+                orbComp->SetSunSystem(sunSystem);
+            }
+        }
+    }
+
     // 一旦タイムライン用オブジェクトを非表示に
     std::vector<GameObject*> timelineIcons = objectList->FindGameObjectsWithTag("UITimeline");
     for (auto icon : timelineIcons)
@@ -388,7 +403,7 @@ void UISystemComponent::MakeUIStatus(std::unique_ptr<GameObjectList>& objectList
 
 void UISystemComponent::MakeUISunRoute(std::unique_ptr<GameObjectList>& objectList)
 {
-    // UIAreaStatusを名前で取得
+    // UIAreaSunRouteを名前で取得
     GameObject* Area = objectList->FindGameObjectWithName("UIAreaSunRoute");
     if (!Area) return;
 
@@ -412,6 +427,35 @@ void UISystemComponent::MakeUISunRoute(std::unique_ptr<GameObjectList>& objectLi
 
     objectList->AddObject(std::move(windowObj));
     std::cout << "[SceneGame] SunRoute window created" << std::endl;
+
+    // ---------------------------------------------------------------
+    // SunOrbの設定
+    // ---------------------------------------------------------------
+    GameObject* sunOrb = objectList->FindGameObjectWithTag("UISunOrb");
+    if (sunOrb)
+    {
+        // レイヤー設定
+        auto* tex = sunOrb->GetMeshComponent<Texture2D>();
+        if (tex)
+        {
+            tex->SetRenderLayer(RenderLayer::UI_2);
+        }
+
+        // 楕円弧の設定
+        // X方向の半径: エリア幅（左右に余裕を持たせる）
+        // Y方向の半径: エリア高さ（上下に余裕を持たせる）
+        float radiusX = areaScale.x * 0.4f;
+        float radiusY = areaScale.y * 0.6f;
+
+        // 中心位置: エリア下端から余裕を持たせた位置
+        float bottomPadding = 20.f;  // 下端からの余白
+        Vector3 arcCenter(areaPos.x, areaPos.y - areaScale.y / 2.f + bottomPadding, 0.f);
+
+        // SunOrbUIComponentを追加
+        sunOrb->AddComponent<SunOrbUIComponent>(arcCenter, radiusX, radiusY);
+
+        std::cout << "[SceneGame] SunOrb UI created" << std::endl;
+    }
 }
 
 // ===================================================================
