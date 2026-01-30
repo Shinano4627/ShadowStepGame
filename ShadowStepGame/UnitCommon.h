@@ -40,6 +40,11 @@ struct MapPosition
 		, z(_z)
 	{}
 
+	bool operator==(const MapPosition& other) const
+	{
+		return x == other.x && z == other.z;
+	}
+
 	// オペレーターオーバーロード
 	MapPosition& operator=(const MapPosition& pos)
 	{
@@ -128,6 +133,16 @@ struct MapPosition
 		return *this;
 	}
 };
+struct MapPositionHash
+{
+	std::size_t operator()(const MapPosition& pos) const noexcept
+	{
+		std::size_t hx = std::hash<int>{}(pos.x);
+		std::size_t hz = std::hash<int>{}(pos.z);
+		return hx ^ (hz << 1); // 定番の合成
+	}
+};
+
 
 struct UnitStatus
 {

@@ -13,6 +13,7 @@
 #include "UISystemComponent.h"
 #include "UnitComponent.h"
 #include "EnemyAICompoment.h"
+#include <unordered_set>
 
 void GameSystemComponent::InitGame(std::unique_ptr<GameObjectList>& gameObjectList)
 {
@@ -377,8 +378,7 @@ void GameSystemComponent::UpdateUnitActing()
 void GameSystemComponent::UpdateUnitEnd()
 {
     // 影チェック
-    CheckShadowKill(m_CurrentUnit);
-
+    CheckShadowKill();
     m_CurrentUnit = nullptr;
     ChangeState(BattleState::Judge);
 }
@@ -398,7 +398,7 @@ void GameSystemComponent::UpdateSunMove()
     m_sunSystem->AdvanceTurn();
 
     // 次は勝敗判定へ
-    ChangeState(BattleState::Judge);
+    ChangeState(BattleState::UnitEnd);
 }
 
 void GameSystemComponent::UpdateJudge(GameObjectList* gameObjectList)
@@ -577,59 +577,98 @@ const char* GameSystemComponent::BattleStateToString(BattleState state)
 }
 
 // 現在のユニット位置が影に被っているかチェックしてKill
-void GameSystemComponent::CheckShadowKill(UnitComponent* unit)
+void GameSystemComponent::CheckShadowKill()
 {
-    // m_Unitpositionをm_mapSystemのConvertUnitPosToMapIndexでMap配列に変換。
-    // ShadowMapSystemを使って今のPositionが影にかぶっているかチェック
-    // 被っていたらその影の発生ObjectのEMapTileを調べる。
-    // （ShadowSystemにて影Mapの更新の際、その影の元のObjectのMap配列とEMapTileの情報を保存しておく）
-    // m_UnitTypeがEnemyで影のObjctがPlayerの時、
-    // m_UnitTypeがPlayerで影のオブジェクトがEnemyの時のみ次のKill処理をする
-    // その影の元のObjectのMap配列をm_mapSystemのConvertMapIndexToUnitPosを使ってUnit座標に変換
-    // UnitSystemのFindUnitAtPositionを使ってKillしたいユニットのComponent*を取得。
-    // それを使ってUnitSystemのUnRegisterUnitでKill（削除）
-    
-    if (!unit) return;
-    int mapX, mapZ;
-    if (!m_mapSystem->ConvertUnitPosToMapIndex(
-        m_Unitposition.x, m_Unitposition.z,
-        mapX, mapZ
-    ))
+    // 全ユニットの位置を取得
+    std::vector<UnitComponent*> allUnits = m_unitSystem->GetAliveUnits();
+    if (allUnits.empty()) return;
+
+    // 太陽方向から影ベクトル作成
+    MapPosition lightDir = m_sunSystem->GetDirection();
+
+    // 真上 → 影なし
+    if (lightDir.x == 0 && lightDir.z == 0)
+        return;
+    int distance = abs(lightDir.x) + abs(lightDir.z);
+    // 長さ計算
+    int shadowLength = std::clamp(
+        distance / 2,
+        2,
+        8
+    );
+    // 正規化
+    MapPosition shadowDir{
+    (lightDir.x != 0) ? (lightDir.x > 0 ? 1 : -1) : 0,
+    (lightDir.z != 0) ? (lightDir.z > 0 ? 1 : -1) : 0
+    };
+
+    // 影マス辞書作成
+    // key: 影マス, value: 影を出しているユニット
+    std::unordered_map<MapPosition, UnitComponent*, MapPositionHash> shadowOwners;
+
+    // 各ユニットから影を伸ばす
+    for (auto* owner : allUnits)
     {
-        return;
+        if (!owner) continue;
+
+        MapPosition base = owner->GetPosition();
+
+        for (int i = 1; i <= shadowLength; ++i)
+        {
+            MapPosition shadowPos{
+                base.x + shadowDir.x * i,
+                base.z + shadowDir.z * i
+            };
+
+            // マップ外なら打ち切り
+            int mx, mz;
+            if (!m_mapSystem->ConvertUnitPosToMapIndex(
+                shadowPos.x, shadowPos.z, mx, mz))
+                break;
+
+            // すでに誰かの影なら奪わない
+            if (shadowOwners.contains(shadowPos))
+                continue;
+
+            shadowOwners.emplace(shadowPos, owner);
+        }
     }
 
-    // 影の有無確認
-    int shadowSource = m_shadowSystem->GetShadowSourceAt(mapX, mapZ);
+    // 判定
+    std::unordered_set<UnitComponent*> killSet;
 
-    // 影の元タイプ判定
-    UnitType shadowType = UnitType::Player;
-    switch (shadowSource) {
-    case 2:// Player
-        shadowType = UnitType::Enemy;
-        break;
-    case 3:// Enemy
-        shadowType = UnitType::Player;
-        break;
-    default:// それ以外
-        return;
-        break;
+    for (auto* stepper : allUnits)
+    {
+        if (!stepper) continue;
+
+        MapPosition pos = stepper->GetPosition();
+
+        auto it = shadowOwners.find(pos);
+        if (it == shadowOwners.end())
+            continue;
+
+        UnitComponent* shadowOwner = it->second;
+        if (!shadowOwner) continue;
+
+        // 同陣営なら無視
+        if (stepper->GetType() == shadowOwner->GetType())
+            continue;
+
+        // 重複防止で登録
+        killSet.insert(shadowOwner);
     }
 
+    // KILL
+    for (auto* dead : killSet)
+    {
+        if (!dead) continue;
 
-    // 自分と異なるタイプの影のみKill対象
-    if (unit->GetType() == shadowType) return;
+        std::cout
+            << "[GameSystem] ShadowKill! UnitID:"
+            << dead->GetId() << std::endl;
 
-    // マップ座標 → Unit座標に変換
-    int targetUnitX, targetUnitZ;
-    m_mapSystem->ConvertMapIndexToUnitPos(mapX, mapZ, targetUnitX, targetUnitZ);
-    MapPosition targetPos{ targetUnitX, targetUnitZ };
+        m_unitSystem->UnRegisterUnit(dead);
+    }
 
-    UnitComponent* targetUnit = m_unitSystem->FindUnitAtPosition(targetPos);
-    if (!targetUnit) return;
-
-    std::cout << "[GameSystem] ShadowKill! UnitID:" << targetUnit->GetId() << std::endl;
-
-    m_unitSystem->UnRegisterUnit(targetUnit);
 
 }
