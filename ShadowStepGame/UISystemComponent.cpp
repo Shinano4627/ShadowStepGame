@@ -441,13 +441,18 @@ void UISystemComponent::MakeUISunRoute(std::unique_ptr<GameObjectList>& objectLi
             tex->SetRenderLayer(RenderLayer::UI_2);
         }
 
-        // 弧の中心位置と半径を計算
-        // 中心はエリアの下端中央、半径はエリア高さの80%程度
-        float radius = areaScale.y * 0.8f;
-        Vector3 arcCenter(areaPos.x, areaPos.y - areaScale.y / 2.f + 10.f, 0.f);
+        // 楕円弧の設定
+        // X方向の半径: エリア幅（左右に余裕を持たせる）
+        // Y方向の半径: エリア高さ（上下に余裕を持たせる）
+        float radiusX = areaScale.x * 0.4f;
+        float radiusY = areaScale.y * 0.6f;
+
+        // 中心位置: エリア下端から余裕を持たせた位置
+        float bottomPadding = 20.f;  // 下端からの余白
+        Vector3 arcCenter(areaPos.x, areaPos.y - areaScale.y / 2.f + bottomPadding, 0.f);
 
         // SunOrbUIComponentを追加
-        sunOrb->AddComponent<SunOrbUIComponent>(arcCenter, radius);
+        sunOrb->AddComponent<SunOrbUIComponent>(arcCenter, radiusX, radiusY);
 
         std::cout << "[SceneGame] SunOrb UI created" << std::endl;
     }

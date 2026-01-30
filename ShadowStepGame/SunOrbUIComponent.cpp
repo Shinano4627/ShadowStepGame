@@ -1,8 +1,10 @@
 ﻿// ===================================================================
 // SunOrbUIComponent.cpp
-// 太陽の位置をUI上に弧状で表示するコンポーネント
+// 太陽の位置をUI上に楕円弧状で表示するコンポーネント
 // ===================================================================
 #include "SunOrbUIComponent.h"
+
+#include "Texture2D.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -31,18 +33,24 @@ void SunOrbUIComponent::Update()
 
     // 進捗率を計算（0.0 ～ 1.0）
     float progress = 0.f;
+    // 進捗0のとき色を変更
+    if (currentTurn == 0)
+    {
+        m_pOwner->GetMeshComponent<Texture2D>()->SetColor(m_pSunSystem->GetCurrentSunData().color);
+    }
+
     if (maxTurn > 0)
     {
         progress = static_cast<float>(currentTurn) / static_cast<float>(maxTurn);
     }
 
-    // 弧上の位置を計算して設定
+    // 楕円弧上の位置を計算して設定
     Vector3 newPos = CalcArcPosition(progress);
     m_pOwner->GetTransform().SetPosition(newPos);
 }
 
 // ===================================================================
-// 弧上の位置を計算
+// 楕円弧上の位置を計算
 // progress: 0.0（左端）～ 1.0（右端）
 // ===================================================================
 Vector3 SunOrbUIComponent::CalcArcPosition(float progress)
@@ -53,9 +61,9 @@ Vector3 SunOrbUIComponent::CalcArcPosition(float progress)
     // 右端(progress=1) → 角度0（0度）
     float angle = DirectX::XM_PI * (1.f - progress);
 
-    // 弧上の位置を計算
-    float x = m_CenterPos.x + m_Radius * cosf(angle);
-    float y = m_CenterPos.y + m_Radius * sinf(angle);
+    // 楕円弧上の位置を計算
+    float x = m_CenterPos.x + m_RadiusX * cosf(angle);
+    float y = m_CenterPos.y + m_RadiusY * sinf(angle);
 
     return Vector3(x, y, 0.f);
 }
