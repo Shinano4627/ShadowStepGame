@@ -19,6 +19,21 @@ void UISystemComponent::SetUIObject(std::unique_ptr<GameObjectList>& objectList)
     MakeUIStatus(objectList);
     MakeUISunRoute(objectList);
 
+    // SunOrbにSunSystemを設定
+    GameObject* sunOrb = objectList->FindGameObjectWithTag("UISunOrb");
+    if (sunOrb)
+    {
+        auto* orbComp = sunOrb->GetComponent<SunOrbUIComponent>();
+        if (orbComp && m_pOwner)
+        {
+            auto* sunSystem = m_pOwner->GetComponent<SunManageComponent>();
+            if (sunSystem)
+            {
+                orbComp->SetSunSystem(sunSystem);
+            }
+        }
+    }
+
     // 一旦タイムライン用オブジェクトを非表示に
     std::vector<GameObject*> timelineIcons = objectList->FindGameObjectsWithTag("UITimeline");
     for (auto icon : timelineIcons)
@@ -388,7 +403,7 @@ void UISystemComponent::MakeUIStatus(std::unique_ptr<GameObjectList>& objectList
 
 void UISystemComponent::MakeUISunRoute(std::unique_ptr<GameObjectList>& objectList)
 {
-    // UIAreaStatusを名前で取得
+    // UIAreaSunRouteを名前で取得
     GameObject* Area = objectList->FindGameObjectWithName("UIAreaSunRoute");
     if (!Area) return;
 
@@ -412,6 +427,30 @@ void UISystemComponent::MakeUISunRoute(std::unique_ptr<GameObjectList>& objectLi
 
     objectList->AddObject(std::move(windowObj));
     std::cout << "[SceneGame] SunRoute window created" << std::endl;
+
+    // ---------------------------------------------------------------
+    // SunOrbの設定
+    // ---------------------------------------------------------------
+    GameObject* sunOrb = objectList->FindGameObjectWithTag("UISunOrb");
+    if (sunOrb)
+    {
+        // レイヤー設定
+        auto* tex = sunOrb->GetMeshComponent<Texture2D>();
+        if (tex)
+        {
+            tex->SetRenderLayer(RenderLayer::UI_2);
+        }
+
+        // 弧の中心位置と半径を計算
+        // 中心はエリアの下端中央、半径はエリア高さの80%程度
+        float radius = areaScale.y * 0.8f;
+        Vector3 arcCenter(areaPos.x, areaPos.y - areaScale.y / 2.f + 10.f, 0.f);
+
+        // SunOrbUIComponentを追加
+        sunOrb->AddComponent<SunOrbUIComponent>(arcCenter, radius);
+
+        std::cout << "[SceneGame] SunOrb UI created" << std::endl;
+    }
 }
 
 // ===================================================================
