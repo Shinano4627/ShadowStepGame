@@ -148,7 +148,7 @@ private:
 	void Input_Select();
 
 	// 現在のユニット位置が影に被っているかチェックしてKill
-	void CheckShadowKill(UnitComponent* unit);
+	void CheckShadowKill();
 
 private:
 	//=======================================

@@ -208,6 +208,8 @@ MapPosition EnemyAI::DecideMoveCloser(
 			int tile = GetTile(mapData, p.x, p.z, mapW, mapH);
 
 			// Player / Enemy / Wall などを除外
+			if (tile == static_cast<int>(EMapTile::Enemy))
+				continue;
 			if (!IsWalkableTile(tile))
 				continue;
 
