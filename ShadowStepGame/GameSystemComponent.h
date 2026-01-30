@@ -207,4 +207,8 @@ private:
 	bool m_RequestStartSelectMap = false;
 	UnitComponent* m_RequestUnit = nullptr;
 	MapPosition m_RequestPos;
+
+public:
+	bool GameEnd_flg = false;
+
 };

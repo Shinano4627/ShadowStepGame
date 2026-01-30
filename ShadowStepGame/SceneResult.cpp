@@ -29,7 +29,6 @@ void SceneResult::Init()
 
     // 表示時間初期化
     m_DisplayTime = 0.0f;
-    m_pCamera = nullptr; // カメラはDraw()で受け取る
 
     using namespace DirectX::SimpleMath;
 
@@ -38,23 +37,23 @@ void SceneResult::Init()
 
     // 追加コンポーネント
     {
-        // ===================================================================
-        // カメラ相対移動コンポーネントを追加
-        // ※ カメラはまだnullptrだが、Update()で使用する前にDraw()が呼ばれてセットされる
-        // ===================================================================
-        // プレイヤー移動コンポーネント
-        auto* mover = m_GameObjectList->FindGameObjectWithTag("ModelObject")->AddComponent<CameraRelativeMoverComponent>(
-            nullptr,    // カメラは後でセット
-            8.0f,       // 移動速度
-            3.0f        // 回転速度
-        );
+        auto* m_win = m_GameObjectList->FindGameObjectWithTag("WIN");
+        m_win->SetActive(false);
+        auto* m_loss = m_GameObjectList->FindGameObjectWithTag("LOSS");
+        m_loss->SetActive(false);
 
-        std::cout << "[SceneResult] ModelObject created with camera-relative movement" << std::endl;
+        // Player勝利か
+        if (SCENE_MANAGER.GetPlayerResult())
+        {
+            m_win->SetActive(true);
+        }
+        else {
+            m_loss->SetActive(true);
+        }
     }
 
     // カメラ初期化
     m_Camera.Init();
-    m_UiCamera.Init();
 
     // BGMの開始
     SOUND_MANAGER.PlayBGM(SOUND_LABEL::SOUND_LABEL_BGM_GAME);
@@ -85,11 +84,9 @@ void SceneResult::UnInit()
 {
     std::cout << "[SceneResult] UnInit" << std::endl;
     m_GameObjectList->DeleteObjectList();
-    m_pCamera = nullptr;
 
     // カメラ終了処理
     m_Camera.Uninit();
-    m_UiCamera.Init();
 
     // BGMの停止
     SOUND_MANAGER.Stop(SOUND_LABEL::SOUND_LABEL_BGM_GAME);
@@ -104,7 +101,6 @@ void SceneResult::Update()
 
     // カメラ更新
     m_Camera.Update();
-    m_UiCamera.Update();
 
     // Enterキーでタイトルへ
     if (IO_MANAGER.GetKeyDown(TYPE_OK) || IO_MANAGER.GetKeyDownKeyBord(VK_RETURN))
@@ -112,30 +108,6 @@ void SceneResult::Update()
         std::cout << "[SceneResult] ENTER pressed - Back to Title" << std::endl;
         m_nextScene = SCENE_TITLE;
         return;
-    }
-
-    // Escキーでゲームをリトライ
-    if (IO_MANAGER.GetKeyDownKeyBord(VK_ESCAPE))
-    {
-        std::cout << "[SceneResult] ESC pressed - Retry Game" << std::endl;
-        m_nextScene = SCENE_GAME;
-        return;
-    }
-
-    // ===================================================================
-    // CameraRelativeMoverComponentにカメラをセット
-    // ===================================================================
-    if (m_pCamera)
-    {
-        auto* modelObject = m_GameObjectList->FindGameObjectWithTag("ModelObject");
-        if (modelObject)
-        {
-            auto* mover = modelObject->GetComponent<CameraRelativeMoverComponent>();
-            if (mover)
-            {
-                mover->SetCamera(m_pCamera);
-            }
-        }
     }
 
     // GameObjectリストを更新（カメラ相対移動など）
@@ -148,70 +120,12 @@ void SceneResult::Draw()
     Draw(&m_Camera);
 
     // UI層のみ描画
-    m_GameObjectList->DrawLayer(&m_UiCamera, RenderLayer::UI);
+    m_GameObjectList->DrawLayer(&m_Camera, RenderLayer::UI);
 }
 
 void SceneResult::Draw(Camera* camera)
 {
-    // カメラを保存（Update()で使用）
-    m_pCamera = camera;
-
-    // ===================================================================
-    // カメラ制御処理
-    // ===================================================================
-    if (camera)
-    {
-        // ModelObjectを検索
-        auto* modelObject = m_GameObjectList->FindGameObjectWithTag("ModelObject");
-        if (modelObject)
-        {
-            using namespace DirectX::SimpleMath;
-
-            // カメラの回転処理（矢印キー）
-            static float cameraAngle = 0.0f;       // カメラの水平角度
-            static float cameraDistance = 10.0f;   // カメラの距離
-            static float cameraHeight = 5.0f;      // カメラの高さ
-
-            float deltaTime = Game::GetDeltaTime();
-
-            // 左右矢印キーでカメラ回転
-            if (IO_MANAGER.GetKeyPressKeyBord(VK_LEFT))
-            {
-                cameraAngle -= 2.0f * deltaTime; // 左回転
-            }
-            if (IO_MANAGER.GetKeyPressKeyBord(VK_RIGHT))
-            {
-                cameraAngle += 2.0f * deltaTime; // 右回転
-            }
-
-            // 上下矢印キーでズーム
-            if (IO_MANAGER.GetKeyPressKeyBord(VK_UP))
-            {
-                cameraDistance -= 8.0f * deltaTime; // 近づく
-                if (cameraDistance < 3.0f) cameraDistance = 3.0f;
-            }
-            if (IO_MANAGER.GetKeyPressKeyBord(VK_DOWN))
-            {
-                cameraDistance += 8.0f * deltaTime; // 遠ざかる
-                if (cameraDistance > 30.0f) cameraDistance = 30.0f;
-            }
-
-            // モデル位置取得
-            Vector3 modelPosition = modelObject->GetTransform().GetPosition();
-
-            // カメラ位置を計算（円周上を回転）
-            float x = modelPosition.x + sin(cameraAngle) * cameraDistance;
-            float z = modelPosition.z + cos(cameraAngle) * cameraDistance;
-            float y = modelPosition.y + cameraHeight;
-
-            Vector3 cameraPosition(x, y, z);
-
-            // カメラ設定
-            camera->SetPosition(cameraPosition);
-            camera->SetTarget(modelPosition);
-        }
-    }
-
+    
     // WORLD層を描画（カメラ使用）
     m_GameObjectList->DrawLayer(camera, RenderLayer::WORLD);
 }

@@ -24,6 +24,8 @@ private:
 	std::atomic<bool> m_isInitializing = false;		// 初期化中フラグ
 	std::mutex m_sceneMutex;						// シーンアクセス用ミューテックス
 
+	bool PlayerResult = false;
+
 public:
 	// シーン共通で使用
 	//int score;	
@@ -48,6 +50,8 @@ public:
 
 	std::string GetSceneName(SCENE _scene) { return m_scene->GetSceneName(_scene); }
 	std::vector<std::string>& GetSceneNameAll() { return m_scene->GetSceneNameAll(); }
+	bool GetPlayerResult() { return PlayerResult; }
+	void SetPlayerResult(bool result) { PlayerResult = result; }
 #pragma endregion
 };
 

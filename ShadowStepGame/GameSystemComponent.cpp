@@ -14,9 +14,12 @@
 #include "UnitComponent.h"
 #include "EnemyAICompoment.h"
 #include <unordered_set>
+#include <SceneManager.h>
 
 void GameSystemComponent::InitGame(std::unique_ptr<GameObjectList>& gameObjectList)
 {
+    GameEnd_flg = false;
+
     // 同じ GameObject にある他の SystemComponent を取得
     m_mapSystem = m_pOwner->GetComponent<MapSystemComponent>();
     m_unitSystem = m_pOwner->GetComponent<UnitSystemComponent>();
@@ -407,6 +410,15 @@ void GameSystemComponent::UpdateJudge(GameObjectList* gameObjectList)
     // 勝敗確定
     if (IsEnemyAllDead() || IsPlayerAllDead())
     {
+        if (IsPlayerAllDead())
+        {
+            // PlayerWIN
+            SCENE_MANAGER.SetPlayerResult(true);
+        }
+        else {
+            // PlayerLOSS
+            SCENE_MANAGER.SetPlayerResult(false);
+        }
         ChangeState(BattleState::End);
     }
     else {
@@ -417,7 +429,7 @@ void GameSystemComponent::UpdateJudge(GameObjectList* gameObjectList)
 
 void GameSystemComponent::UpdateEnd()
 {
-
+    GameEnd_flg = true;
 }
 
 void GameSystemComponent::UpdateShadow(GameObjectList* gameObjectList)

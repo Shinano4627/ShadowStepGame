@@ -1,6 +1,6 @@
-// ===================================================================
+ï»¿// ===================================================================
 // SceneResult.h
-// ƒŠƒUƒ‹ƒgƒV[ƒ“ - OBJƒ‚ƒfƒ‹“Ç‚İ‚İ‚ÆƒJƒƒ‰’Ç]
+// ãƒªã‚¶ãƒ«ãƒˆã‚·ãƒ¼ãƒ³ - OBJãƒ¢ãƒ‡ãƒ«èª­ã¿è¾¼ã¿ã¨ã‚«ãƒ¡ãƒ©è¿½å¾“
 // ===================================================================
 #pragma once
 #include "SceneBase.h"
@@ -9,17 +9,16 @@
 class SceneResult : public SceneBase
 {
 private:
-    // ƒIƒuƒWƒFƒNƒgŠÇ——pID
+    // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç®¡ç†ç”¨ID
     enum OBJECT_ID
     {
-        ID_MODEL_OBJECT,    // OBJƒ‚ƒfƒ‹•\¦—p
+        ID_MODEL_OBJECT,    // OBJãƒ¢ãƒ‡ãƒ«è¡¨ç¤ºç”¨
 
         ID_COUNT,
     };
 
-    float m_DisplayTime = 0.f;    // •\¦ŠÔ
-    Camera* m_pCamera = nullptr;      // ƒJƒƒ‰‚Ö‚ÌQÆiDraw()‚Åó‚¯æ‚éj
-
+    float m_DisplayTime = 0.f;    // è¡¨ç¤ºæ™‚é–“
+    
 public:
     void Init() override;
     void UnInit() override;

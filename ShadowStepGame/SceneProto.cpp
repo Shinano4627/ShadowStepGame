@@ -136,6 +136,7 @@ void SceneProto::UnInit()
 
 void SceneProto::Update()
 {
+
     // 1. カメラ更新
     m_Camera.Update();
     m_UiCamera.Update();
@@ -146,6 +147,11 @@ void SceneProto::Update()
     // システムアップデート
     auto* gameSystem = m_GameObjectList->FindGameObjectWithTag("System")->GetComponent<GameSystemComponent>();
     gameSystem->UpdateGame(m_GameObjectList);   // リスト権限を渡して各種アップデート
+    if (gameSystem->GameEnd_flg == true)
+    {
+        std::cout << "[SceneProto] Ended - Next Result" << std::endl;
+        m_nextScene = SCENE_RESULT;
+    }
 
     // 2. 全GameObject更新
     m_GameObjectList->UpdateObjectList();
