@@ -19,6 +19,7 @@
 #include "ShadowSystemComponent.h"
 #include "UnitSystemComponent.h"
 #include "UISystemComponent.h"
+#include "MeshRendererComponent.h"
 
 #include <fstream>
 #include <sstream>
@@ -243,12 +244,13 @@ void SceneProto::MakeUnit()
 
             // Obj生成
             auto obj = std::make_unique<GameObject>(
-                Vector3(pl_x * 5, 2.0f, pl_z * 5),
+                Vector3(pl_x * 5, 0.f, pl_z * 5),
                 Vector3::Zero,
-                Vector3(1.0f, 1.0f, 1.0f)
+                Vector3(2.5f, 2.5f, 2.5f)
             );
             GameObject* newObject = obj.get();
             newObject->SetID(u_ID);
+            Transform& transform = newObject->GetTransform();
 
             if (data == 1 ||
                 data == 2 ||
@@ -264,15 +266,43 @@ void SceneProto::MakeUnit()
                     // Attack
                     unit_S.model = UnitModel::Attack;
                     // Mesh
-                    newObject->AddMeshComponent<SimpleCubeRendererComponent>
-                        (Color(1.0f,0.0f,0.0f,1.0f));
+                    {
+                        // テンプレートからモデル情報を取得
+                        auto playerTemplate = m_GameObjectList->FindGameObjectWithName("PlayerAttackTemplate");
+                        if (!playerTemplate) return;
+                        auto* templateMesh = playerTemplate->GetMeshComponent<MeshRendererComponent>();
+                        if (!templateMesh) return;
+                        Vector3 newScale = transform.GetScale() * playerTemplate->GetTransform().GetScale();
+                        transform.SetScale(newScale);
+
+                        // メッシュコンポーネントを追加
+                        auto mesh = newObject->AddMeshComponent<MeshRendererComponent>(
+                            templateMesh->GetModelPath(),
+                            templateMesh->GetTexturePath()
+                        );
+                        mesh->LoadModel();
+                    }
                     break;
                 case 2:
+                {
                     // Place
                     unit_S.model = UnitModel::Place;
                     // Mesh
-                    newObject->AddMeshComponent<SimpleCubeRendererComponent>
-                        (Color(1.0f, 0.0f, 0.0f, 1.0f));
+                    // テンプレートからモデル情報を取得 TODO:配置と攻撃のモデルをわける
+                    auto playerTemplate = m_GameObjectList->FindGameObjectWithName("PlayerAttackTemplate");
+                    if (!playerTemplate) return;
+                    auto* templateMesh = playerTemplate->GetMeshComponent<MeshRendererComponent>();
+                    if (!templateMesh) return;
+                    Vector3 newScale = transform.GetScale() * playerTemplate->GetTransform().GetScale();
+                    transform.SetScale(newScale);
+
+                    // メッシュコンポーネントを追加
+                    auto mesh = newObject->AddMeshComponent<MeshRendererComponent>(
+                        templateMesh->GetModelPath(),
+                        templateMesh->GetTexturePath()
+                    );
+                    mesh->LoadModel();
+                }
                     break;
                 case 3:
                     // Giant
@@ -299,15 +329,43 @@ void SceneProto::MakeUnit()
                     // Attack
                     unit_S.model = UnitModel::Attack;
                     // Mesh
-                    newObject->AddMeshComponent<SimpleCubeRendererComponent>
-                        (Color(0.0f, 0.0f, 1.0f, 1.0f));
+                    {
+                        // テンプレートからモデル情報を取得
+                        auto enemyTemplate = m_GameObjectList->FindGameObjectWithName("EnemyTemplate");
+                        if (!enemyTemplate) return;
+                        auto* templateMesh = enemyTemplate->GetMeshComponent<MeshRendererComponent>();
+                        if (!templateMesh) return;
+                        Vector3 newScale = transform.GetScale() * enemyTemplate->GetTransform().GetScale();
+                        transform.SetScale(newScale);
+
+                        // メッシュコンポーネントを追加
+                        auto mesh = newObject->AddMeshComponent<MeshRendererComponent>(
+                            templateMesh->GetModelPath(),
+                            templateMesh->GetTexturePath()
+                        );
+                        mesh->LoadModel();
+                    }
                     break;
                 case 5:
                     // Place
                     unit_S.model = UnitModel::Place;
                     // Mesh
-                    newObject->AddMeshComponent<SimpleCubeRendererComponent>
-                        (Color(0.0f, 0.0f, 1.0f, 1.0f));
+                    {
+                        // テンプレートからモデル情報を取得
+                        auto enemyTemplate = m_GameObjectList->FindGameObjectWithName("EnemyTemplate");
+                        if (!enemyTemplate) return;
+                        auto* templateMesh = enemyTemplate->GetMeshComponent<MeshRendererComponent>();
+                        if (!templateMesh) return;
+                        Vector3 newScale = transform.GetScale() * enemyTemplate->GetTransform().GetScale();
+                        transform.SetScale(newScale);
+
+                        // メッシュコンポーネントを追加
+                        auto mesh = newObject->AddMeshComponent<MeshRendererComponent>(
+                            templateMesh->GetModelPath(),
+                            templateMesh->GetTexturePath()
+                        );
+                        mesh->LoadModel();
+                    }
                     break;
                 case 6:
                     // Giant

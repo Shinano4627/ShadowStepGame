@@ -78,7 +78,7 @@ void SceneTitle::Update()
     if (IO_MANAGER.GetKeyDown(TYPE_OK) || IO_MANAGER.GetKeyDownKeyBord(VK_RETURN))
     {
         std::cout << "[SceneTitle] ENTER pressed - Starting Game" << std::endl;
-        m_nextScene = SCENE_SELECT;
+        m_nextScene = SCENE_PROTO;
         return;
     }
 
