@@ -17,16 +17,11 @@ void MapSystemComponent::MakeMap(std::unique_ptr<GameObjectList>& objectList)   
     int n = 3000;
     ifstream csv_data(m_DataFile, ios::in);
 
-    // 既存データの削除
-    DeleteMap();
-
-    if (!csv_data.is_open())
-    {
+    if (!csv_data.is_open()) {
         cout << "Error: opening file fail" << endl;
         exit(1);
     }
-    else
-    {
+    else {
         cout << "Start Read : " << m_DataFile << endl;
 
         string line;
@@ -45,21 +40,11 @@ void MapSystemComponent::MakeMap(std::unique_ptr<GameObjectList>& objectList)   
         getline(sin, word, ',');
         m_MapHeight = stoi(word);
 
-        // マップインスタンス作成
+        // マップ
         m_MapData = new int* [m_MapHeight]();
         for (int i = 0; i < m_MapHeight; i++)
         {
             m_MapData[i] = new int[m_MapWidth]();
-        }
-        m_UnitMapData = new int* [m_MapHeight]();
-        for (int i = 0; i < m_MapHeight; i++)
-        {
-            m_UnitMapData[i] = new int[m_MapWidth]();
-        }
-        m_ObjectMapData = new int* [m_MapHeight]();
-        for (int i = 0; i < m_MapHeight; i++)
-        {
-            m_ObjectMapData[i] = new int[m_MapWidth]();
         }
 
         // 原点を中心に表示されるようにスタート位置を計算
@@ -126,94 +111,20 @@ void MapSystemComponent::MakeMap(std::unique_ptr<GameObjectList>& objectList)   
             //return words;
         }
 
+
         csv_data.close();
+    }
 
-        // レイヤーデータの作成
-        for (int i = 0; i < m_MapHeight; i++)
+    // デバッグ出力
+    for (int i = 0; i < m_MapHeight; i++)
+    {
+        for (int j = 0; j < m_MapWidth; j++)
         {
-            for (int j = 0; j < m_MapWidth; j++)
-            {
-                switch ((EMapTile)m_MapData[i][j])
-                {
-                    // オブジェクト
-                case EMapTile::Wall:
-                    m_UnitMapData[i][j] = (int)EMapTile::Empty;
-                    m_ObjectMapData[i][j] = (int)EMapTile::Wall;
-                    break;
-                case EMapTile::Tree:
-                    m_UnitMapData[i][j] = (int)EMapTile::Empty;
-                    m_ObjectMapData[i][j] = (int)EMapTile::Tree;
-                    break;
-                    // ユニット
-                case EMapTile::Player:
-                    m_UnitMapData[i][j] = (int)EMapTile::Player;
-                    m_ObjectMapData[i][j] = (int)EMapTile::Empty;
-                    break;
-                case EMapTile::Enemy:
-                    m_UnitMapData[i][j] = (int)EMapTile::Enemy;
-                    m_ObjectMapData[i][j] = (int)EMapTile::Empty;
-                    break;
-                    // その他
-                case EMapTile::Shadow:
-                case EMapTile::Empty:
-                case EMapTile::None:
-                    m_UnitMapData[i][j] = (int)EMapTile::Empty;
-                    m_ObjectMapData[i][j] = (int)EMapTile::Empty;
-                    break;
-                default:
-                    break;
-                }
-
-                std::cout << m_MapData[i][j];       // デバッグ出力
-            }
-            std::cout << std::endl;
+            std::cout << m_MapData[i][j];
         }
+        std::cout << std::endl;
     }
 
-}
-
-void MapSystemComponent::DeleteMap()
-{
-    if (m_MapData)
-    {
-        for (int i = 0; i < m_MapHeight; i++)
-        {
-            delete[] m_MapData[i];
-        }
-        delete[] m_MapData;
-    }
-
-    if (m_UnitMapData)
-    {
-        for (int i = 0; i < m_MapHeight; i++)
-        {
-            delete[] m_UnitMapData[i];
-        }
-        delete[] m_UnitMapData;
-    }
-
-    if (m_ObjectMapData)
-    {
-        for (int i = 0; i < m_MapHeight; i++)
-        {
-            delete[] m_ObjectMapData[i];
-        }
-        delete[] m_ObjectMapData;
-    }
-
-    if (m_SelectMapData)
-    {
-        for (int z = 0; z < m_MapHeight; z++)
-            delete[] m_SelectMapData[z];
-        delete[] m_SelectMapData;
-    }
-
-    if (m_SelectMapObjects)
-    {
-        for (int z = 0; z < m_MapHeight; z++)
-            delete[] m_SelectMapObjects[z];
-        delete[] m_SelectMapObjects;
-    }
 }
 
 // ===================================================================
@@ -225,18 +136,24 @@ void MapSystemComponent::UpdateMap(const std::vector<UnitComponent*>& units,
 {
     if (!m_pOwner) return;
 
-    // クリア
-    for (int i = 0; i < m_MapHeight; i++)
+    //=======================================
+    // マップを初期化（地形のみ残す）
+    //=======================================
+    for (int z = 0; z < m_MapHeight; ++z)
     {
-        for (int j = 0; j < m_MapWidth; j++)
+        for (int x = 0; x < m_MapWidth; ++x)
         {
-            m_MapData[i][j] = (int)EMapTile::Empty;
-            m_UnitMapData[i][j] = (int)EMapTile::Empty;
+            // 地形はそのまま、それ以外はEmptyに
+            if (m_MapData[z][x] != (int)EMapTile::Wall ||
+                m_MapData[z][x] != (int)EMapTile::Tree)
+            {
+                m_MapData[z][x] = (int)EMapTile::Empty;
+            }
         }
     }
 
     //=======================================
-    // UnitSystemからプレイヤー・敵の位置を取得
+    // UnitSystemからプレイヤー・敵の位置を取得・反映
     //=======================================
     for(auto* unit : units)
     {
@@ -250,39 +167,27 @@ void MapSystemComponent::UpdateMap(const std::vector<UnitComponent*>& units,
         if (!ConvertUnitPosToMapIndex(u_map.x, u_map.z, mapX, mapZ))
             continue;
 
-        m_UnitMapData[mapZ][mapX] =
+        m_MapData[mapZ][mapX] =
             (unit->GetType() == UnitType::Player)
             ? (int)EMapTile::Player
             : (int)EMapTile::Enemy;
     }
 
     //=======================================
-    // ユニット＞オブジェクト＞影になるように結合
+    // ShadowSystemから影情報を取得・反映
+    // 空いているセルのみ反映
     //=======================================
     
     for (int z = 0; z < m_MapHeight; ++z)
     {
         for (int x = 0; x < m_MapWidth; ++x)
         {
-            // 影
-            if (shadowMap[z][x] != 0)
+            if (m_MapData[z][x] == (int)EMapTile::Empty &&
+                shadowMap[z][x] == 1)
             {
                 m_MapData[z][x] = (int)EMapTile::Shadow;
             }
-
-            if (m_ObjectMapData[z][x] != (int)EMapTile::Empty)
-            {
-                m_MapData[z][x] = m_ObjectMapData[z][x];
-            }
-
-            if (m_UnitMapData[z][x] != (int)EMapTile::Empty)
-            {
-                m_MapData[z][x] = m_UnitMapData[z][x];
-            }
-
-            std::cout << m_MapData[z][x];       // デバッグ出力
         }
-        std::cout << std::endl;
     }
     
 }
