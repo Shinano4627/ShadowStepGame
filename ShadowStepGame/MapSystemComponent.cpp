@@ -81,35 +81,27 @@ void MapSystemComponent::MakeMap(std::unique_ptr<GameObjectList>& objectList)   
                 Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
                 switch (data)
                 {
-                case 0:
-                    //何もない
-                    color = Color(1.0f, 1.0f, 1.0f, 1.0f);
-                    break;
                 case 1:
                     //壁
                     color = Color(0.2f, 0.2f, 0.2f, 1.0f);
-                    break;
-                case 2:
-                    //プレーヤー
-                    color = Color(0, 0, 1.0f, 1.0f);
-                    break;
-                case 3:
-                    //敵
-                    color = Color(1.0f, 0, 0, 1.0f);
                     break;
                 case 4:
                     //樹
                     color = Color(0, 1.0f, 0, 1.0f);
                     break;
-                case 5:
-                    //影
-                    color = Color(0.5f, 0.5f, 0.5f, 1.0f);
+                case 0: //何もない
+                case 2: //プレーヤー
+                case 3: //敵
+                case 5: //影
+                    color = Color(1.0f, 1.0f, 1.0f, 1.0f);
+                    break;
+                
                     break;
                 default:
 
                     break;
                 }
-                newObject->AddMeshComponent<SimplePlaneRendererComponent>(color);
+                newObject->AddMeshComponent<SimplePlaneRendererComponent>(color, "asset/texture/Grid/Base.png"); // TODO　Templateから取得するようにしたい
                 mapX++;
                 n++;
                 objectList->AddObject(std::move(obj));
