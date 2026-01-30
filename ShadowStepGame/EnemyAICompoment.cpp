@@ -53,7 +53,6 @@ UnitComponent* EnemyAI::FindNearestPlayer(
 	for (auto* p : playerList)
 	{
 		if (!p) continue;
-		if (p->IsDown()) continue;
 
 		MapPosition ppos = p->GetPosition();
 
@@ -201,6 +200,10 @@ MapPosition EnemyAI::DecideMoveCloser(
 				epos.x + dx,
 				epos.z + dz
 			};
+
+			// Player に重なる位置は絶対NG
+			if (p.x == tpos.x && p.z == tpos.z)
+				continue;
 
 			int tile = GetTile(mapData, p.x, p.z, mapW, mapH);
 
