@@ -12,6 +12,7 @@
 #include "GameObjectList.h"
 #include "UnitComponent.h"
 #include "UnitCommon.h"
+#include "SunOrbUIComponent.h"
 #include <map>
 
 // 前方宣言

@@ -280,6 +280,10 @@ public:
     {
         return m_TurnProgress;      // 現在のターン経過を取得
     }
+    int GetMaxTurn() const
+    {
+        return m_MaxTurn;           // 最大ターン数を取得
+    }
     MapPosition GetDirection() const
     {
         return m_Direction;      // 現在の方向を取得
