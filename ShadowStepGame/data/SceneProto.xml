@@ -13,32 +13,6 @@
         <Color R="1" G="0" B="1" A="1"/>
     </Object>
 
-    <Object ID="2">
-        <ObjectName Value="Player"/>
-        <ObjectType Value="SimpleCube"/>
-        <Tag Value="Player"/>
-        <FileName Value=""/>
-        <Texture Value=""/>
-
-        <Posision X="0" Y="0" Z="0"/>
-        <Rotation X="0" Y="0" Z="0"/>
-        <Scale X="1" Y="1" Z="1"/>
-        <Color R="1" G="0" B="0" A="1"/>
-    </Object>
-
-    <Object ID="3">
-        <ObjectName Value="Enemy"/>
-        <ObjectType Value="SimpleCube"/>
-        <Tag Value="Enemy"/>
-        <FileName Value=""/>
-        <Texture Value=""/>
-
-        <Posision X="5" Y="0" Z="0"/>
-        <Rotation X="0" Y="0" Z="0"/>
-        <Scale X="1" Y="1" Z="1"/>
-        <Color R="0" G="0" B="1" A="1"/>
-    </Object>
-
     <Object ID="4">
         <ObjectName Value="TurnManager"/>
         <ObjectType Value=""/>

@@ -83,7 +83,9 @@ void MapSystemComponent::MakeMap(std::unique_ptr<GameObjectList>& objectList)   
             {
                 // トランスフォームデータを渡す
                 auto obj = std::make_unique<GameObject>
-                    (Vector3(m_DrawStartPosX + mapX * m_SizePiece, m_DrawStartPosY, m_DrawStartPosZ + mapZ * m_SizePiece), Vector3::Zero, Vector3(m_SizePiece / 2, 1.f, m_SizePiece / 2));
+                    (Vector3(m_DrawStartPosX + mapX * m_SizePiece, m_DrawStartPosY, m_DrawStartPosZ + mapZ * m_SizePiece),
+                        Vector3::Zero,
+                        Vector3(m_SizePiece / 2, 1.f, m_SizePiece / 2));
                 GameObject* newObject = obj.get();
                 newObject->SetID(n);
                 newObject->SetName("Map");

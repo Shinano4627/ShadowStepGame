@@ -47,7 +47,7 @@ void Game::Init()
 
 	// マネージャークラス初期化処理
 	SOUND_MANAGER.Init();
-	PHYSICS_MANAGER.Init();
+	//PHYSICS_MANAGER.Init();
 	SCENE_MANAGER.Init();
 	DATA_MANAGER.Init();
 	M_RESOURCE.Init();
@@ -76,7 +76,7 @@ void Game::Update()
 	IO_MANAGER.Update();
 
 	// 物理演算・衝突判定
-	PHYSICS_MANAGER.Update();
+	//PHYSICS_MANAGER.Update();
 
 	// マネージャークラス更新処理
 	SCENE_MANAGER.Update();
@@ -103,7 +103,7 @@ void Game::Uninit()
 	M_RESOURCE.UnInit();
 	DATA_MANAGER.UnInit();
 	SCENE_MANAGER.UnInit();
-	PHYSICS_MANAGER.UnInit();
+	//PHYSICS_MANAGER.UnInit();
 	CURSOR_MANAGER.UnInit();
 	SOUND_MANAGER.UnInit();
 

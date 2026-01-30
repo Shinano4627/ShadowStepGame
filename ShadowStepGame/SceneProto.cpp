@@ -20,6 +20,11 @@
 #include "UnitSystemComponent.h"
 #include "UISystemComponent.h"
 
+#include <fstream>
+#include <sstream>
+#include <stdio.h>
+using namespace std;
+
 using namespace DirectX::SimpleMath;
 
 
@@ -76,29 +81,9 @@ void SceneProto::Init()
     // ※m_sunSystem は現状 private なので、public setter または friend でアクセス推奨
     // gameSystem->SetSunSystem(sun); // setter を作ると良い
 
-
-
-
-
-
-        
-        // プレイヤー
-        auto* playerObj = m_GameObjectList->FindGameObjectWithTag("Player");
-        auto* playerUnit = playerObj->AddComponent<UnitComponent>();
-        UnitStatus pl_1 = { 1000,UnitType::Player,UnitModel::Attack,MapPosition{0,0},10,10,false };
-        playerUnit->SetStatus(pl_1);
-
-        //エネミー
-        auto* enemyObj = m_GameObjectList->FindGameObjectWithTag("Enemy");
-        auto* enemyUnit = enemyObj->AddComponent<UnitComponent>();
-        UnitStatus en_1 = { 1000,UnitType::Enemy,UnitModel::Attack,MapPosition{1,0},10,5,false };
-        enemyUnit->SetStatus(en_1);
-
-
-        // ユニットをシステムに格納
-        unitSystem->RegisterUnit(playerUnit);
-        unitSystem->RegisterUnit(enemyUnit);
     }  
+
+    MakeUnit();
 
     // Init Camera
     m_Camera.Init();
@@ -178,3 +163,177 @@ void SceneProto::Draw(Camera* camera)
     m_GameObjectList->DrawLayer(camera, RenderLayer::WORLD);
 }
 
+
+// Unitを.csvファイルから作成
+void SceneProto::MakeUnit()
+{
+    m_DataFile = "data/testunit.csv";
+
+    // .csvData変数
+    ifstream csv_data(m_DataFile, ios::in);
+
+    // 各Component
+    // ユニットシステム
+    auto* unitSystem = m_GameObjectList->FindGameObjectWithTag("System")->GetComponent<UnitSystemComponent>();
+    auto* mapSystem = m_GameObjectList->FindGameObjectWithTag("System")->GetComponent<MapSystemComponent>();
+
+
+    // 既存データ削除
+
+
+    // CSVを開く
+    if (!csv_data.is_open()) 
+    {
+        cout << "Error: opening file fail" << endl;
+        exit(1);
+    }
+    
+    cout << "Start Read : " << m_DataFile << endl;
+
+    string line;
+    istringstream sin;
+    string word;
+
+    m_MapWidth = 0;     // CSVから読み取り
+    m_MapHeight = 0;    // CSVから読み取り
+
+    // ------------データ読み取り-----------------
+
+    // マップの広さを取得
+    getline(csv_data, line);
+    sin.clear();
+    sin.str(line);
+
+    //文字列ストリームsinの文字をコンマ区切り
+    getline(sin, word, ',');
+    m_MapWidth = stoi(word);
+    getline(sin, word, ',');
+    m_MapHeight = stoi(word);
+
+    int z = 0;
+
+    int pl_x, pl_z;
+
+    int u_ID = 2000;
+    int p_Speed = 30;
+    int e_Speed = 10;
+    
+    // 行ごとにデータを読み込む
+    while (getline(csv_data, line)) {
+        sin.clear();
+        sin.str(line);
+        int x = 0;
+
+        // CSV は上から下に並んでいるので反転させる
+        int realZ = m_MapHeight - 1 - z;
+
+        while (getline(sin, word, ',')) {
+            int data = std::stoi(word);
+
+            if (data == 0) { x++; continue; }
+
+            // Map座標 → PlayerMapPos変換
+            mapSystem->ConvertMapIndexToUnitPos(x, realZ, pl_x, pl_z);
+
+            UnitStatus unit_S;
+            unit_S.id = u_ID;
+            unit_S.hp = 10;
+            unit_S.isDown = false;
+            unit_S.pos = MapPosition(pl_x, pl_z);
+
+            // Obj生成
+            auto obj = std::make_unique<GameObject>(
+                Vector3(pl_x * 5, 2.0f, pl_z * 5),
+                Vector3::Zero,
+                Vector3(1.0f, 1.0f, 1.0f)
+            );
+            GameObject* newObject = obj.get();
+            newObject->SetID(u_ID);
+
+            if (data == 1 ||
+                data == 2 ||
+                data == 3)
+            {
+                // Player
+                unit_S.type = UnitType::Player;
+                unit_S.speed = p_Speed;
+                newObject->SetName("Player");
+                newObject->SetTag("Player");
+                switch (data) {
+                case 1:
+                    // Attack
+                    unit_S.model = UnitModel::Attack;
+                    // Mesh
+                    newObject->AddMeshComponent<SimpleCubeRendererComponent>
+                        (Color(1.0f,0.0f,0.0f,1.0f));
+                    break;
+                case 2:
+                    // Place
+                    unit_S.model = UnitModel::Place;
+                    // Mesh
+                    newObject->AddMeshComponent<SimpleCubeRendererComponent>
+                        (Color(1.0f, 0.0f, 0.0f, 1.0f));
+                    break;
+                case 3:
+                    // Giant
+                    unit_S.model = UnitModel::Giant;
+                    // Mesh
+                    newObject->AddMeshComponent<SimpleCubeRendererComponent>
+                        (Color(1.0f, 0.0f, 0.0f, 1.0f));
+                    break;
+                }
+
+                p_Speed++;
+            }
+            else if (data == 4 ||
+                data == 5 ||
+                data == 6)
+            {
+                // Enemy
+                unit_S.type = UnitType::Enemy;
+                unit_S.speed = e_Speed;
+                newObject->SetName("Enemy");
+                newObject->SetTag("Enemy");
+                switch (data) {
+                case 4:
+                    // Attack
+                    unit_S.model = UnitModel::Attack;
+                    // Mesh
+                    newObject->AddMeshComponent<SimpleCubeRendererComponent>
+                        (Color(0.0f, 0.0f, 1.0f, 1.0f));
+                    break;
+                case 5:
+                    // Place
+                    unit_S.model = UnitModel::Place;
+                    // Mesh
+                    newObject->AddMeshComponent<SimpleCubeRendererComponent>
+                        (Color(0.0f, 0.0f, 1.0f, 1.0f));
+                    break;
+                case 6:
+                    // Giant
+                    unit_S.model = UnitModel::Giant;
+                    // Mesh
+                    newObject->AddMeshComponent<SimpleCubeRendererComponent>
+                        (Color(0.0f, 0.0f, 1.0f, 1.0f));
+                    break;
+                }
+
+                e_Speed++;
+            }
+
+            cout << "Create:Unit" << endl;
+            // UnitComponentをAdd
+            auto* Unit = newObject->AddComponent<UnitComponent>();
+            Unit->SetStatus(unit_S);
+
+            m_GameObjectList->AddObject(std::move(obj));
+            
+            unitSystem->RegisterUnit(Unit);
+            x++;
+            u_ID++;
+        }
+        z++;
+    }
+
+    csv_data.close();
+}

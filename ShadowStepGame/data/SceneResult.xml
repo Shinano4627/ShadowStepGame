@@ -1,25 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Objects>
-    <Object ID="0">
-        <ObjectName Value="BackGround"/>
-        <ObjectType Value="2D"/>
-        <Tag Value="BackGround"/>
-        <FileName Value=""/>
-        <Texture Value="asset/texture/BackGround/Result_BG.png"/>
-        <Posision X="0" Y="0" Z="0"/>
-        <Rotation X="0" Y="0" Z="0"/>
-        <Scale X="1280" Y="720" Z="0"/>
-        <Color R="1" G="1" B="1" A="1"/>
-    </Object>
     <Object ID="1">
         <ObjectName Value="WIN"/>
         <ObjectType Value="2D"/>
         <Tag Value="WIN"/>
         <FileName Value=""/>
         <Texture Value="asset/texture/BackGround/Select_BG.png"/>
-        <Posision X="0" Y="100" Z="0"/>
+        <Posision X="0" Y="0" Z="0"/>
         <Rotation X="0" Y="0" Z="0"/>
-        <Scale X="320" Y="180" Z="0"/>
+        <Scale X="1280" Y="720" Z="0"/>
         <Color R="1" G="1" B="1" A="1"/>
     </Object>
     <Object ID="2">
@@ -28,20 +17,9 @@
         <Tag Value="LOSS"/>
         <FileName Value=""/>
         <Texture Value="asset/texture/BackGround/Loding_BG.png"/>
-        <Posision X="0" Y="100" Z="0"/>
+        <Posision X="0" Y="0" Z="0"/>
         <Rotation X="0" Y="0" Z="0"/>
-        <Scale X="320" Y="180" Z="0"/>
-        <Color R="1" G="1" B="1" A="1"/>
-    </Object>
-    <Object ID="3">
-        <ObjectName Value="UI_TITLE"/>
-        <ObjectType Value="2D"/>
-        <Tag Value="UI_TITLE"/>
-        <FileName Value=""/>
-        <Texture Value="asset/texture/BackGround/Select_BG.png"/>
-        <Posision X="200" Y="-200" Z="0"/>
-        <Rotation X="0" Y="0" Z="0"/>
-        <Scale X="320" Y="180" Z="0"/>
+        <Scale X="1280" Y="720" Z="0"/>
         <Color R="1" G="1" B="1" A="1"/>
     </Object>
 </Objects>

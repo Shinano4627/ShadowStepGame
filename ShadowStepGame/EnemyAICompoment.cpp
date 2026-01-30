@@ -4,6 +4,8 @@
 UnitAction EnemyAI::DecideAction(
 	UnitComponent* enemy,	// 操作ユニット
 	const std::vector<UnitComponent*>& playerList,	// PlayerList
+	const std::vector<UnitComponent*>& enemyList,
+	const std::vector<UnitComponent*>& allUnits,
 	MapPosition SunDirection,	// 太陽のMapPosition（ディレクションライト）
 	const int* const* mapData,
 	int mapWidth,
@@ -11,7 +13,7 @@ UnitAction EnemyAI::DecideAction(
 )
 {
 	// １：Playerから最も近いPlayerを検索
-	UnitComponent* target = FindNearestPlayer(enemy, playerList);
+	UnitComponent* target = FindNearestPlayer(enemy, playerList, enemyList);
 
 	UnitAction none;
 	none.targetGrid = MapPosition(0, 0);
@@ -30,7 +32,7 @@ UnitAction EnemyAI::DecideAction(
 
 	// ４：近づけるか？
 	if (CanMove(enemy))
-		return MakeMoveCloserAction(enemy, target, mapData, mapWidth, mapHeight);
+		return MakeMoveCloserAction(enemy, target, allUnits,mapData, mapWidth, mapHeight);
 
 	// ５：何もできない
 	return none;
@@ -38,7 +40,8 @@ UnitAction EnemyAI::DecideAction(
 
 UnitComponent* EnemyAI::FindNearestPlayer(
 	UnitComponent* enemy,
-	const std::vector<UnitComponent*>& playerList
+	const std::vector<UnitComponent*>& playerList,
+	const std::vector<UnitComponent*>& enemyList
 ) const
 {
 	if (!enemy) return nullptr;
@@ -55,6 +58,20 @@ UnitComponent* EnemyAI::FindNearestPlayer(
 		if (!p) continue;
 
 		MapPosition ppos = p->GetPosition();
+
+		// 他の敵ユニットと衝突しないかも確認（任意）
+		bool blocked = false;
+		for (auto* otherEnemy : enemyList)
+		{
+			if (!otherEnemy || otherEnemy == enemy) continue;
+			if (ppos == otherEnemy->GetPosition())
+			{
+				blocked = true;
+				break;
+			}
+		}
+
+		if (blocked) continue;
 
 		int dist =
 			abs(epos.x - ppos.x) +
@@ -164,6 +181,7 @@ UnitAction EnemyAI::MakeAttackAction(
 UnitAction EnemyAI::MakeMoveCloserAction(
 	UnitComponent* enemy,
 	UnitComponent* target,
+	const std::vector<UnitComponent*>& allUnits,
 	const int* const* mapData,
 	int mapW,
 	int mapH
@@ -171,58 +189,66 @@ UnitAction EnemyAI::MakeMoveCloserAction(
 {
 	UnitAction action;
 	action.type = UnitActionType::Move;
-	action.targetGrid = DecideMoveCloser(enemy, target, mapData, mapW, mapH);
+	action.targetGrid = DecideMoveCloser(enemy, target, allUnits, mapData, mapW, mapH);
 	return action;
 }
 
 MapPosition EnemyAI::DecideMoveCloser(
     UnitComponent* enemy,
     UnitComponent* target,
+	const std::vector<UnitComponent*>& allUnits,
 	const int* const* mapData,
 	int mapW,
 	int mapH
 ) const
 {
-    MapPosition epos = enemy->GetPosition();
-    MapPosition tpos = target->GetPosition();
+	if (!enemy || !target) return enemy->GetPosition();
 
-    MapPosition best = epos;
-    int bestDist = INT_MAX;
+	MapPosition epos = enemy->GetPosition();
+	MapPosition tpos = target->GetPosition();
 
-    // 縦横3マス四角
-    for (int dz = -1; dz <= 1; dz++)
-    {
-        for (int dx = -1; dx <= 1; dx++)
-        {
-			if (dx == 0 && dz == 0) continue;
+	MapPosition best = epos;
+	int bestDist = INT_MAX;
 
-			MapPosition p{
-				epos.x + dx,
-				epos.z + dz
-			};
+	// 探索範囲を 5x5 に拡張（dx/dz = -2..2）
+	for (int dz = -3; dz <= 3; dz++)
+	{
+		for (int dx = -3; dx <= 3; dx++)
+		{
+			MapPosition p{ epos.x + dx, epos.z + dz };
 
-			// Player に重なる位置は絶対NG
-			if (p.x == tpos.x && p.z == tpos.z)
-				continue;
-
+			// マップ外チェック
 			int tile = GetTile(mapData, p.x, p.z, mapW, mapH);
+			if (!IsWalkableTile(tile)) continue;
 
-			// Player / Enemy / Wall などを除外
-			if (tile == static_cast<int>(EMapTile::Enemy))
-				continue;
-			if (!IsWalkableTile(tile))
-				continue;
+			// 他ユニットがいるマスは除外
+			bool occupied = false;
+			for (auto* u : allUnits)
+			{
+				if (!u) continue;
+				if (u->GetPosition() == p)
+				{
+					occupied = true;
+					break;
+				}
+			}
+			if (occupied) continue;
 
-			int dist =
-				abs(p.x - tpos.x) +
-				abs(p.z - tpos.z);
+			// Player との距離で評価
+			int dist = abs(p.x - tpos.x) + abs(p.z - tpos.z);
 
 			if (dist < bestDist)
 			{
-				bestDist = dist;
-				best = p;
+				// 移動可能範囲（3x3）の中なら候補として採用
+				if (abs(dx) <= 1 && abs(dz) <= 1)
+				{
+					bestDist = dist;
+					best = p;
+				}
 			}
-        }
-    }
-    return best;
+		}
+	}
+
+	// 移動できない場合は epos のまま
+	return best;
 }

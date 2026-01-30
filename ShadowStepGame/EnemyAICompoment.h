@@ -43,6 +43,8 @@ public:
 	UnitAction DecideAction(
 		UnitComponent* enemy,	// 操作ユニット
 		const std::vector<UnitComponent*>& playerList,	// PlayerList
+		const std::vector<UnitComponent*>& enemyList,
+		const std::vector<UnitComponent*>& allUnits,
 		MapPosition SunDirection,	// 太陽のMapPosition（ディレクションライト）
 		const int* const* mapData,
 		int mapWidth,
@@ -52,7 +54,8 @@ public:
 private:
 	// ターゲット選択
 	UnitComponent* FindNearestPlayer(UnitComponent* enemy,
-		const std::vector<UnitComponent*>& playerList) const;
+		const std::vector<UnitComponent*>& playerList,
+		const std::vector<UnitComponent*>& enemyList) const;
 
 	//=======================================
 	// 判定関数
@@ -106,6 +109,7 @@ private:
 	UnitAction MakeMoveCloserAction(
 		UnitComponent* enemy,
 		UnitComponent* target,
+		const std::vector<UnitComponent*>& allUnits,
 		const int* const* mapData,
 		int mapW,
 		int mapH
@@ -114,6 +118,7 @@ private:
 	MapPosition DecideMoveCloser(
 		UnitComponent* enemy,
 		UnitComponent* target,
+		const std::vector<UnitComponent*>& allUnits,
 		const int* const* mapData,
 		int mapW,
 		int mapH

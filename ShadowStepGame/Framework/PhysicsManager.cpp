@@ -1,6 +1,6 @@
-// ===================================================================
+ï»¿// ===================================================================
 // PhysicsManager.cpp
-// •¨—‰‰ZEÕ“Ë”»’èƒ}ƒl[ƒWƒƒ[‚ÌÀ‘•
+// ç‰©ç†æ¼”ç®—ãƒ»è¡çªåˆ¤å®šãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã®å®Ÿè£…
 // ===================================================================
 #include "PhysicsManager.h"
 #include "Collider.h"
@@ -9,20 +9,20 @@
 #include <iostream>
 
 // ===================================================================
-// ‰Šú‰»
+// åˆæœŸåŒ–
 // ===================================================================
 void PhysicsManager::Init()
 {
     std::cout << "[PhysicsManager] Initializing..." << std::endl;
 
-    // ƒRƒ‰ƒCƒ_[ƒŠƒXƒg‚ğƒNƒŠƒA
+    // ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ãƒªã‚¹ãƒˆã‚’ã‚¯ãƒªã‚¢
     m_Colliders.clear();
     m_PreviousCollisions.clear();
 
-    // ƒfƒtƒHƒ‹ƒg‚Ìd—Íİ’èiY²•‰•ûŒüj
+    // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®é‡åŠ›è¨­å®šï¼ˆYè»¸è² æ–¹å‘ï¼‰
     m_Gravity = Vector3(0.0f, -9.8f, 0.0f);
 
-    // ƒŒƒCƒ„[Õ“Ëƒ}ƒgƒŠƒNƒX‚ğ‰Šú‰»i‚·‚×‚Ä—LŒøj
+    // ãƒ¬ã‚¤ãƒ¤ãƒ¼è¡çªãƒãƒˆãƒªã‚¯ã‚¹ã‚’åˆæœŸåŒ–ï¼ˆã™ã¹ã¦æœ‰åŠ¹ï¼‰
     for (int i = 0; i < Physics::MAX_LAYERS; i++)
     {
         for (int j = 0; j < Physics::MAX_LAYERS; j++)
@@ -39,14 +39,14 @@ void PhysicsManager::Init()
 }
 
 // ===================================================================
-// I—¹ˆ—
+// çµ‚äº†å‡¦ç†
 // ===================================================================
 void PhysicsManager::UnInit()
 {
     std::cout << "[PhysicsManager] Uninitializing..." << std::endl;
 
-    // ƒRƒ‰ƒCƒ_[ƒŠƒXƒg‚ğƒNƒŠƒA
-    // iÀÛ‚ÌColliderƒIƒuƒWƒFƒNƒg‚ÍGameObject‚ªŠÇ—‚µ‚Ä‚¢‚é‚Ì‚Åíœ‚µ‚È‚¢j
+    // ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ãƒªã‚¹ãƒˆã‚’ã‚¯ãƒªã‚¢
+    // ï¼ˆå®Ÿéš›ã®Colliderã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¯GameObjectãŒç®¡ç†ã—ã¦ã„ã‚‹ã®ã§å‰Šé™¤ã—ãªã„ï¼‰
     m_Colliders.clear();
     m_PreviousCollisions.clear();
 
@@ -54,17 +54,17 @@ void PhysicsManager::UnInit()
 }
 
 // ===================================================================
-// XVˆ—iƒƒCƒ“ƒ‹[ƒvj
+// æ›´æ–°å‡¦ç†ï¼ˆãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—ï¼‰
 // ===================================================================
 void PhysicsManager::Update()
 {
-    // ‡@ –³Œø‚ÈƒRƒ‰ƒCƒ_[‚ğœŠO
+    // â‘  ç„¡åŠ¹ãªã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ã‚’é™¤å¤–
     CleanupInvalidColliders();
 
-    // ‡A Õ“Ë”»’è‚ğÀs
+    // â‘¡ è¡çªåˆ¤å®šã‚’å®Ÿè¡Œ
     CheckCollisions();
 
-    // ‡B ƒfƒoƒbƒO•`‰æiƒfƒoƒbƒOƒrƒ‹ƒh‚Ì‚İj
+    // â‘¢ ãƒ‡ãƒãƒƒã‚°æç”»ï¼ˆãƒ‡ãƒãƒƒã‚°ãƒ“ãƒ«ãƒ‰æ™‚ã®ã¿ï¼‰
 #ifdef DEBUG
     if (m_DebugDraw)
     {
@@ -74,7 +74,7 @@ void PhysicsManager::Update()
 }
 
 // ===================================================================
-// Collider“o˜^
+// Colliderç™»éŒ²
 // ===================================================================
 void PhysicsManager::RegisterCollider(Collider* collider)
 {
@@ -83,7 +83,7 @@ void PhysicsManager::RegisterCollider(Collider* collider)
         return;
     }
 
-    // Šù‚É“o˜^‚³‚ê‚Ä‚¢‚é‚©ƒ`ƒFƒbƒN
+    // æ—¢ã«ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
     auto it = std::find(m_Colliders.begin(), m_Colliders.end(), collider);
     if (it == m_Colliders.end())
     {
@@ -97,7 +97,7 @@ void PhysicsManager::RegisterCollider(Collider* collider)
 }
 
 // ===================================================================
-// Collider‰ğœ
+// Colliderè§£é™¤
 // ===================================================================
 void PhysicsManager::UnregisterCollider(Collider* collider)
 {
@@ -106,7 +106,7 @@ void PhysicsManager::UnregisterCollider(Collider* collider)
         return;
     }
 
-    // ƒŠƒXƒg‚©‚çíœ
+    // ãƒªã‚¹ãƒˆã‹ã‚‰å‰Šé™¤
     auto it = std::find(m_Colliders.begin(), m_Colliders.end(), collider);
     if (it != m_Colliders.end())
     {
@@ -120,11 +120,11 @@ void PhysicsManager::UnregisterCollider(Collider* collider)
 }
 
 // ===================================================================
-// ƒŒƒCƒ„[Õ“Ëİ’è
+// ãƒ¬ã‚¤ãƒ¤ãƒ¼è¡çªè¨­å®š
 // ===================================================================
 void PhysicsManager::SetLayerCollision(int layer1, int layer2, bool enable)
 {
-    // ”ÍˆÍƒ`ƒFƒbƒN
+    // ç¯„å›²ãƒã‚§ãƒƒã‚¯
     if (layer1 < 0 || layer1 >= Physics::MAX_LAYERS ||
         layer2 < 0 || layer2 >= Physics::MAX_LAYERS)
     {
@@ -133,17 +133,17 @@ void PhysicsManager::SetLayerCollision(int layer1, int layer2, bool enable)
         return;
     }
 
-    // ‘ÎÌs—ñ‚Æ‚µ‚Äİ’è
+    // å¯¾ç§°è¡Œåˆ—ã¨ã—ã¦è¨­å®š
     m_LayerCollisionMatrix[layer1][layer2] = enable;
     m_LayerCollisionMatrix[layer2][layer1] = enable;
 }
 
 // ===================================================================
-// ƒŒƒCƒ„[Õ“Ëæ“¾
+// ãƒ¬ã‚¤ãƒ¤ãƒ¼è¡çªå–å¾—
 // ===================================================================
 bool PhysicsManager::GetLayerCollision(int layer1, int layer2) const
 {
-    // ”ÍˆÍƒ`ƒFƒbƒN
+    // ç¯„å›²ãƒã‚§ãƒƒã‚¯
     if (layer1 < 0 || layer1 >= Physics::MAX_LAYERS ||
         layer2 < 0 || layer2 >= Physics::MAX_LAYERS)
     {
@@ -154,14 +154,14 @@ bool PhysicsManager::GetLayerCollision(int layer1, int layer2) const
 }
 
 // ===================================================================
-// Õ“Ë”»’è‚ÌƒƒCƒ“ƒ‹[ƒv
+// è¡çªåˆ¤å®šã®ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—
 // ===================================================================
 void PhysicsManager::CheckCollisions()
 {
-    // ¡ƒtƒŒ[ƒ€‚ÌÕ“Ë‚ğ‹L˜^
+    // ä»Šãƒ•ãƒ¬ãƒ¼ãƒ ã®è¡çªã‚’è¨˜éŒ²
     std::unordered_set<CollisionPair, CollisionPair::Hash> currentCollisions;
 
-    // ‘SƒRƒ‰ƒCƒ_[ƒyƒA‚ğƒ`ƒFƒbƒN
+    // å…¨ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ãƒšã‚¢ã‚’ãƒã‚§ãƒƒã‚¯
     for (size_t i = 0; i < m_Colliders.size(); i++)
     {
         for (size_t j = i + 1; j < m_Colliders.size(); j++)
@@ -169,24 +169,24 @@ void PhysicsManager::CheckCollisions()
             Collider* col1 = m_Colliders[i];
             Collider* col2 = m_Colliders[j];
 
-            // Õ“Ë”»’è‚·‚×‚«‚©ƒ`ƒFƒbƒN
+            // è¡çªåˆ¤å®šã™ã¹ãã‹ãƒã‚§ãƒƒã‚¯
             if (!ShouldCollide(col1, col2))
             {
                 continue;
             }
 
-            // Õ“Ë”»’èÀs
+            // è¡çªåˆ¤å®šå®Ÿè¡Œ
             CollisionInfo info;
             if (col1->CheckCollision(col2, info))
             {
-                // Õ“ËƒyƒA‚ğ‹L˜^
+                // è¡çªãƒšã‚¢ã‚’è¨˜éŒ²
                 CollisionPair pair(col1, col2);
                 currentCollisions.insert(pair);
 
-                // ‘OƒtƒŒ[ƒ€‚àÕ“Ë‚µ‚Ä‚¢‚½‚©ƒ`ƒFƒbƒN
+                // å‰ãƒ•ãƒ¬ãƒ¼ãƒ ã‚‚è¡çªã—ã¦ã„ãŸã‹ãƒã‚§ãƒƒã‚¯
                 if (m_PreviousCollisions.find(pair) != m_PreviousCollisions.end())
                 {
-                    // Œp‘±Õ“Ë ¨ OnCollisionStay
+                    // ç¶™ç¶šè¡çª â†’ OnCollisionStay
                     info.other = col2->GetOwner();
                     info.otherCollider = col2;
                     col1->OnCollisionStay(info);
@@ -197,7 +197,7 @@ void PhysicsManager::CheckCollisions()
                 }
                 else
                 {
-                    // V‹KÕ“Ë ¨ OnCollisionEnter
+                    // æ–°è¦è¡çª â†’ OnCollisionEnter
                     info.other = col2->GetOwner();
                     info.otherCollider = col2;
                     col1->OnCollisionEnter(info);
@@ -210,13 +210,13 @@ void PhysicsManager::CheckCollisions()
         }
     }
 
-    // OnCollisionExit ˆ—
-    // i‘OƒtƒŒ[ƒ€‚É‚ ‚Á‚Ä¡ƒtƒŒ[ƒ€‚É‚È‚¢Õ“Ëj
+    // OnCollisionExit å‡¦ç†
+    // ï¼ˆå‰ãƒ•ãƒ¬ãƒ¼ãƒ ã«ã‚ã£ã¦ä»Šãƒ•ãƒ¬ãƒ¼ãƒ ã«ãªã„è¡çªï¼‰
     for (const auto& pair : m_PreviousCollisions)
     {
         if (currentCollisions.find(pair) == currentCollisions.end())
         {
-            // Õ“Ë‚ªI—¹‚µ‚½
+            // è¡çªãŒçµ‚äº†ã—ãŸ
             CollisionInfo info;
 
             info.other = pair.collider2->GetOwner();
@@ -229,28 +229,28 @@ void PhysicsManager::CheckCollisions()
         }
     }
 
-    // ‘OƒtƒŒ[ƒ€‚ÌÕ“Ë‚ğXV
+    // å‰ãƒ•ãƒ¬ãƒ¼ãƒ ã®è¡çªã‚’æ›´æ–°
     m_PreviousCollisions = std::move(currentCollisions);
 }
 
 // ===================================================================
-// 2‚Â‚ÌƒRƒ‰ƒCƒ_[‚ªÕ“Ë”»’è‚·‚×‚«‚©ƒ`ƒFƒbƒN
+// 2ã¤ã®ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ãŒè¡çªåˆ¤å®šã™ã¹ãã‹ãƒã‚§ãƒƒã‚¯
 // ===================================================================
 bool PhysicsManager::ShouldCollide(Collider* col1, Collider* col2) const
 {
-    // nullƒ`ƒFƒbƒN
+    // nullãƒã‚§ãƒƒã‚¯
     if (!col1 || !col2)
     {
         return false;
     }
 
-    // —LŒø«ƒ`ƒFƒbƒN
+    // æœ‰åŠ¹æ€§ãƒã‚§ãƒƒã‚¯
     if (!col1->IsEnabled() || !col2->IsEnabled())
     {
         return false;
     }
 
-    // ƒI[ƒi[‚Ì—LŒø«ƒ`ƒFƒbƒN
+    // ã‚ªãƒ¼ãƒŠãƒ¼ã®æœ‰åŠ¹æ€§ãƒã‚§ãƒƒã‚¯
     GameObject* owner1 = col1->GetOwner();
     GameObject* owner2 = col2->GetOwner();
 
@@ -264,13 +264,13 @@ bool PhysicsManager::ShouldCollide(Collider* col1, Collider* col2) const
         return false;
     }
 
-    // Ã“IƒIƒuƒWƒFƒNƒg“¯m‚ÍƒXƒLƒbƒviÅ“K‰»j
+    // é™çš„ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåŒå£«ã¯ã‚¹ã‚­ãƒƒãƒ—ï¼ˆæœ€é©åŒ–ï¼‰
     if (col1->IsStatic() && col2->IsStatic())
     {
         return false;
     }
 
-    // ƒŒƒCƒ„[ƒ}ƒXƒNƒ`ƒFƒbƒN
+    // ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒã‚¹ã‚¯ãƒã‚§ãƒƒã‚¯
     if (!GetLayerCollision(col1->GetLayer(), col2->GetLayer()))
     {
         return false;
@@ -280,7 +280,7 @@ bool PhysicsManager::ShouldCollide(Collider* col1, Collider* col2) const
 }
 
 // ===================================================================
-// –³Œø‚ÈƒRƒ‰ƒCƒ_[‚ğíœ
+// ç„¡åŠ¹ãªã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ã‚’å‰Šé™¤
 // ===================================================================
 void PhysicsManager::CleanupInvalidColliders()
 {
@@ -295,7 +295,7 @@ void PhysicsManager::CleanupInvalidColliders()
 }
 
 // ===================================================================
-// ƒfƒoƒbƒO•`‰æ
+// ãƒ‡ãƒãƒƒã‚°æç”»
 // ===================================================================
 #ifdef DEBUG
 void PhysicsManager::DrawDebug()

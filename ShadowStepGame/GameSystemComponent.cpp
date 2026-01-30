@@ -228,10 +228,14 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
 
         // Player 一覧
         const auto& players = m_unitSystem->GetPlayerUnits();
+        const auto& enemys = m_unitSystem->GetEnemyUnits();
+        const auto& units = m_unitSystem->GetAllUnits();
 
         UnitAction action = enemyAI.DecideAction(
             m_CurrentUnit,
             players,
+            enemys,
+            units,
             sunDir,
             mapData,
             mapW,
@@ -410,7 +414,7 @@ void GameSystemComponent::UpdateJudge(GameObjectList* gameObjectList)
     // 勝敗確定
     if (IsEnemyAllDead() || IsPlayerAllDead())
     {
-        if (IsPlayerAllDead())
+        if (IsEnemyAllDead())
         {
             // PlayerWIN
             SCENE_MANAGER.SetPlayerResult(true);
@@ -588,99 +592,105 @@ const char* GameSystemComponent::BattleStateToString(BattleState state)
     }
 }
 
-// 現在のユニット位置が影に被っているかチェックしてKill
 void GameSystemComponent::CheckShadowKill()
 {
-    // 全ユニットの位置を取得
-    std::vector<UnitComponent*> allUnits = m_unitSystem->GetAliveUnits();
-    if (allUnits.empty()) return;
-
     // 太陽方向から影ベクトル作成
     MapPosition lightDir = m_sunSystem->GetDirection();
 
     // 真上 → 影なし
     if (lightDir.x == 0 && lightDir.z == 0)
         return;
+
     int distance = abs(lightDir.x) + abs(lightDir.z);
-    // 長さ計算
-    int shadowLength = std::clamp(
-        distance / 2,
-        2,
-        8
-    );
-    // 正規化
+    int shadowLength = std::clamp(distance / 2, 2, 8);
+
     MapPosition shadowDir{
-    (lightDir.x != 0) ? (lightDir.x > 0 ? 1 : -1) : 0,
-    (lightDir.z != 0) ? (lightDir.z > 0 ? 1 : -1) : 0
+        (lightDir.x != 0) ? (lightDir.x > 0 ? 1 : -1) : 0,
+        (lightDir.z != 0) ? (lightDir.z > 0 ? 1 : -1) : 0
     };
 
-    // 影マス辞書作成
-    // key: 影マス, value: 影を出しているユニット
-    std::unordered_map<MapPosition, UnitComponent*, MapPositionHash> shadowOwners;
+    auto allPlayers = m_unitSystem->GetPlayerUnits();
+    auto allEnemies = m_unitSystem->GetEnemyUnits();
 
-    // 各ユニットから影を伸ばす
-    for (auto* owner : allUnits)
-    {
-        if (!owner) continue;
-
-        MapPosition base = owner->GetPosition();
-
-        for (int i = 1; i <= shadowLength; ++i)
+    // 判定用ラムダ
+    auto checkShadow = [&](const std::vector<UnitComponent*>& owners,
+        const std::vector<UnitComponent*>& targets)
         {
-            MapPosition shadowPos{
-                base.x + shadowDir.x * i,
-                base.z + shadowDir.z * i
-            };
+            std::unordered_set<UnitComponent*> killSet;
 
-            // マップ外なら打ち切り
-            int mx, mz;
-            if (!m_mapSystem->ConvertUnitPosToMapIndex(
-                shadowPos.x, shadowPos.z, mx, mz))
-                break;
+            for (auto* owner : owners)
+            {
+                if (!owner) continue;
 
-            // すでに誰かの影なら奪わない
-            if (shadowOwners.contains(shadowPos))
-                continue;
+                MapPosition base = owner->GetPosition();
 
-            shadowOwners.emplace(shadowPos, owner);
-        }
-    }
+                // このユニットの影を計算
+                std::vector<MapPosition> shadowPositions;
+                for (int i = 1; i <= shadowLength; ++i)
+                {
+                    MapPosition shadowPos{
+                        base.x + shadowDir.x * i,
+                        base.z + shadowDir.z * i
+                    };
 
-    // 判定
-    std::unordered_set<UnitComponent*> killSet;
+                    int mx, mz;
+                    if (!m_mapSystem->ConvertUnitPosToMapIndex(shadowPos.x, shadowPos.z, mx, mz))
+                        break;
 
-    for (auto* stepper : allUnits)
-    {
-        if (!stepper) continue;
+                    shadowPositions.push_back(shadowPos);
+                }
 
-        MapPosition pos = stepper->GetPosition();
+                // 影の上に敵がいるか判定
+                for (auto* target : targets)
+                {
+                    if (!target) continue;
+                    MapPosition targetPos = target->GetPosition();
 
-        auto it = shadowOwners.find(pos);
-        if (it == shadowOwners.end())
-            continue;
+                    for (auto& sp : shadowPositions)
+                    {
+                        if (sp == targetPos)
+                        {
+                            // 敵が影の上にいたらこのユニットをKILL
+                            killSet.insert(target);
+                            break;
+                        }
+                    }
+                }
+            }
 
-        UnitComponent* shadowOwner = it->second;
-        if (!shadowOwner) continue;
+            // KILL処理
+            for (auto* dead : killSet)
+            {
+                if (!dead) continue;
 
-        // 同陣営なら無視
-        if (stepper->GetType() == shadowOwner->GetType())
-            continue;
+                std::cout << "[GameSystem] ShadowKill! UnitID:" << dead->GetId() << std::endl;
 
-        // 重複防止で登録
-        killSet.insert(shadowOwner);
-    }
+                // タイムラインから削除
+                int idx = 0;
+                while (idx < static_cast<int>(m_Timeline.size()))
+                {
+                    if (m_Timeline[idx].unit == dead)
+                    {
+                        m_Timeline.erase(m_Timeline.begin() + idx);
+                        if (idx <= m_TimelineIndex && m_TimelineIndex > 0)
+                            m_TimelineIndex--; // 現在インデックス補正
+                    }
+                    else
+                    {
+                        idx++;
+                    }
+                }
 
-    // KILL
-    for (auto* dead : killSet)
-    {
-        if (!dead) continue;
+                // ユニットシステムから削除
+                m_unitSystem->UnRegisterUnit(dead);
+                dead->GetOwner()->SetActive(false);
+            }
 
-        std::cout
-            << "[GameSystem] ShadowKill! UnitID:"
-            << dead->GetId() << std::endl;
+        };
 
-        m_unitSystem->UnRegisterUnit(dead);
-    }
+    // Playerの影をEnemyが踏んでいるか → Playerが死ぬ
+    checkShadow(allPlayers, allEnemies);
 
-
+    // Enemyの影をPlayerが踏んでいるか → Enemyが死ぬ
+    checkShadow(allEnemies, allPlayers);
 }

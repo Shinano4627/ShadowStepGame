@@ -25,6 +25,13 @@ public:
 
 private:
 
+	// .csv関係
+	std::string m_DataFile;	// CSVファイル名
+	int m_MapWidth = 0;     // CSVから読み取り
+	int m_MapHeight = 0;    // CSVから読み取り
+
+	void MakeUnit();
+
 #pragma endregion
 };
 
