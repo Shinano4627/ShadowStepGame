@@ -7,6 +7,8 @@
 #include "SimplePlaneRendererComponent.h"
 #include "UnitCommon.h"
 #include "GameObjectList.h"
+#include "MeshRendererComponent.h"
+#include "SimpleCubeRendererComponent.h"
 
 using namespace std;
 
@@ -94,20 +96,20 @@ void MapSystemComponent::MakeMap(std::unique_ptr<GameObjectList>& objectList)   
 
                 // CSVからのよみとり
                 Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
-                switch (data)
+                switch ((EMapTile)data)
                 {
-                case 1:
+                case EMapTile::Wall:
                     //壁
                     color = Color(0.2f, 0.2f, 0.2f, 1.0f);
                     break;
-                case 4:
+                case EMapTile::Tree:
                     //樹
                     color = Color(0, 1.0f, 0, 1.0f);
                     break;
-                case 0: //何もない
-                case 2: //プレーヤー
-                case 3: //敵
-                case 5: //影
+                case EMapTile::Empty: //何もない
+                case EMapTile::Player: //プレーヤー
+                case EMapTile::Enemy: //敵
+                case EMapTile::Shadow: //影
                     color = Color(1.0f, 1.0f, 1.0f, 1.0f);
                     break;
                 
@@ -164,10 +166,18 @@ void MapSystemComponent::MakeMap(std::unique_ptr<GameObjectList>& objectList)   
                     break;
                 }
 
+                // マップ表示用オブジェクト作成
+                MakeMapObjectData(objectList.get(), GetPositionToMap(MapPosition(j, i)), (EMapTile)m_MapData[i][j]);
                 std::cout << m_MapData[i][j];       // デバッグ出力
             }
             std::cout << std::endl;
         }
+
+        // テンプレートオブジェクトを非表示 TODO：タグをテンプレートで統一して一括で非表示にする
+        objectList->FindGameObjectWithName("EnemyTemplate")->SetActive(false);
+        objectList->FindGameObjectWithName("PlayerAttackTemplate")->SetActive(false);
+        objectList->FindGameObjectWithName("PlayerPlaceTemplate")->SetActive(false);
+        objectList->FindGameObjectWithName("TreeTemplate")->SetActive(false);
     }
 
 }
@@ -221,7 +231,8 @@ void MapSystemComponent::DeleteMap()
 // UnitData,ShadowData,地形MapDataを元にMapDataを更新する
 // ===================================================================
 void MapSystemComponent::UpdateMap(const std::vector<UnitComponent*>& units,
-    const int* const* shadowMap)
+    const int* const* shadowMap,
+    GameObjectList* gameObjectList)
 {
     if (!m_pOwner) return;
 
@@ -631,4 +642,103 @@ void MapSystemComponent::EndSelectMap()
 
     m_IsSelectMapActive = false;
 
+}
+
+void MapSystemComponent::MakeMapObjectData(GameObjectList* objectList, const Vector3& pos, EMapTile type)
+{
+    // オブジェクト生成（初期状態では基本サイズ）
+   auto newObject = std::make_unique<GameObject>(
+       pos,
+        Vector3::Zero,
+        Vector3(m_SizePiece * 0.5, m_SizePiece * 0.5, m_SizePiece * 0.5)
+    );
+   int id = objectList->GetLastID();
+   newObject->SetID(id++);
+   Transform& transform = newObject->GetTransform();
+
+   // タイプごとにテンプレート取得
+   switch (type)
+   {
+   case EMapTile::Wall:
+   {
+       newObject->AddMeshComponent<SimpleCubeRendererComponent>(Color(0.3f, 0.3f, 0.3f, 1.f));  // 灰色のキューブ
+       newObject->SetName("Wall");
+       newObject->SetTag("Wall");
+       // スケール分位置を変更
+       Vector3 newPos = transform.GetPosition();
+       newPos.y = transform.GetScale().y * 0.5;
+       transform.SetPosition(newPos);
+   }
+       break;
+   case EMapTile::Player:
+   {
+       // テンプレートからモデル情報を取得
+       auto playerTemplate = objectList->FindGameObjectWithName("PlayerAttackTemplate");
+       if (!playerTemplate) return;
+       auto* templateMesh = playerTemplate->GetMeshComponent<MeshRendererComponent>();
+       if (!templateMesh) return;
+
+       newObject->SetName("Player");
+       newObject->SetTag("Player");
+       Vector3 newScale = transform.GetScale() * playerTemplate->GetTransform().GetScale();
+       transform.SetScale(newScale);
+
+       // メッシュコンポーネントを追加
+       auto mesh = newObject->AddMeshComponent<MeshRendererComponent>(
+           templateMesh->GetModelPath(),
+           templateMesh->GetTexturePath()
+       );
+       mesh->LoadModel();
+   }
+       break;
+   case EMapTile::Enemy:
+   {
+       // テンプレートからモデル情報を取得
+       auto enemyTemplate = objectList->FindGameObjectWithName("EnemyTemplate");
+       if (!enemyTemplate) return;
+       auto* templateMesh = enemyTemplate->GetMeshComponent<MeshRendererComponent>();
+       if (!templateMesh) return;
+
+       newObject->SetName("Enemy");
+       newObject->SetTag("Enemy");
+       Vector3 newScale = transform.GetScale() * enemyTemplate->GetTransform().GetScale();
+       transform.SetScale(newScale);
+
+       // メッシュコンポーネントを追加
+       auto mesh = newObject->AddMeshComponent<MeshRendererComponent>(
+           templateMesh->GetModelPath(),
+           templateMesh->GetTexturePath()
+       );
+       mesh->LoadModel();
+   }
+       break;
+   case EMapTile::Tree:
+   {
+       // テンプレートからモデル情報を取得
+       auto treeTemplate = objectList->FindGameObjectWithName("TreeTemplate");
+       if (!treeTemplate) return;
+       auto* templateMesh = treeTemplate->GetMeshComponent<MeshRendererComponent>();
+       if (!templateMesh) return;
+
+       newObject->SetName("Tree");
+       newObject->SetTag("Tree");
+       Vector3 newScale = transform.GetScale() * treeTemplate->GetTransform().GetScale();
+       transform.SetScale(newScale);
+
+       // メッシュコンポーネントを追加
+       auto mesh = newObject->AddMeshComponent<MeshRendererComponent>(
+           templateMesh->GetModelPath(),
+           templateMesh->GetTexturePath()
+       );
+       mesh->LoadModel();
+   }
+       break;
+   case EMapTile::Shadow:
+   case EMapTile::Empty:
+   case EMapTile::None:
+   default:
+       return;  // 終了
+   }
+
+    objectList->AddObject(std::move(newObject));    // リスト追加
 }
