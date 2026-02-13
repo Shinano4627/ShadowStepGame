@@ -109,8 +109,8 @@ void MapSystemComponent::MakeMap(std::unique_ptr<GameObjectList>& objectList)   
                     color = Color(0, 1.0f, 0, 1.0f);
                     break;
                 case EMapTile::Empty: //何もない
-                case EMapTile::Player: //プレーヤー
-                case EMapTile::Enemy: //敵
+                case EMapTile::PlayerAttack: //プレーヤー
+                case EMapTile::EnemyAttack: //敵
                 case EMapTile::Shadow: //影
                     color = Color(1.0f, 1.0f, 1.0f, 1.0f);
                     break;
@@ -149,12 +149,12 @@ void MapSystemComponent::MakeMap(std::unique_ptr<GameObjectList>& objectList)   
                     m_ObjectMapData[i][j] = (int)EMapTile::Tree;
                     break;
                     // ユニット
-                case EMapTile::Player:
-                    m_UnitMapData[i][j] = (int)EMapTile::Player;
+                case EMapTile::PlayerAttack:
+                    m_UnitMapData[i][j] = (int)EMapTile::PlayerAttack;
                     m_ObjectMapData[i][j] = (int)EMapTile::Empty;
                     break;
-                case EMapTile::Enemy:
-                    m_UnitMapData[i][j] = (int)EMapTile::Enemy;
+                case EMapTile::EnemyAttack:
+                    m_UnitMapData[i][j] = (int)EMapTile::EnemyAttack;
                     m_ObjectMapData[i][j] = (int)EMapTile::Empty;
                     break;
                     // その他
@@ -265,8 +265,8 @@ void MapSystemComponent::UpdateMap(const std::vector<UnitComponent*>& units,
 
         m_UnitMapData[mapZ][mapX] =
             (unit->GetType() == UnitType::Player)
-            ? (int)EMapTile::Player
-            : (int)EMapTile::Enemy;
+            ? (int)EMapTile::PlayerAttack
+            : (int)EMapTile::EnemyAttack;
     }
 
     //=======================================
@@ -366,13 +366,13 @@ bool MapSystemComponent::IsAttackableAtUnitPos(int fromX, int fromZ,
     switch (type)
     {
     case UnitType::Enemy:
-        if (tile != EMapTile::Player) return false;
+        if (tile != EMapTile::PlayerAttack) return false;
         // 縦横指定マス以内
         
         return (dx + dz) <= 2 && (dx == 0 || dz == 0);
         break;
     case UnitType::Player:
-        if (tile != EMapTile::Enemy) return false;
+        if (tile != EMapTile::EnemyAttack) return false;
         // 縦横指定マス以内
         
         return (dx + dz) <= 2 && (dx == 0 || dz == 0);
@@ -672,7 +672,7 @@ void MapSystemComponent::MakeMapObjectData(GameObjectList* objectList, const Vec
        transform.SetPosition(newPos);
    }
        break;
-   case EMapTile::Player:
+   case EMapTile::PlayerAttack:
    {
        // テンプレートからモデル情報を取得
        auto playerTemplate = objectList->FindGameObjectWithName("PlayerAttackTemplate");
@@ -693,7 +693,7 @@ void MapSystemComponent::MakeMapObjectData(GameObjectList* objectList, const Vec
        mesh->LoadModel();
    }
        break;
-   case EMapTile::Enemy:
+   case EMapTile::EnemyAttack:
    {
        // テンプレートからモデル情報を取得
        auto enemyTemplate = objectList->FindGameObjectWithName("EnemyTemplate");
