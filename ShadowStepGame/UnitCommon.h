@@ -18,12 +18,21 @@ enum class UnitModel
 
 enum class EMapTile
 {
-	Empty = 0,  // 何もない
-	Wall = 1,   // 壁
-	Player = 2, // プレイヤー
-	Enemy = 3,  // 敵
-	Tree = 4,   // 樹
-	Shadow = 5, // 影
+	Empty = 0,  // オブジェクトなし
+	Load = 1,  // 道
+	Wall = 10,  // 壁
+	Tree = 11,  // 木
+	Torii = 12,  // 鳥居
+	WallBlocken = 13,  // 壊せる壁
+	PlayerAttack = 20,  // プレイヤー
+	PlayerPlace = 21,  // プレイヤー
+	PlayerBig = 22,  // プレイヤー
+	EnemyAttack = 30,  // 敵
+	EnemyPlace = 31,  // 敵
+	EnemyBig = 32,  // 敵
+	Shadow = 40,  // 影
+	Reserve2 = 50,  // Reserve
+	Reserve3 = 60,  // Reserve
 
 	None = 99	// マップ外
 };
@@ -147,7 +156,7 @@ struct MapPositionHash
 struct UnitStatus
 {
 	int id;		// GameObject IDと一致させる
-	UnitType type;	// Player / Enemy
+	UnitType type;	// PlayerAttack / EnemyAttack
 	UnitModel model;	// ユニット種別
 	MapPosition pos;	// マップ座標
 	int hp;
