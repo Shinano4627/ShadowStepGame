@@ -219,7 +219,7 @@ void SceneProto::MakeUnit()
     int u_ID = 2000;
     int p_Speed = 30;
     int e_Speed = 10;
-    
+
     // 行ごとにデータを読み込む
     while (getline(csv_data, line)) {
         sin.clear();
@@ -260,7 +260,7 @@ void SceneProto::MakeUnit()
                 // Player
                 unit_S.type = UnitType::Player;
                 unit_S.speed = p_Speed;
-                newObject->SetName("Player");
+                newObject->SetName("Player" + u_ID);
                 newObject->SetTag("Player");
                 switch (data) {
                 case 1:
@@ -327,7 +327,7 @@ void SceneProto::MakeUnit()
                 // Enemy
                 unit_S.type = UnitType::Enemy;
                 unit_S.speed = e_Speed;
-                newObject->SetName("Enemy");
+                newObject->SetName("Enemy" + u_ID);
                 newObject->SetTag("Enemy");
                 switch (data) {
                 case 4:

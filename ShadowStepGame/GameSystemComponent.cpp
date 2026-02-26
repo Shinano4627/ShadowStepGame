@@ -245,9 +245,6 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
         // Unitに行動をセット
         m_CurrentUnit->SetAction(action);
 
-        // 行動を実行
-        m_CurrentUnit->ExcuteAction();
-
         ChangeState(BattleState::UnitActing); // 敵AI行動
     }
 }
@@ -305,6 +302,11 @@ void GameSystemComponent::UpdateUnitActionSelect()
                 ok = m_mapSystem->IsWalkableAtUnitPos(
                     m_SelectMapPosition.x,
                     m_SelectMapPosition.z);
+                if (ok)
+                {
+                    // 行動
+                    m_CurrentUnit->Move();
+                }
                 break;
 
             case UnitActionType::Attack:
@@ -315,6 +317,8 @@ void GameSystemComponent::UpdateUnitActionSelect()
 
                 if (ok)
                 {
+                    // 行動
+                    m_CurrentUnit->Attack();
                     UnitComponent* target =
                         m_unitSystem->FindUnitAtPosition(m_SelectMapPosition);
 
@@ -330,6 +334,12 @@ void GameSystemComponent::UpdateUnitActionSelect()
                 ok = m_mapSystem->IsPlacebleAtUnitPos(
                     m_SelectMapPosition.x,
                     m_SelectMapPosition.z);
+
+                if (ok)
+                {
+                    // 行動
+                    m_CurrentUnit->Place();
+                }
                 break;
             }
 
@@ -345,9 +355,6 @@ void GameSystemComponent::UpdateUnitActionSelect()
 
                 // SelectMap終了
                 m_mapSystem->EndSelectMap();
-
-                // 行動を実行
-                m_CurrentUnit->ExcuteAction();
 
                 ChangeState(BattleState::UnitActing);
 
@@ -370,8 +377,12 @@ void GameSystemComponent::UpdateUnitActionSelect()
 //=======================================
 void GameSystemComponent::UpdateUnitActing()
 {
-    // Unit行動終了チェック
-    if (m_CurrentUnit->IsTurnDinished())
+    if (!m_CurrentUnit->IsTurnFinished())
+    {
+        // 行動を実行
+        m_CurrentUnit->ExcuteAction();
+    }
+    else
     {
         m_CurrentUnit->EndTurn();
         ChangeState(BattleState::UnitEnd);

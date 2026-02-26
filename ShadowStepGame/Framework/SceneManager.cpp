@@ -65,7 +65,7 @@ void SceneManager::Update()
 
 				// 延長待機を開始
 				m_isExtraWaiting = true;
-				m_loadingExtraTimer = 1.0f;
+				m_loadingExtraTimer = 2.0f;
 
 				std::cout << "[SceneManager] Scene initialization completed. Extra loading wait started." << std::endl;
 			}

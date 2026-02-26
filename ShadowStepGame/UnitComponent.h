@@ -29,6 +29,9 @@ private:
     bool m_isActing = false;        // 行動中か
     bool m_turnFinished = false;    // ターン終了済みか
 
+    // 設定データ
+    float m_WalkSpeed = 0.2f;
+
 public:
  
     //=======================================
@@ -48,6 +51,11 @@ public:
     //=======================================
     // 実行関数
     //=======================================
+    // -------- 行動制御 --------
+    void Move();
+    void Attack();
+    void Place();
+
     // -------- ターン制御 --------
     void StartTurn();
     void EndTurn();
@@ -63,7 +71,7 @@ public:
     void ExcuteAction();
 
     // -------- 状態取得 --------
-    bool IsTurnDinished() const
+    bool IsTurnFinished() const
     {
         return m_turnFinished;
     }
@@ -112,9 +120,8 @@ public:
         }
     }
 
+    bool IsActing() { return m_isActing; }
+
 private:
-    void Move();
-    void Attack();
-    void Place();
 
 };

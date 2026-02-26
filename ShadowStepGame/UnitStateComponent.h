@@ -63,6 +63,8 @@ namespace UnitState
     public:
         void OnStart(ManagedComponent* managedComponent) override
         {
+            managedComponent->pUnitMeshRenderer->ChangeAnimation("Move");
+            managedComponent->pUnitMeshRenderer->SetDoAnimation(true);
         };
         void OnUpdate(ManagedComponent* managedComponent) override
         {};
@@ -187,16 +189,6 @@ public:
     UnitState::UnitState GetPreState()
     {
         return m_PreState;
-    }
-
-    void Move()
-    {
-        std::cout << "Player Moving\n";
-    }
-
-    void Attack()
-    {
-        std::cout << "Player Attacking\n";
     }
 
 private:
