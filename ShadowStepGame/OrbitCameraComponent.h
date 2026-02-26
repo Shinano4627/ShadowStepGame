@@ -9,6 +9,10 @@ using namespace DirectX::SimpleMath;
 
 class OrbitCameraComponent : public Component
 {
+private:
+    // 設定データ
+    const int m_MoveFrame = 30; // 移動完了フレーム
+
 public:
     OrbitCameraComponent(Camera* camera)
         : m_Camera(camera)
@@ -59,7 +63,7 @@ public:
         if (isTacticalView)
         {
             m_WasTacticalView = true;
-            return; // ← OrbitCamera処理を止める
+            //return; // ← OrbitCamera処理を止める
         }
         else
         {

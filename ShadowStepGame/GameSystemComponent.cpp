@@ -271,26 +271,25 @@ void GameSystemComponent::UpdateUnitActionSelect()
     // ============================
     // Action入力（常に受け付ける）
     // ============================
-    // UIシステムから取得
-    if (IO_MANAGER.GetKeyDownKeyBord(VK_LBUTTON))   // 左クリックで更新
-    {
-        m_SelectType = m_uISystem->GetSelectedButton();
-    }    
 
-    // Actionが初めて選ばれた瞬間
-    if (m_SelectType != UnitActionType::None &&
-        m_SelectPhase == SelectPhase::Action)
+    switch (m_SelectPhase)
     {
-        m_SelectPhase = SelectPhase::Position;
+    case SelectPhase::Action:
+    {
+        // UIシステムから取得
+        if (IO_MANAGER.GetKeyDownKeyBord(VK_LBUTTON))   // 左クリックで更新
+        {
+            m_SelectType = m_uISystem->GetSelectedButton();
+            m_SelectPhase = SelectPhase::Position;
+        }
     }
-
-    // まだポジション選択していない
-    if (m_SelectPhase == SelectPhase::Position)
+    break;
+    case SelectPhase::Position:
     {
         // 入力管理
         // セレクト移動（仮実装：カメラがマップを右上を正、左下を負と見ていると仮定）
         Input_Select();
-        
+
         // 選択確定(F)
         if (IO_MANAGER.GetKeyDownKeyBord(VK_E) || IO_MANAGER.GetKeyDown(TYPE_OK))
         {
@@ -362,12 +361,16 @@ void GameSystemComponent::UpdateUnitActionSelect()
                     m_Unitposition = m_SelectMapPosition;
                 }
             }
-            else {
-                m_SelectPhase == SelectPhase::Action;
-                ok = false;
-            }
-
+            //else {
+            //    m_SelectPhase == SelectPhase::Action;
+            //    ok = false;
+            //}
         }
+        break;
+
+    default:
+        break;
+    }
     }
 }
 

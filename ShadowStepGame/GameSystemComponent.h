@@ -57,8 +57,8 @@ public:
 
 	enum class SelectPhase
 	{
-		Action,     // 1:アクション選択
-		Position,   // 2:ポジション選択
+		Action,     // 1:行動選択フェーズ
+		Position,   // 2:ポジション選択フェーズ
 	};
 
 public:
@@ -95,8 +95,8 @@ public:
 	MapPosition GetUnitPosition() { return m_Unitposition; }
 	bool IsSelectingPosition() const
 	{
-		return m_State == BattleState::UnitActionSelect &&
-			m_SelectPhase == SelectPhase::Position;
+		return m_State == BattleState::UnitActionSelect ||
+			m_State == BattleState::UnitActing;
 	}
 
 private:
