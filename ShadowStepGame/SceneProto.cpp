@@ -20,6 +20,7 @@
 #include "UnitSystemComponent.h"
 #include "UISystemComponent.h"
 #include "MeshRendererComponent.h"
+#include "UnitStateComponent.h"
 
 #include <fstream>
 #include <sstream>
@@ -390,8 +391,16 @@ void SceneProto::MakeUnit()
             }
 
             cout << "Create:Unit" << endl;
-            // UnitComponentをAdd
-            auto* Unit = newObject->AddComponent<UnitComponent>();
+
+            // ステートで管理するコンポーネント
+            UnitState::ManagedComponent managedComponent;
+            managedComponent.pUnitMeshRenderer = newObject->GetMeshComponent<MeshRendererComponent>();
+
+            // コンポーネント追加
+            auto UnitState = newObject->AddComponent<UnitStateComponent>();
+            UnitState->SetInitData(managedComponent);
+
+            auto* Unit = newObject->AddComponent<UnitComponent>(UnitState);
             Unit->Init();
             Unit->SetStatus(unit_S);
 

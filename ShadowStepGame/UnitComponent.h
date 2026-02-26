@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Component.h"
 #include "UnitCommon.h"
+#include "UnitStateComponent.h"
 #include <vector>
 // ===================================================================
 // ユニットコンポネント
@@ -17,6 +18,9 @@ private:
     // アクション情報
     UnitAction m_action;
 
+    // ステータスアニメーション管理
+    UnitStateComponent* m_unitStateComponent = nullptr;
+
     int downTurn = 0;
 
     // -------- 各Flug --------
@@ -30,7 +34,8 @@ public:
     //=======================================
     // コンストラクタ・デストラクタ
     //=======================================
-    UnitComponent(){}
+    UnitComponent(UnitStateComponent* unitStateComponent) 
+    :m_unitStateComponent(unitStateComponent){}
     ~UnitComponent(){}
 
     //=======================================
