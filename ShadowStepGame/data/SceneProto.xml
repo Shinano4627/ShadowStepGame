@@ -243,6 +243,7 @@
             <Animation Name="Idle" Path="asset/model/chr/enemies2/Great Sword Idle.fbx"/>
             <Animation Name="Down" Path="asset/model/chr/enemies2/Standing Death Backward 01.fbx"/>
             <Animation Name="Place" Path="asset/model/chr/enemies2/Two Hand Spell Casting.fbx"/>
+            <Animation Name="Move" Path="asset/model/chr/enemies2/Walking.fbx"/>
         </Animations>
         <Texture Value="asset/model/chr"/>
         <Posision X="0" Y="0" Z="0"/>
@@ -259,6 +260,7 @@
             <Animation Name="Idle" Path="asset/model/chr/player_atk/Great Sword Idle.fbx"/>
             <Animation Name="Down" Path="asset/model/chr/player_atk/Sword And Shield Death.fbx"/>
             <Animation Name="Attack" Path="asset/model/chr/player_atk/Standing Torch Melee Attack 02.fbx"/>
+            <Animation Name="Move" Path="asset/model/chr/player_atk/Crouched Walking.fbx"/>
         </Animations>
         <Texture Value="asset/model/chr"/>
         <Posision X="0" Y="0" Z="0"/>

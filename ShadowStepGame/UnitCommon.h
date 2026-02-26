@@ -178,3 +178,4 @@ struct UnitAction
 	UnitActionType type = UnitActionType::None;
 	MapPosition targetGrid;
 };
+
