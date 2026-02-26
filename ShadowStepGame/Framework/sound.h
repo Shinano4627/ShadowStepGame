@@ -9,7 +9,9 @@ typedef enum
 	SOUND_LABEL_BGM_TITLE = 0,		// タイトル、セレクト
 	SOUND_LABEL_BGM_GAME,		// ゲーム中、リザルト
 	//SOUND_LABEL_BGM001,		// サンプルBGM
-	//SOUND_LABEL_SE000,		// サンプルSE
+	SOUND_LABEL_SE_ACTION_SELECTED,		// ゲーム中
+	SOUND_LABEL_SE_CURSOL_MOVE,	// ゲーム中
+	SOUND_LABEL_SE_POSITION_SELECTED,	// ゲーム中
 	//SOUND_LABEL_SE001,		// サンプルSE
 
 	SOUND_LABEL_MAX,
@@ -29,11 +31,10 @@ private:
 		{"asset/sound/bgm/titleBGM.wav", true},	// サンプルBGM（ループさせるのでtrue設定）
 		{"asset/sound/bgm/battleBGM.wav", true},	// サンプルBGM（ループさせるのでtrue設定）
 //		{"asset/BGM/○○○.wav", true},	// サンプルBGM
-//		{"asset/SE/○○○.wav", false},  		// サンプルSE（ループしないのでfalse設定）
+		{"asset/sound/se/決定ボタンを押す18.wav", false},  		// サンプルSE（ループしないのでfalse設定）
+		{"asset/sound/se/カーソル移動12.wav", false},  		// サンプルSE（ループしないのでfalse設定）
+		{"asset/sound/se/小鼓（こつづみ）.wav", false},  		// サンプルSE（ループしないのでfalse設定）
 //		{"asset/SE/○○○.wav", false},		// サンプルSE
-
-
-
 	};
 
 	IXAudio2* m_pXAudio2 = NULL;

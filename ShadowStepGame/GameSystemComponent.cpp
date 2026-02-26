@@ -301,6 +301,7 @@ void GameSystemComponent::UpdateUnitActionSelect()
         {
             m_SelectType = m_uISystem->GetSelectedButton();
             m_SelectPhase = SelectPhase::Position;
+            SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_ACTION_SELECTED);
         }
     }
     break;
@@ -380,6 +381,8 @@ void GameSystemComponent::UpdateUnitActionSelect()
                 if (m_SelectType == UnitActionType::Move) {
                     m_Unitposition = m_SelectMapPosition;
                 }
+
+                SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_POSITION_SELECTED);
             }
             //else {
             //    m_SelectPhase == SelectPhase::Action;
@@ -591,21 +594,25 @@ void GameSystemComponent::Input_Select()
     {
         m_SelectMapPosition.x += 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
+        SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_CURSOL_MOVE);
     }
     else if (IO_MANAGER.GetKeyDownKeyBord(VK_LEFT))
     {
         m_SelectMapPosition.x -= 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
+        SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_CURSOL_MOVE);
     }
     else if (IO_MANAGER.GetKeyDownKeyBord(VK_UP))
     {
         m_SelectMapPosition.z += 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
+        SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_CURSOL_MOVE);
     }
     else if (IO_MANAGER.GetKeyDownKeyBord(VK_DOWN))
     {
         m_SelectMapPosition.z -= 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
+        SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_CURSOL_MOVE);
     }
     
 }
