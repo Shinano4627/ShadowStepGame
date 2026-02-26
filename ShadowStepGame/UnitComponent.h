@@ -30,7 +30,7 @@ private:
     bool m_turnFinished = false;    // ターン終了済みか
 
     // 設定データ
-    float m_WalkSpeed = 0.2f;
+    float m_WalkSpeed = 0.1f;
     float m_RotateSpeed = 0.1f;  // 回転速度（ラジアン/フレーム）
 
 public:

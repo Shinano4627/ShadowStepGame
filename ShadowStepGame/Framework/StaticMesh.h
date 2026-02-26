@@ -28,6 +28,7 @@ private:
 	std::vector<DirectX::SimpleMath::Matrix> m_Bonecombmtxcontainer;				// ボーンコンビネーション行列の配列
 private:
 	void UpdateBoneMatrix(const aiNode* node, const DirectX::SimpleMath::Matrix& matrix);
+	void UpdateBoneMatrix(const aiNode* node, const DirectX::SimpleMath::Matrix& matrix, std::unordered_map<std::string, AssimpPerse::BONE>& bones);
 public:
     // ===================================================================
     // メッシュ読み込み
@@ -38,9 +39,16 @@ public:
     // ===================================================================
 	const aiScene* LoadAnimation(const aiScene* data, const char* FileName, const char* Name, bool flip);
 	void UpdateAnimation(const char* AnimationName, int Frame);
+	// ユニット固有のボーン行列を出力するオーバーロード（共有メッシュの状態を汚染しない）
+	void UpdateAnimation(const char* AnimationName, int Frame, std::vector<DirectX::SimpleMath::Matrix>& outBoneMatrices);
     void CopyAnimationData(StaticMesh* distMesh)
     {
         distMesh->m_Animations = m_Animations;
+    }
+    int GetAnimationMaxFrame()
+    {
+        aiAnimation* anim = m_pScene->mAnimations[0];
+        return static_cast<int>(anim->mDuration);
     }
 	// ===================================================================
     // データ取得

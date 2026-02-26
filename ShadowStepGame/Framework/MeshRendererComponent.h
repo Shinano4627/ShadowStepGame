@@ -52,7 +52,10 @@ private:
     std::string m_curAnimation;
     int m_Frame = 0;
     bool m_doAnim = true;   // アニメーションするか
+    bool m_doLoop = true;   // ループ再生するか
     int m_FlameSlowmotion = 1;   // フレームをおとしてスローモーション
+    // ユニット固有のボーン行列（共有StaticMeshから独立して管理）
+    std::vector<DirectX::SimpleMath::Matrix> m_BoneMatrices;
     // 初期化済みフラグ
     bool m_Initialized = false;
 
@@ -192,7 +195,13 @@ public:
         if (!m_doAnim) return;
 
         m_Frame++;
-        mesh->UpdateAnimation(m_curAnimation.c_str(), m_Frame);
+        // ユニット固有のボーン行列バッファに出力（共有メッシュの状態を汚染しない）
+        mesh->UpdateAnimation(m_curAnimation.c_str(), m_Frame, m_BoneMatrices);
+
+        if (!m_doLoop && m_Frame >= mesh->GetAnimationMaxFrame())
+        {
+            m_doAnim = false;
+        }
     }
 
     // ===================================================================
@@ -224,10 +233,16 @@ public:
         m_curAnimation = newAnimaiton;
     }
 
+    void SetIsAnimationLoop(bool isLoop)
+    {
+        m_doLoop = isLoop;
+    }
+
     void SetDoAnimation(bool doAnim)
     {
         m_doAnim = doAnim;
     }
+    bool GetDoAnimation() { return m_doAnim; }
     void SetFlameSlowmotion(int rateSlowmotion) { m_FlameSlowmotion = rateSlowmotion; }
     int GetFlameSlowmotion() const { return m_FlameSlowmotion; }
     void CopyAnimations(MeshRendererComponent* distMesh);

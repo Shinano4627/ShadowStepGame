@@ -66,12 +66,11 @@ void MeshRendererComponent::Draw(Camera* camera)
 	// UV行列を設定
 	Renderer::SetUV(0, 0, 1, 1); // GPUにセット
 
-	// ボーン行列をGPUに設定
+	// ボーン行列をGPUに設定（ユニット固有の行列を使用）
 	Renderer::ResetBoneMatrix();
-	const auto& boneMatrices = mesh->GetBoneMatrices();
-	if (boneMatrices.size() > 0)
+	if (m_BoneMatrices.size() > 0)
 	{
-		Renderer::SetBoneMatrix(boneMatrices);
+		Renderer::SetBoneMatrix(m_BoneMatrices);
 	}
 
 	// 描画前処理
