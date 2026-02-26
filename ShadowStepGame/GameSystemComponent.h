@@ -19,6 +19,7 @@ class SunManageComponent;
 class ShadowSystemComponent;
 class UnitComponent;
 class UISystemComponent;
+class OrbitCameraComponent;
 
 class GameSystemComponent : public Component
 {
@@ -57,6 +58,7 @@ public:
 
 	enum class SelectPhase
 	{
+		Init,			// 初期化処理実行中
 		Action,     // 1:行動選択フェーズ
 		Position,   // 2:ポジション選択フェーズ
 	};
@@ -210,5 +212,11 @@ private:
 
 public:
 	bool GameEnd_flg = false;
+
+	// OrbitCameraComponentの登録
+	void SetOrbitCamera(OrbitCameraComponent* cam) { m_orbitCamera = cam; }
+
+private:
+	OrbitCameraComponent* m_orbitCamera = nullptr;
 
 };

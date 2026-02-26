@@ -78,6 +78,9 @@ void SceneProto::Init()
         orbitCamera->SetGameSystem(gameSystem);
         orbitCamera->SetRotationSpeed(0.02f);
 
+        // システムにカメラコンポーネントを登録
+        gameSystem->SetOrbitCamera(orbitCamera);
+
 
     // ここで SunManageComponent をセット
     // ※m_sunSystem は現状 private なので、public setter または friend でアクセス推奨

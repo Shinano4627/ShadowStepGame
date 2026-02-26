@@ -3,7 +3,9 @@
 //=======================================
 
 #include "GameSystemComponent.h"
+#include "OrbitCameraComponent.h"
 #include "GameObject.h"
+#include "SoundManager.h"
 
 // 他システム
 #include "MapSystemComponent.h"
@@ -206,7 +208,25 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
         m_UnitType = unit->GetType();
         m_UnitModel = unit->GetModel();
         m_SelectType = UnitActionType::None;
-        m_SelectPhase = SelectPhase::Action;
+        m_SelectPhase = SelectPhase::Init; // カメラ移動完了を待つ
+
+        // 戦術視点カメラ指定位置を計算して移動開始
+        if (m_orbitCamera)
+        {
+            Vector3 unitPos(
+                m_Unitposition.x * 5.0f,
+                0.0f,
+                m_Unitposition.z * 5.0f
+            );
+
+            Vector3 tacticalDir(0.0f, 1.0f, -1.2f);
+            tacticalDir.Normalize();
+            float tacticalDistance = 50.0f;
+
+            Vector3 endCamPos = unitPos + tacticalDir * tacticalDistance;
+            m_orbitCamera->StartMoveTo(endCamPos, unitPos);
+        }
+
         // SelectMap起動
         m_mapSystem->StartSelectMap(unit, m_SelectMapPosition);
         
@@ -567,22 +587,22 @@ bool GameSystemComponent::IsEnemyAllDead() const
 void GameSystemComponent::Input_Select()
 {
     
-    if (IO_MANAGER.GetKeyDownKeyBord(VK_RIGHT) || IO_MANAGER.GetKeyDownKeyBord(VK_A))
+    if (IO_MANAGER.GetKeyDownKeyBord(VK_RIGHT))
     {
         m_SelectMapPosition.x += 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
     }
-    else if (IO_MANAGER.GetKeyDownKeyBord(VK_LEFT) || IO_MANAGER.GetKeyDownKeyBord(VK_D))
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_LEFT))
     {
         m_SelectMapPosition.x -= 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
     }
-    else if (IO_MANAGER.GetKeyDownKeyBord(VK_UP) || IO_MANAGER.GetKeyDownKeyBord(VK_W))
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_UP))
     {
         m_SelectMapPosition.z += 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
     }
-    else if (IO_MANAGER.GetKeyDownKeyBord(VK_DOWN) || IO_MANAGER.GetKeyDownKeyBord(VK_S))
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_DOWN))
     {
         m_SelectMapPosition.z -= 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);

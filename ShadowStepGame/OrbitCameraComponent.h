@@ -13,12 +13,35 @@ private:
     // 設定データ
     const int m_MoveFrame = 30; // 移動完了フレーム
 
+    // カメラ移動用
+    Vector3 m_StartCamPos;      // 移動開始時のカメラ位置
+    Vector3 m_EndCamPos;        // 移動先のカメラ位置
+    Vector3 m_StartTarget;      // 移動開始時のターゲット位置
+    Vector3 m_EndTarget;        // 移動先のターゲット位置
+    int     m_MoveFrameCount = 0; // 現在の移動フレームカウント
+    bool    m_IsMoving = false;   // 移動中フラグ
+
 public:
     OrbitCameraComponent(Camera* camera)
         : m_Camera(camera)
     {}
 
     void SetRotationSpeed(float speed) { m_RotSpeed = speed; }
+
+    // カメラ移動開始
+    void StartMoveTo(const Vector3& endCamPos, const Vector3& endTarget)
+    {
+        if (!m_Camera) return;
+        m_StartCamPos      = m_Camera->GetPosition();
+        m_StartTarget      = m_Camera->GetTarget();
+        m_EndCamPos        = endCamPos;
+        m_EndTarget        = endTarget;
+        m_MoveFrameCount   = 0;
+        m_IsMoving         = true;
+    }
+
+    // 移動が完了しているか
+    bool IsMoveFinished() const { return !m_IsMoving; }
 
     void Update()
     {
@@ -31,30 +54,28 @@ public:
             (m_GameSystem && m_GameSystem->IsSelectingPosition());
 
         // -------------------------------------------------
-        // 戦術視点に「入った瞬間」だけスナップ
+        // カメラ移動中の補間処理
         // -------------------------------------------------
-        bool enterTacticalView =
-            isTacticalView && !m_WasTacticalView;
-
-        if (enterTacticalView)
+        if (m_IsMoving)
         {
-            Vector3 unitPos(0.0f, 0.0f, 0.0f);
+            m_MoveFrameCount++;
 
-            if (m_GameSystem)
+            // 補間係数（0.0〜1.0）
+            float t = static_cast<float>(m_MoveFrameCount) / static_cast<float>(m_MoveFrame);
+            if (t >= 1.0f)
             {
-                MapPosition mapPos = m_GameSystem->GetUnitPosition();
-                unitPos.x = mapPos.x * 5.0f;
-                unitPos.z = mapPos.z * 5.0f;
+                t = 1.0f;
+                m_IsMoving = false;
             }
 
-            Vector3 tacticalDir(0.0f, 1.0f, -1.2f);
-            tacticalDir.Normalize();
-
-            float tacticalDistance = 50.0f;
-            Vector3 camPos = unitPos + tacticalDir * tacticalDistance;
-
-            m_Camera->SetTarget(unitPos);
+            // 線形補間でカメラ位置・ターゲットを更新
+            Vector3 camPos   = Vector3::Lerp(m_StartCamPos,  m_EndCamPos,  t);
+            Vector3 target   = Vector3::Lerp(m_StartTarget,  m_EndTarget,  t);
             m_Camera->SetPosition(camPos);
+            m_Camera->SetTarget(target);
+
+            // 移動中はOrbit処理をスキップ
+            return;
         }
 
         // -------------------------------------------------
@@ -117,6 +138,14 @@ public:
         // カメラ位置反映
         // -----------------------------
         camPos = target + offset * distance;
+        // リリースのときはカメラが地面の下にうまらないように調整
+#ifdef _DEBUG
+        if (camPos.y < 0.5f)
+        {
+            camPos.y = 0.5f;
+        }
+#endif // DEBUG
+
         m_Camera->SetPosition(camPos);
         m_Camera->SetTarget(target);
     }
