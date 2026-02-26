@@ -1,6 +1,6 @@
-// ===================================================================
+ï»¿// ===================================================================
 // MeshRendererComponent.cpp
-// GameObject‚É•`‰æ‹@”\‚ğ’Ç‰Á‚·‚éƒRƒ“ƒ|[ƒlƒ“ƒg
+// GameObjectã«æç”»æ©Ÿèƒ½ã‚’è¿½åŠ ã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
 // ===================================================================
 #include "MeshRendererComponent.h"
 #include "ResourceManager.h"
@@ -8,34 +8,34 @@
 #include "XmlRW.h"
 
 // ===================================================================
-// ‰Šú‰»
+// åˆæœŸåŒ–
 // ===================================================================
 void MeshRendererComponent::Init()
 {
-	// ƒƒbƒVƒ…‚ªƒZƒbƒg‚³‚ê‚Ä‚¢‚ê‚ÎƒŒƒ“ƒ_ƒ‰[‚ğ‰Šú‰»
+	// ãƒ¡ãƒƒã‚·ãƒ¥ãŒã‚»ãƒƒãƒˆã•ã‚Œã¦ã„ã‚Œã°ãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼ã‚’åˆæœŸåŒ–
 	if (m_MeshHandle)
 	{
 		auto* mesh = m_MeshHandle.Get();
 		if (mesh)
 		{
-			// MeshRenderer‚ğ‰Šú‰»i’¸“_EƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ğì¬j
+			// MeshRendererã‚’åˆæœŸåŒ–ï¼ˆé ‚ç‚¹ãƒ»ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ä½œæˆï¼‰
 			m_Renderer.Init(*mesh);
 
-			// ƒ}ƒeƒŠƒAƒ‹‚ğì¬
+			// ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’ä½œæˆ
 			CreateMaterials();
 
-			// ‰Šú‰»Ï‚İƒtƒ‰ƒO‚ğ—§‚Ä‚é
+			// åˆæœŸåŒ–æ¸ˆã¿ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
 			m_Initialized = true;
 		}
 	}
 }
 
 // ===================================================================
-// •`‰æˆ—
+// æç”»å‡¦ç†
 // ===================================================================
 void MeshRendererComponent::Draw(Camera* camera)
 {
-	// ‰Šú‰»ƒ`ƒFƒbƒN
+	// åˆæœŸåŒ–ãƒã‚§ãƒƒã‚¯
 	if (!m_Initialized || !m_MeshHandle || !m_ShaderHandle)
 	{
 		return;
@@ -49,24 +49,24 @@ void MeshRendererComponent::Draw(Camera* camera)
 		return;
 	}
 
-	// ƒJƒƒ‰İ’èiWORLD‘w‚Ì‚İj
+	// ã‚«ãƒ¡ãƒ©è¨­å®šï¼ˆWORLDå±¤ã®ã¿ï¼‰
 	if (camera && GetRenderLayer() == RenderLayer::WORLD)
 	{
-		camera->SetCamera(0); // 3Dƒ‚[ƒh
+		camera->SetCamera(0); // 3Dãƒ¢ãƒ¼ãƒ‰
 	}
 
-	// Transform‚©‚çƒ[ƒ‹ƒhs—ñ‚ğæ“¾
+	// Transformã‹ã‚‰ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã‚’å–å¾—
 	Matrix worldMatrix = m_pOwner->GetTransform().GetWorldMatrix();
-	// GPU‚Éİ’è
+	// GPUã«è¨­å®š
 	Renderer::SetWorldMatrix(&worldMatrix);
 
-	// ƒVƒF[ƒ_[İ’è
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼è¨­å®š
 	shader->SetGPU();
 
-	// UVs—ñ‚ğİ’è
-	Renderer::SetUV(0, 0, 1, 1); // GPU‚ÉƒZƒbƒg
+	// UVè¡Œåˆ—ã‚’è¨­å®š
+	Renderer::SetUV(0, 0, 1, 1); // GPUã«ã‚»ãƒƒãƒˆ
 
-	// ƒ{[ƒ“s—ñ‚ğGPU‚Éİ’è
+	// ãƒœãƒ¼ãƒ³è¡Œåˆ—ã‚’GPUã«è¨­å®š
 	Renderer::ResetBoneMatrix();
 	const auto& boneMatrices = mesh->GetBoneMatrices();
 	if (boneMatrices.size() > 0)
@@ -74,10 +74,10 @@ void MeshRendererComponent::Draw(Camera* camera)
 		Renderer::SetBoneMatrix(boneMatrices);
 	}
 
-	// •`‰æ‘Oˆ—
+	// æç”»å‰å‡¦ç†
 	m_Renderer.BeforeDraw();
 
-	// ƒTƒuƒZƒbƒg‚²‚Æ‚É•`‰æ
+	// ã‚µãƒ–ã‚»ãƒƒãƒˆã”ã¨ã«æç”»
 	const auto& subsets = mesh->GetSubsets();
 	const auto& textureHandles = mesh->GetTextureHandles();
 
@@ -85,13 +85,13 @@ void MeshRendererComponent::Draw(Camera* camera)
 	{
 		const auto& subset = subsets[i];
 
-		// ƒ}ƒeƒŠƒAƒ‹‚ğGPU‚Éİ’è
+		// ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’GPUã«è¨­å®š
 		if (subset.MaterialIdx < m_Materials.size())
 		{
 			m_Materials[subset.MaterialIdx]->SetGPU();
 		}
 
-		// ƒeƒNƒXƒ`ƒƒ‚ğGPU‚Éİ’è
+		// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’GPUã«è¨­å®š
 		if (subset.MaterialIdx < textureHandles.size() && textureHandles[subset.MaterialIdx])
 		{
 			auto* texture = textureHandles[subset.MaterialIdx].Get();
@@ -101,11 +101,11 @@ void MeshRendererComponent::Draw(Camera* camera)
 			}
 		}
 
-		// ƒTƒuƒZƒbƒg•`‰æ
+		// ã‚µãƒ–ã‚»ãƒƒãƒˆæç”»
 		m_Renderer.DrawSubset(
-			subset.IndexNum,    // •`‰æ‚·‚éƒCƒ“ƒfƒbƒNƒX”
-			subset.IndexBase,   // ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ÌŠJnˆÊ’u
-			subset.VertexBase   // ’¸“_ƒoƒbƒtƒ@‚ÌŠJnˆÊ’u
+			subset.IndexNum,    // æç”»ã™ã‚‹ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹æ•°
+			subset.IndexBase,   // ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®é–‹å§‹ä½ç½®
+			subset.VertexBase   // é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®é–‹å§‹ä½ç½®
 		);
 	}
 }
@@ -115,17 +115,17 @@ void MeshRendererComponent::LoadModel(const std::vector<AnimationData>& animatio
 	bool modelLoaded = false;
 
 	// ===================================================================
-	// OBJƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ‚ğ‚İ‚é
+	// OBJãƒ¢ãƒ‡ãƒ«ã®èª­ã¿è¾¼ã¿ã‚’è©¦ã¿ã‚‹
 	// ===================================================================
 	try
 	{
-		// MeshRendererComponentì¬
+		// MeshRendererComponentä½œæˆ
 		auto* meshRenderer = m_pOwner->GetMeshComponent<MeshRendererComponent>();
 
-		// ResourceManagerŒo—R‚ÅƒƒbƒVƒ…“Ç‚İ‚İ
+		// ResourceManagerçµŒç”±ã§ãƒ¡ãƒƒã‚·ãƒ¥èª­ã¿è¾¼ã¿
 		auto meshHandle = M_RESOURCE.LoadMesh(m_ModelPath, m_TexturePath);
 
-		// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ì“Ç‚İ‚İ
+		// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®èª­ã¿è¾¼ã¿
 		for (auto anim : animations)
 		{
 			M_RESOURCE.LoadAnimation(meshHandle.GetShared(), anim.path.c_str(), anim.name.c_str(), true);
@@ -133,10 +133,10 @@ void MeshRendererComponent::LoadModel(const std::vector<AnimationData>& animatio
 
 		if (meshHandle)
 		{
-			// shared_ptr‚Æ‚µ‚Äæ“¾‚µ‚ÄƒZƒbƒg
+			// shared_ptrã¨ã—ã¦å–å¾—ã—ã¦ã‚»ãƒƒãƒˆ
 			meshRenderer->SetMesh(meshHandle.GetShared());
 
-			// ƒVƒF[ƒ_[İ’è
+			// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼è¨­å®š
 			ResourceHandle<Shader> shaderHandle;
 			if (animations.size() != 0)
 			{
@@ -157,7 +157,7 @@ void MeshRendererComponent::LoadModel(const std::vector<AnimationData>& animatio
 		else
 		{
 #ifdef _DEBUG	
-			//assert(mesh);	// ƒfƒoƒbƒO‚Ì‚İƒƒbƒVƒ…“Ç‚İ‚İ¸”s‚ÉƒGƒ‰[‚ğo‚·
+			//assert(mesh);	// ãƒ‡ãƒãƒƒã‚°æ™‚ã®ã¿ãƒ¡ãƒƒã‚·ãƒ¥èª­ã¿è¾¼ã¿å¤±æ•—ã«ã‚¨ãƒ©ãƒ¼ã‚’å‡ºã™
 #endif	// _DEBUG
 			std::cerr << "[SceneResult] Model file not found or failed to load" << std::endl;
 			//m_pOwner->RemoveMeshComponent<MeshRendererComponent>();
@@ -166,7 +166,7 @@ void MeshRendererComponent::LoadModel(const std::vector<AnimationData>& animatio
 	catch (const std::exception& e)
 	{
 		std::cerr << "Exception loading model: " << e.what() << std::endl;
-		// MeshRendererComponent‚ğíœi‚à‚µ’Ç‰Á‚³‚ê‚Ä‚¢‚½‚çj
+		// MeshRendererComponentã‚’å‰Šé™¤ï¼ˆã‚‚ã—è¿½åŠ ã•ã‚Œã¦ã„ãŸã‚‰ï¼‰
 		//if (modelObject->GetMeshComponent<MeshRendererComponent>())
 		//{
 		//	modelObject->RemoveMeshComponent<MeshRendererComponent>();
@@ -174,14 +174,28 @@ void MeshRendererComponent::LoadModel(const std::vector<AnimationData>& animatio
 	}
 
 	// ===================================================================
-	// ƒtƒH[ƒ‹ƒoƒbƒNFOBJ“Ç‚İ‚İ¸”s‚ÍSimpleCube‚ğg—p
+	// ãƒ•ã‚©ãƒ¼ãƒ«ãƒãƒƒã‚¯ï¼šOBJèª­ã¿è¾¼ã¿å¤±æ•—æ™‚ã¯SimpleCubeã‚’ä½¿ç”¨
 	// ===================================================================
 	if (!modelLoaded)
 	{
 		std::cout << "[SceneResult] Using fallback: SimpleCubeRenderer" << std::endl;
 
-		//auto* cubeRenderer = modelObject->AddMeshComponent<SimpleCubeRendererComponent>(Color(1, 1, 0, 1)); // ‰©F
+		//auto* cubeRenderer = modelObject->AddMeshComponent<SimpleCubeRendererComponent>(Color(1, 1, 0, 1)); // é»„è‰²
 		//cubeRenderer->SetRenderLayer(RenderLayer::WORLD);
 	}
 }
 
+void MeshRendererComponent::CopyAnimations(MeshRendererComponent* distMesh)
+{
+	if (m_MeshHandle)
+	{
+		auto* mesh = m_MeshHandle.Get();
+		if (mesh)
+		{
+			mesh->CopyAnimationData(distMesh->m_MeshHandle.Get());
+
+			// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç”¨ã®ã‚·ã‚§ãƒ¼ãƒ€èª­ã¿è¾¼ã¿
+			distMesh->SetShader(M_RESOURCE.LoadShader("shader/litTextureAnimationVS.hlsl", "shader/litTexturePS.hlsl"));
+		}
+	}
+}

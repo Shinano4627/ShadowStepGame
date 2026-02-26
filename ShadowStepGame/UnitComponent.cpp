@@ -1,5 +1,14 @@
 ﻿#include "UnitComponent.h"
 #include "GameObject.h"
+#include "MeshRendererComponent.h"
+
+void UnitComponent::Init()
+{
+    // アニメーション再生
+    auto mesh = m_pOwner->GetMeshComponent<MeshRendererComponent>();
+    mesh->ChangeAnimation("Idle");
+    mesh->SetDoAnimation(true);
+}
 
 void UnitComponent::Update()
 {

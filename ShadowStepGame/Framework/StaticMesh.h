@@ -38,6 +38,10 @@ public:
     // ===================================================================
 	const aiScene* LoadAnimation(const aiScene* data, const char* FileName, const char* Name, bool flip);
 	void UpdateAnimation(const char* AnimationName, int Frame);
+    void CopyAnimationData(StaticMesh* distMesh)
+    {
+        distMesh->m_Animations = m_Animations;
+    }
 	// ===================================================================
     // データ取得
     // ===================================================================

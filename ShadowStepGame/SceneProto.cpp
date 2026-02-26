@@ -281,6 +281,8 @@ void SceneProto::MakeUnit()
                             templateMesh->GetTexturePath()
                         );
                         mesh->LoadModel();
+                        // アニメーション情報取得
+                        templateMesh->CopyAnimations(mesh);
                     }
                     break;
                 case 2:
@@ -302,6 +304,8 @@ void SceneProto::MakeUnit()
                         templateMesh->GetTexturePath()
                     );
                     mesh->LoadModel();
+                    // アニメーション情報取得
+                    templateMesh->CopyAnimations(mesh);
                 }
                     break;
                 case 3:
@@ -343,7 +347,10 @@ void SceneProto::MakeUnit()
                             templateMesh->GetModelPath(),
                             templateMesh->GetTexturePath()
                         );
+
                         mesh->LoadModel();
+                        // アニメーション情報取得
+                        templateMesh->CopyAnimations(mesh);
                     }
                     break;
                 case 5:
@@ -365,6 +372,9 @@ void SceneProto::MakeUnit()
                             templateMesh->GetTexturePath()
                         );
                         mesh->LoadModel();
+
+                        // アニメーション情報取得
+                        templateMesh->CopyAnimations(mesh);
                     }
                     break;
                 case 6:
@@ -382,6 +392,7 @@ void SceneProto::MakeUnit()
             cout << "Create:Unit" << endl;
             // UnitComponentをAdd
             auto* Unit = newObject->AddComponent<UnitComponent>();
+            Unit->Init();
             Unit->SetStatus(unit_S);
 
             m_GameObjectList->AddObject(std::move(obj));

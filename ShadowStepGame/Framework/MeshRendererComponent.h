@@ -230,7 +230,7 @@ public:
     }
     void SetFlameSlowmotion(int rateSlowmotion) { m_FlameSlowmotion = rateSlowmotion; }
     int GetFlameSlowmotion() const { return m_FlameSlowmotion; }
-
+    void CopyAnimations(MeshRendererComponent* distMesh);
     // ===================================================================
     // 色設定
     // ===================================================================

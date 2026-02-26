@@ -257,7 +257,7 @@
         <FileName Value="asset/model/chr/player_atk.fbx"/>
         <Animations>
             <Animation Name="Idle" Path="asset/model/chr/player_atk/Great Sword Idle.fbx"/>
-            <Animation Name="Down" Path="asset/model/chr/player_atk/Falling Forward Death.fbx"/>
+            <Animation Name="Down" Path="asset/model/chr/player_atk/Sword And Shield Death.fbx"/>
             <Animation Name="Attack" Path="asset/model/chr/player_atk/Standing Torch Melee Attack 02.fbx"/>
         </Animations>
         <Texture Value="asset/model/chr"/>

@@ -127,7 +127,7 @@ void SceneManager::AsyncInitScene(SCENE scene)
 	{
 		// シーンの初期化を実行
 		m_scene->GetScene(scene)->Init();
-
+		// TODO　ボーンの初期化が完了しないため少し待つ
 	}
 	catch (const std::exception& e)
 	{
