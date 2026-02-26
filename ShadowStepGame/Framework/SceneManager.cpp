@@ -56,13 +56,33 @@ void SceneManager::Update()
 		// 初期化完了を確認
 		if (m_scene->GetScene(m_currentScene)->IsInitialized())
 		{
-			// スレッドの終了を待機
-			WaitForInitThread();
+			// 追加で待機する　※暫定処置
+			// DirectX11が非同期処理に対応していないことによりボーンの読み込みが間に合わないことがある。修正するにはDirectX12にする必要あり
+			if (!m_isExtraWaiting)
+			{
+				// スレッドの終了を待機
+				WaitForInitThread();
 
-			m_isInitializing = false;
-			m_isLoading = false;
+				// 延長待機を開始
+				m_isExtraWaiting = true;
+				m_loadingExtraTimer = 1.0f;
 
-			std::cout << "[SceneManager] Scene initialization completed" << std::endl;
+				std::cout << "[SceneManager] Scene initialization completed. Extra loading wait started." << std::endl;
+			}
+			else
+			{
+				// 延長タイマーをカウントダウン
+				m_loadingExtraTimer -= Game::GetDeltaTime();
+				if (m_loadingExtraTimer <= 0.0f)
+				{
+					// 延長終了、ローディング終了
+					m_isExtraWaiting = false;
+					m_isInitializing = false;
+					m_isLoading = false;
+
+					std::cout << "[SceneManager] Extra loading wait finished." << std::endl;
+				}
+			}
 		}
 		return;
 	}
@@ -127,7 +147,6 @@ void SceneManager::AsyncInitScene(SCENE scene)
 	{
 		// シーンの初期化を実行
 		m_scene->GetScene(scene)->Init();
-		// TODO　ボーンの初期化が完了しないため少し待つ
 	}
 	catch (const std::exception& e)
 	{

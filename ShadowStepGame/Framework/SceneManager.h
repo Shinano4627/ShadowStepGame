@@ -24,6 +24,10 @@ private:
 	std::atomic<bool> m_isInitializing = false;		// 初期化中フラグ
 	std::mutex m_sceneMutex;						// シーンアクセス用ミューテックス
 
+	// ローディング延長用
+	bool m_isExtraWaiting = false;					// 延長待機中フラグ
+	float m_loadingExtraTimer = 0.0f;				// 延長時間の残りカウント（秒）
+
 	bool PlayerResult = false;
 
 public:
