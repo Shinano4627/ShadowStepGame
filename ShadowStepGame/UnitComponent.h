@@ -31,6 +31,7 @@ private:
 
     // 設定データ
     float m_WalkSpeed = 0.2f;
+    float m_RotateSpeed = 0.1f;  // 回転速度（ラジアン/フレーム）
 
 public:
  

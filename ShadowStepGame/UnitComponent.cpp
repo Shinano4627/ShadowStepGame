@@ -79,11 +79,39 @@ void UnitComponent::ExcuteAction()
         Vector3 newPos = DirectX::SimpleMath::Vector3::Lerp(currentPos, targetPos, m_WalkSpeed);
         transform.SetPosition(newPos);
 
+        // 移動方向へのYaw回転
+        Vector3 diff = currentPos - targetPos;
+        if (diff.LengthSquared() > 1e-4f)
+        {
+            // 移動方向から目標Yawを算出（+Z前方基準）
+            float targetYaw = atan2f(diff.x, diff.z);
+            float currentYaw = transform.GetRotation().y;
+
+            // 角度差を-PI～PIに匆正
+            float delta = targetYaw - currentYaw;
+            while (delta > DirectX::XM_PI)  delta -= DirectX::XM_2PI;
+            while (delta < -DirectX::XM_PI) delta += DirectX::XM_2PI;
+
+            // 回転速度分だけYawを近づける
+            if (fabsf(delta) <= m_RotateSpeed)
+                currentYaw = targetYaw;
+            else
+                currentYaw += (delta > 0.0f ? m_RotateSpeed : -m_RotateSpeed);
+
+            Vector3 rot = transform.GetRotation();
+            rot.y = currentYaw;
+            transform.SetRotation(rot);
+        }
+
         // 移動完了
         if ((targetPos - newPos).Length() <= 1e-1f)
         {
             // 位置あわせ
             transform.SetPosition(targetPos);
+            // 前を向く（Yaw = 0）
+            Vector3 rot = transform.GetRotation();
+            rot.y = 0.0f;
+            transform.SetRotation(rot);
             m_unitStateComponent->ChangeState(UnitState::UnitState::Idle);
             m_turnFinished = true;
             m_isActing = false;
