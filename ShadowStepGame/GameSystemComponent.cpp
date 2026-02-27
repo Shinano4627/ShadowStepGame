@@ -6,6 +6,7 @@
 #include "OrbitCameraComponent.h"
 #include "GameObject.h"
 #include "SoundManager.h"
+#include "CursorManager.h"
 
 // 他システム
 #include "MapSystemComponent.h"
@@ -77,6 +78,13 @@ void GameSystemComponent::InitGame(std::unique_ptr<GameObjectList>& gameObjectLi
 
 void GameSystemComponent::UpdateGame(std::unique_ptr<GameObjectList>& gameObjectList)
 {
+    // アクション選択時のみ有効
+    if (m_SelectPhase == SelectPhase::Action)
+    {
+        // ゲーム用カーソルアップデート
+        CURSOR_MANAGER.Update();
+    }
+
     // VK_E が押されたら状態更新（テスト用）
     if (IO_MANAGER.GetKeyDownKeyBord(VK_E))
     {
@@ -392,13 +400,20 @@ void GameSystemComponent::UpdateUnitActionSelect()
 
                 SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_POSITION_SELECTED);
             }
-            //else {
-            //    m_SelectPhase == SelectPhase::Action;
-            //    ok = false;
-            //}
+            else
+            {
+                ok = false;
+                SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_POSITION_BEEP);
+            }
+        }
+
+        // 行動キャンセル　キー割り当ては仮
+        if (IO_MANAGER.GetKeyDownKeyBord(VK_Q) || IO_MANAGER.GetKeyDown(TYPE_CANCEL))
+        {
+            SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_POSITION_BACK);
+            m_SelectPhase = SelectPhase::Action;
         }
         break;
-
     default:
         break;
     }

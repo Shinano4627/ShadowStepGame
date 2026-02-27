@@ -198,7 +198,7 @@ private:
 	UnitActionType m_SelectType;	// 今選んでいるアクション選択
 	UnitModel m_UnitModel;
 
-	SelectPhase m_SelectPhase = SelectPhase::Action;
+	SelectPhase m_SelectPhase = SelectPhase::Init;
 
 	//=======================================
 	// デバッグ用

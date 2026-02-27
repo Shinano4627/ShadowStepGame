@@ -5,7 +5,6 @@
 #include "SceneProto.h"
 #include "SceneManager.h"
 #include "IOManager.h"
-#include "CursorManager.h"
 #include "SoundManager.h"
 #include <iostream>
 
@@ -130,9 +129,6 @@ void SceneProto::Update()
     // 1. カメラ更新
     m_Camera.Update();
     m_UiCamera.Update();
-
-    // ゲーム用カーソルアップデート
-    CURSOR_MANAGER.Update();
 
     // システムアップデート
     auto* gameSystem = m_GameObjectList->FindGameObjectWithTag("System")->GetComponent<GameSystemComponent>();

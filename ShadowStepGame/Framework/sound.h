@@ -12,6 +12,8 @@ typedef enum
 	SOUND_LABEL_SE_ACTION_SELECTED,		// ゲーム中
 	SOUND_LABEL_SE_CURSOL_MOVE,	// ゲーム中
 	SOUND_LABEL_SE_POSITION_SELECTED,	// ゲーム中
+	SOUND_LABEL_SE_POSITION_BEEP,	// ゲーム中
+	SOUND_LABEL_SE_POSITION_BACK,	// ゲーム中
 	//SOUND_LABEL_SE001,		// サンプルSE
 
 	SOUND_LABEL_MAX,
@@ -34,6 +36,8 @@ private:
 		{"asset/sound/se/決定ボタンを押す18.wav", false},  		// サンプルSE（ループしないのでfalse設定）
 		{"asset/sound/se/カーソル移動12.wav", false},  		// サンプルSE（ループしないのでfalse設定）
 		{"asset/sound/se/小鼓（こつづみ）.wav", false},  		// サンプルSE（ループしないのでfalse設定）
+		{"asset/sound/se/ビープ音2.wav", false},  		// サンプルSE（ループしないのでfalse設定）
+		{"asset/sound/se/シーン切り替え2.wav", false},  		// サンプルSE（ループしないのでfalse設定）
 //		{"asset/SE/○○○.wav", false},		// サンプルSE
 	};
 
