@@ -202,7 +202,6 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
 
     m_CurrentUnit->StartTurn();
 
-
     // ============================
     // プレイヤー or 敵で分岐
     // ============================
@@ -217,23 +216,6 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
         m_UnitModel = unit->GetModel();
         m_SelectType = UnitActionType::None;
         m_SelectPhase = SelectPhase::Init; // カメラ移動完了を待つ
-
-        // 戦術視点カメラ指定位置を計算して移動開始
-        if (m_orbitCamera)
-        {
-            Vector3 unitPos(
-                m_Unitposition.x * 5.0f,
-                0.0f,
-                m_Unitposition.z * 5.0f
-            );
-
-            Vector3 tacticalDir(0.0f, 1.0f, -1.2f);
-            tacticalDir.Normalize();
-            float tacticalDistance = 50.0f;
-
-            Vector3 endCamPos = unitPos + tacticalDir * tacticalDistance;
-            m_orbitCamera->StartMoveTo(endCamPos, unitPos);
-        }
 
         // SelectMap起動
         m_mapSystem->StartSelectMap(unit, m_SelectMapPosition);
@@ -274,6 +256,23 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
         m_CurrentUnit->SetAction(action);
 
         ChangeState(BattleState::UnitActing); // 敵AI行動
+    }
+
+    // 戦術視点カメラ指定位置を計算して移動開始
+    if (m_orbitCamera)
+    {
+        Vector3 unitPos(
+            m_Unitposition.x * 5.0f,
+            0.0f,
+            m_Unitposition.z * 5.0f
+        );
+
+        Vector3 tacticalDir(0.0f, 1.0f, -1.2f);
+        tacticalDir.Normalize();
+        float tacticalDistance = 50.0f;
+
+        Vector3 endCamPos = unitPos + tacticalDir * tacticalDistance;
+        m_orbitCamera->StartMoveTo(endCamPos, unitPos);
     }
 }
 
