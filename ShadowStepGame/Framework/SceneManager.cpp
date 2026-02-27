@@ -56,8 +56,7 @@ void SceneManager::Update()
 		// 初期化完了を確認
 		if (m_scene->GetScene(m_currentScene)->IsInitialized())
 		{
-			// 追加で待機する　※暫定処置
-			// DirectX11が非同期処理に対応していないことによりボーンの読み込みが間に合わないことがある。修正するにはDirectX12にする必要あり
+			// 追加で待機する　※今は使わない
 			if (!m_isExtraWaiting)
 			{
 				// スレッドの終了を待機
@@ -65,7 +64,7 @@ void SceneManager::Update()
 
 				// 延長待機を開始
 				m_isExtraWaiting = true;
-				m_loadingExtraTimer = 2.0f;
+				m_loadingExtraTimer = 0.0f;	// 延長時間
 
 				std::cout << "[SceneManager] Scene initialization completed. Extra loading wait started." << std::endl;
 			}

@@ -528,11 +528,25 @@ void Renderer::SetProjectionMatrix(Matrix* ProjectionMatrix)
 
 void Renderer::SetBoneMatrix(const std::vector<Matrix>& matrices)
 {
-	// ボーン行列をGPU側へ送る
-	if (matrices.size() > 0)
+	if (matrices.size() == 0) return;
+
+	// 400要素固定の中間バッファにコピーしてからGPUへ転送する
+	// 	Tips: 直接matrices.data()を渡すと、バッファサイズ400個分をソースポインタから読み取ろうとしてアクセス違反が発生する
+	// 	定数バッファへのUpdateSubresourceはpDstBox = NULLが必須仕様。pDstBoxでのデータ制御は不可
+	static Matrix buf[400];
+	UINT count = static_cast<UINT>(min(matrices.size(), (size_t)400));
+
+	// 実データをコピー
+	memcpy(buf, matrices.data(), count * sizeof(Matrix));
+
+	// 残りの領域を単位行列で埋める
+	for (UINT i = count; i < 400; i++)
 	{
-		m_pDeviceContext->UpdateSubresource(m_pBoneBuffer, 0, NULL, matrices.data(), 0, 0);
+		buf[i] = Matrix::Identity;
 	}
+
+	// ボーン行列をGPU側へ送る
+	m_pDeviceContext->UpdateSubresource(m_pBoneBuffer, 0, NULL, buf, 0, 0);
 }
 
 void Renderer::ResetBoneMatrix()
