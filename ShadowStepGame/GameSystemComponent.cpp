@@ -294,6 +294,14 @@ void GameSystemComponent::UpdateUnitActionSelect()
 
     switch (m_SelectPhase)
     {
+    case SelectPhase::Init:
+    {
+        // カメラ移動が完了しているか
+        if (m_orbitCamera->IsMoveFinished())
+        {
+            m_SelectPhase = SelectPhase::Action;
+        }
+    }
     case SelectPhase::Action:
     {
         // UIシステムから取得
