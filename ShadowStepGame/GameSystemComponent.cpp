@@ -309,6 +309,7 @@ void GameSystemComponent::UpdateUnitActionSelect()
             m_SelectPhase = SelectPhase::Action;
         }
     }
+    break;
     case SelectPhase::Action:
     {
         // UIシステムから取得
@@ -330,6 +331,15 @@ void GameSystemComponent::UpdateUnitActionSelect()
         if (IO_MANAGER.GetKeyDownKeyBord(VK_E) || IO_MANAGER.GetKeyDown(TYPE_OK))
         {
             bool ok = false;
+
+            // UnitActionを組み立て
+            UnitAction action;
+            action.type = m_SelectType;
+            action.targetGrid = m_SelectMapPosition;
+
+            // Unitに行動をセット
+            m_CurrentUnit->SetAction(action);
+
             // Actionに合わせてMapの位置をチェック(あとで関数化)
             switch (m_SelectType)
             {
@@ -380,14 +390,6 @@ void GameSystemComponent::UpdateUnitActionSelect()
 
             if (ok)
             {
-                // UnitActionを組み立て
-                UnitAction action;
-                action.type = m_SelectType;
-                action.targetGrid = m_SelectMapPosition;
-
-                // Unitに行動をセット
-                m_CurrentUnit->SetAction(action);
-
                 // SelectMap終了
                 m_mapSystem->EndSelectMap();
 
