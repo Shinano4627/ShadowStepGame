@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Component.h"
 #include "UnitCommon.h"
+#include "UnitStateComponent.h"
 #include <vector>
 // ===================================================================
 // ユニットコンポネント
@@ -17,6 +18,9 @@ private:
     // アクション情報
     UnitAction m_action;
 
+    // ステータスアニメーション管理
+    UnitStateComponent* m_unitStateComponent = nullptr;
+
     int downTurn = 0;
 
     // -------- 各Flug --------
@@ -25,24 +29,34 @@ private:
     bool m_isActing = false;        // 行動中か
     bool m_turnFinished = false;    // ターン終了済みか
 
+    // 設定データ
+    float m_WalkSpeed = 0.1f;
+    float m_RotateSpeed = 0.1f;  // 回転速度（ラジアン/フレーム）
+
 public:
  
     //=======================================
     // コンストラクタ・デストラクタ
     //=======================================
-    UnitComponent(){}
+    UnitComponent(UnitStateComponent* unitStateComponent) 
+    :m_unitStateComponent(unitStateComponent){}
     ~UnitComponent(){}
 
     //=======================================
     // ライフサイクル
     //=======================================
-    void Init() override {};
+    void Init() override;
     void Update() override;
     void Uninit() override {};
 
     //=======================================
     // 実行関数
     //=======================================
+    // -------- 行動制御 --------
+    void Move();
+    void Attack();
+    void Place();
+
     // -------- ターン制御 --------
     void StartTurn();
     void EndTurn();
@@ -58,7 +72,7 @@ public:
     void ExcuteAction();
 
     // -------- 状態取得 --------
-    bool IsTurnDinished() const
+    bool IsTurnFinished() const
     {
         return m_turnFinished;
     }
@@ -107,9 +121,8 @@ public:
         }
     }
 
+    bool IsActing() { return m_isActing; }
+
 private:
-    void Move();
-    void Attack();
-    void Place();
 
 };

@@ -1,6 +1,6 @@
-//=======================================
+ï»¿//=======================================
 // ResourceManager.h
-// ƒŠƒ\[ƒX‚ÌŠÇ—ƒ}ƒl[ƒWƒƒ[ƒNƒ‰ƒX
+// ãƒªã‚½ãƒ¼ã‚¹ã®ç®¡ç†ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‚¯ãƒ©ã‚¹
 //=======================================
 #pragma once
 #include "singleton.h"
@@ -9,7 +9,7 @@
 #include <string>
 #include "AssimpPerse.h"
 
-// ‘O•ûéŒ¾
+// å‰æ–¹å®£è¨€
 class Texture;
 class StaticMesh;
 class Shader;
@@ -17,7 +17,7 @@ class Material;
 struct MATERIAL;
 
 //=======================================
-// ResourceHandle ƒeƒ“ƒvƒŒ[ƒg
+// ResourceHandle ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆ
 //=======================================
 template<typename T>
 class ResourceHandle
@@ -31,30 +31,30 @@ public:
     ResourceHandle(std::shared_ptr<T> resource, const std::string& path)
         : m_Resource(resource), m_Path(path) {}
 
-    // ¶ƒ|ƒCƒ“ƒ^æ“¾
+    // ç”Ÿãƒã‚¤ãƒ³ã‚¿å–å¾—
     T* Get() const { return m_Resource.get(); }
 
-    // operator-> ‚Íshared_ptr‚ÉˆÏ÷iŠ®‘S‚ÈŒ^’è‹`‚ª•K—vj
+    // operator-> ã¯shared_ptrã«å§”è­²ï¼ˆå®Œå…¨ãªå‹å®šç¾©ãŒå¿…è¦ï¼‰
     T* operator->() const { return m_Resource.get(); }
 
-    // bool•ÏŠ·
+    // boolå¤‰æ›
     explicit operator bool() const { return m_Resource != nullptr; }
 
-    // ƒpƒXæ“¾
+    // ãƒ‘ã‚¹å–å¾—
     const std::string& GetPath() const { return m_Path; }
 
-    // shared_ptræ“¾
+    // shared_ptrå–å¾—
     std::shared_ptr<T> GetShared() const { return m_Resource; }
 };
 
 //=======================================
-// ResourceManager ƒNƒ‰ƒX
+// ResourceManager ã‚¯ãƒ©ã‚¹
 //=======================================
 class ResourceManager
 {
 private:
     //=======================================
-    // ƒŠƒ\[ƒXƒLƒƒƒbƒVƒ…ƒ}ƒbƒv
+    // ãƒªã‚½ãƒ¼ã‚¹ã‚­ãƒ£ãƒƒã‚·ãƒ¥ãƒãƒƒãƒ—
     //=======================================
     std::unordered_map<std::string, std::shared_ptr<Texture>> m_TextureCache;
     std::unordered_map<std::string, std::shared_ptr<StaticMesh>> m_MeshCache;
@@ -63,14 +63,14 @@ private:
     std::unordered_map<std::string, const aiScene*> m_AnimationCache;
 
     //=======================================
-    // ƒfƒtƒHƒ‹ƒgƒŠƒ\[ƒXiƒtƒH[ƒ‹ƒoƒbƒN—pj
+    // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒªã‚½ãƒ¼ã‚¹ï¼ˆãƒ•ã‚©ãƒ¼ãƒ«ãƒãƒƒã‚¯ç”¨ï¼‰
     //=======================================
     std::shared_ptr<Texture> m_DefaultTexture;
     std::shared_ptr<Shader> m_DefaultShader;
     std::shared_ptr<Material> m_DefaultMaterial;
 
     //=======================================
-    // ƒŠƒ\[ƒX“Œvî•ñ
+    // ãƒªã‚½ãƒ¼ã‚¹çµ±è¨ˆæƒ…å ±
     //=======================================
     struct ResourceStats
     {
@@ -78,12 +78,12 @@ private:
         size_t meshCount = 0;
         size_t shaderCount = 0;
         size_t materialCount = 0;
-        size_t totalMemoryUsage = 0; // ƒoƒCƒg’PˆÊi«—ˆÀ‘•j
+        size_t totalMemoryUsage = 0; // ãƒã‚¤ãƒˆå˜ä½ï¼ˆå°†æ¥å®Ÿè£…ï¼‰
     };
     ResourceStats m_Stats;
 
     //=======================================
-    // ƒXƒŒƒbƒhƒZ[ƒtƒeƒB
+    // ã‚¹ãƒ¬ãƒƒãƒ‰ã‚»ãƒ¼ãƒ•ãƒ†ã‚£
     //=======================================
     std::mutex m_TextureMutex;
     std::mutex m_MeshMutex;
@@ -91,7 +91,7 @@ private:
     std::mutex m_MaterialMutex;
 
     //=======================================
-    // ƒfƒtƒHƒ‹ƒgƒŠƒ\[ƒXƒpƒX
+    // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒªã‚½ãƒ¼ã‚¹ãƒ‘ã‚¹
     //=======================================
     const std::string DEFAULT_TEXTURE_PATH = "asset/texture/default.png";
     const std::string DEFAULT_SHADER_VS_PATH = "shader/litTextureVS.hlsl";
@@ -102,59 +102,59 @@ public:
     void UnInit();
 
     //=======================================
-    // ƒeƒNƒXƒ`ƒƒ“Ç‚İ‚İ (ƒLƒƒƒbƒVƒ…Šˆ—p)
+    // ãƒ†ã‚¯ã‚¹ãƒãƒ£èª­ã¿è¾¼ã¿ (ã‚­ãƒ£ãƒƒã‚·ãƒ¥æ´»ç”¨)
     //=======================================
     ResourceHandle<Texture> LoadTexture(const std::string& filepath);
 
-    // ƒeƒNƒXƒ`ƒƒ‚ğ‹­§Ä“Ç‚İ‚İ
+    // ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’å¼·åˆ¶å†èª­ã¿è¾¼ã¿
     ResourceHandle<Texture> ReloadTexture(const std::string& filepath);
 
-    // ƒfƒtƒHƒ‹ƒgƒeƒNƒXƒ`ƒƒæ“¾
+    // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒ†ã‚¯ã‚¹ãƒãƒ£å–å¾—
     ResourceHandle<Texture> GetDefaultTexture();
 
     //=======================================
-    // ƒƒbƒVƒ…“Ç‚İ‚İ (ƒLƒƒƒbƒVƒ…Šˆ—p)
+    // ãƒ¡ãƒƒã‚·ãƒ¥èª­ã¿è¾¼ã¿ (ã‚­ãƒ£ãƒƒã‚·ãƒ¥æ´»ç”¨)
     //=======================================
     ResourceHandle<StaticMesh> LoadMesh(
         const std::string& filepath,
         const std::string& textureDir = "");
 
-    // ƒƒbƒVƒ…‚ğ‹­§Ä“Ç‚İ‚İ
+    // ãƒ¡ãƒƒã‚·ãƒ¥ã‚’å¼·åˆ¶å†èª­ã¿è¾¼ã¿
     ResourceHandle<StaticMesh> ReloadMesh(
         const std::string& filepath,
         const std::string& textureDir = "");
 
     //=======================================
-    // ƒVƒF[ƒ_[“Ç‚İ‚İ (ƒLƒƒƒbƒVƒ…Šˆ—p)
+    // ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼èª­ã¿è¾¼ã¿ (ã‚­ãƒ£ãƒƒã‚·ãƒ¥æ´»ç”¨)
     //=======================================
     ResourceHandle<Shader> LoadShader(
         const std::string& vsPath,
         const std::string& psPath);
 
-    // ƒVƒF[ƒ_[‚ğ‹­§Ä“Ç‚İ‚İ
+    // ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’å¼·åˆ¶å†èª­ã¿è¾¼ã¿
     ResourceHandle<Shader> ReloadShader(
         const std::string& vsPath,
         const std::string& psPath);
 
-    // ƒfƒtƒHƒ‹ƒgƒVƒF[ƒ_[æ“¾
+    // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚·ã‚§ãƒ¼ãƒ€ãƒ¼å–å¾—
     ResourceHandle<Shader> GetDefaultShader();
 
     //=======================================
-    // ƒ}ƒeƒŠƒAƒ‹ì¬iƒLƒƒƒbƒVƒ…Šˆ—pj
+    // ãƒãƒ†ãƒªã‚¢ãƒ«ä½œæˆï¼ˆã‚­ãƒ£ãƒƒã‚·ãƒ¥æ´»ç”¨ï¼‰
     //=======================================
     ResourceHandle<Material> CreateMaterial(
         const std::string& name,
         const MATERIAL& materialData);
 
-    // ƒfƒtƒHƒ‹ƒgƒ}ƒeƒŠƒAƒ‹æ“¾
+    // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒãƒ†ãƒªã‚¢ãƒ«å–å¾—
     ResourceHandle<Material> GetDefaultMaterial();
     // ===================================================================
-    // ƒAƒjƒ[ƒVƒ‡ƒ““Ç‚İ‚İ (ƒLƒƒƒbƒVƒ…Šˆ—p)
+    // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³èª­ã¿è¾¼ã¿ (ã‚­ãƒ£ãƒƒã‚·ãƒ¥æ´»ç”¨)
     // ===================================================================
     void LoadAnimation(std::weak_ptr<StaticMesh>mesh, const char* filepath, const char* name, bool flip);
 
     //=======================================
-    // ƒŠƒ\[ƒX‘¶İƒ`ƒFƒbƒN
+    // ãƒªã‚½ãƒ¼ã‚¹å­˜åœ¨ãƒã‚§ãƒƒã‚¯
     //=======================================
     bool HasTexture(const std::string& filepath) const;
     bool HasMesh(const std::string& filepath) const;
@@ -162,32 +162,32 @@ public:
     bool HasMaterial(const std::string& name) const;
 
     //=======================================
-    // ƒŠƒ\[ƒX‰ğ•ú
+    // ãƒªã‚½ãƒ¼ã‚¹è§£æ”¾
     //=======================================
     void UnloadTexture(const std::string& filepath);
     void UnloadMesh(const std::string& filepath);
     void UnloadShader(const std::string& vsPath, const std::string& psPath);
     void UnloadMaterial(const std::string& name);
 
-    // “Á’èƒ^ƒCƒv‚ÌƒŠƒ\[ƒX‚ğ‚·‚×‚Ä‰ğ•ú
+    // ç‰¹å®šã‚¿ã‚¤ãƒ—ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’ã™ã¹ã¦è§£æ”¾
     void UnloadAllTextures();
     void UnloadAllMeshes();
     void UnloadAllShaders();
     void UnloadAllMaterials();
     // ===================================================================
-    // ‘SƒŠƒ\[ƒX‰ğ•ú
+    // å…¨ãƒªã‚½ãƒ¼ã‚¹è§£æ”¾
     // ===================================================================
     void ClearAll();
 
     //=======================================
-    // ƒŠƒ\[ƒXî•ñ
+    // ãƒªã‚½ãƒ¼ã‚¹æƒ…å ±
     //=======================================
     const ResourceStats& GetStats() const { return m_Stats; }
     void PrintCacheInfo() const;
     void PrintDetailedInfo() const;
 
     //=======================================
-    // ƒŠƒ\[ƒXƒŠƒXƒgæ“¾iƒfƒoƒbƒO—pj
+    // ãƒªã‚½ãƒ¼ã‚¹ãƒªã‚¹ãƒˆå–å¾—ï¼ˆãƒ‡ãƒãƒƒã‚°ç”¨ï¼‰
     //=======================================
     std::vector<std::string> GetLoadedTextureList() const;
     std::vector<std::string> GetLoadedMeshList() const;
@@ -196,21 +196,21 @@ public:
 
 private:
     //=======================================
-    // “à•”ŠÖ”
+    // å†…éƒ¨é–¢æ•°
     //=======================================
     
-    // ƒVƒF[ƒ_[ƒL[‚ğ¶¬ ("vs_path|ps_path" ‚ÌŒ`®)
+    // ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚­ãƒ¼ã‚’ç”Ÿæˆ ("vs_path|ps_path" ã®å½¢å¼)
     std::string MakeShaderKey(const std::string& vs, const std::string& ps) const;
 
-    // ƒpƒX³‹K‰»i‹æØ‚è•¶š“ˆê‚È‚Çj
+    // ãƒ‘ã‚¹æ­£è¦åŒ–ï¼ˆåŒºåˆ‡ã‚Šæ–‡å­—çµ±ä¸€ãªã©ï¼‰
     std::string NormalizePath(const std::string& path) const;
 
-    // ƒfƒtƒHƒ‹ƒgƒŠƒ\[ƒX‚ğì¬
+    // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒªã‚½ãƒ¼ã‚¹ã‚’ä½œæˆ
     void CreateDefaultResources();
 
-    // “Œvî•ñ‚ğXV
+    // çµ±è¨ˆæƒ…å ±ã‚’æ›´æ–°
     void UpdateStats();
 };
 
-// —BˆêƒCƒ“ƒXƒ^ƒ“ƒXæ“¾ƒ}ƒNƒ
+// å”¯ä¸€ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å–å¾—ãƒã‚¯ãƒ­
 #define M_RESOURCE Singleton<ResourceManager>::GetInstance()

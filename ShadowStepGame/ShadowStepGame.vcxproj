@@ -212,6 +212,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClInclude Include="Framework\utility.h" />
     <ClInclude Include="Framework\VertexBuffer.h" />
     <ClInclude Include="Framework\XmlRW.h" />
+    <ClInclude Include="StateMachine.h" />
     <ClInclude Include="SunOrbUIComponent.h" />
     <ClInclude Include="UIAnimationComponent.h" />
     <ClInclude Include="RadioButtonComponent.h" />
@@ -230,6 +231,7 @@ robocopy $(SolutionDir)ShadowStepGame\asset $(OutDir)asset *.*   /s /e /COPY:DT 
     <ClInclude Include="UnitCommon.h" />
     <ClInclude Include="UnitComponent.h" />
     <ClInclude Include="ShadowSystemComponent.h" />
+    <ClInclude Include="UnitStateComponent.h" />
     <ClInclude Include="UnitSystemComponent.h" />
   </ItemGroup>
   <ItemGroup>

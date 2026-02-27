@@ -1,4 +1,4 @@
-// ===================================================================
+﻿// ===================================================================
 // StaticMesh.cpp
 // Assimpを使った静的メッシュクラスの実装（ResourceManager対応版）
 // ===================================================================
@@ -249,6 +249,83 @@ void StaticMesh::UpdateAnimation(const char* AnimationName, int Frame)
 		// GPUに送る前に転置
 		//m_Bonecombmtxcontainer[data.second.idx] = data.second.Matrix.Transpose();
 		m_Bonecombmtxcontainer[data.second.idx] = data.second.Matrix;
+	}
+}
+
+// ユニット固有のボーン行列を計算する（共有m_Bonesを使わずローカルコピーで処理）
+void StaticMesh::UpdateAnimation(const char* AnimationName, int Frame, std::vector<Matrix>& outBoneMatrices)
+{
+	if (m_Animations.count(AnimationName) == 0) return;
+	if (!m_Animations[AnimationName]->HasAnimations()) return;
+
+	// m_Bonesのローカルコピーを作成して計算（共有StaticMeshのボーン状態を汚染しない）
+	auto localBones = m_Bones;
+
+	Matrix rootMatrix;
+	Vector3 scale = { 1.0f, 1.0f, 1.0f };
+	Vector3 position = { 0.0f, 0.0f, 0.0f };
+	Quaternion rotation;
+	rotation.x = 0.0f;
+	rotation.y = 0.0f;
+	rotation.z = 0.0f;
+	rotation.w = 1.0f;
+
+	Matrix scalemtx = Matrix::CreateScale(scale.x, scale.y, scale.z);
+	Matrix rotmtx = Matrix::CreateFromQuaternion(rotation);
+	Matrix transmtx = Matrix::CreateTranslation(position.x, position.y, position.z);
+	rootMatrix = scalemtx * rotmtx * transmtx;
+
+	aiAnimation* animation = m_Animations[AnimationName]->mAnimations[0];
+
+	for (unsigned int c = 0; c < animation->mNumChannels; c++)
+	{
+		aiNodeAnim* nodeAnim = animation->mChannels[c];
+		AssimpPerse::BONE* bone = &localBones[nodeAnim->mNodeName.C_Str()];
+		int f;
+
+		f = Frame % nodeAnim->mNumRotationKeys;
+		aiQuaternion rot = nodeAnim->mRotationKeys[f].mValue;
+		f = Frame % nodeAnim->mNumPositionKeys;
+		aiVector3D pos = nodeAnim->mPositionKeys[f].mValue;
+
+		Vector3 boneScale = { 1.0f, 1.0f, 1.0f };
+		Vector3 bonePos = { pos.x, pos.y, pos.z };
+		Quaternion boneRot;
+		boneRot.x = rot.x;
+		boneRot.y = rot.y;
+		boneRot.z = rot.z;
+		boneRot.w = rot.w;
+
+		Matrix bs = Matrix::CreateScale(boneScale.x, boneScale.y, boneScale.z);
+		Matrix br = Matrix::CreateFromQuaternion(boneRot);
+		Matrix bt = Matrix::CreateTranslation(bonePos.x, bonePos.y, bonePos.z);
+		bone->AnimationMatrix = bs * br * bt;
+	}
+
+	UpdateBoneMatrix(m_pScene->mRootNode, rootMatrix, localBones);
+
+	// ローカルで計算した結果を出力
+	outBoneMatrices.clear();
+	outBoneMatrices.resize(localBones.size());
+	for (auto& data : localBones)
+	{
+		outBoneMatrices[data.second.idx] = data.second.Matrix;
+	}
+}
+
+// ローカルボーンマップを使ったUpdateBoneMatrixオーバーロード
+void StaticMesh::UpdateBoneMatrix(const aiNode* node, const Matrix& matrix, std::unordered_map<std::string, AssimpPerse::BONE>& bones)
+{
+	if (node->mName.length <= 0) return;
+
+	AssimpPerse::BONE* bone = &bones[node->mName.C_Str()];
+	Matrix bonecombinationmtx = bone->OffsetMatrix * bone->AnimationMatrix * matrix;
+	bone->Matrix = bonecombinationmtx;
+	Matrix mybonemtx = bone->AnimationMatrix * matrix;
+
+	for (unsigned int n = 0; n < node->mNumChildren; n++)
+	{
+		UpdateBoneMatrix(node->mChildren[n], mybonemtx, bones);
 	}
 }
 

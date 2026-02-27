@@ -297,6 +297,15 @@
     <ClInclude Include="EnemyAICompoment.h">
       <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
+    <ClInclude Include="SunOrbUIComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitStateComponent.h">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="StateMachine.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\AABBCollider.cpp">
@@ -478,6 +487,9 @@
     </ClCompile>
     <ClCompile Include="EnemyAICompoment.cpp">
       <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="SunOrbUIComponent.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

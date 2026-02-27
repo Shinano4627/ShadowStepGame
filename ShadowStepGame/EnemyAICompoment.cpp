@@ -143,7 +143,7 @@ bool EnemyAI::CanAttack(
 		return false;
 
 	int tile = GetTile(mapData, t.x, t.z, mapW, mapH);
-	return tile == static_cast<int>(EMapTile::Player);
+	return tile == static_cast<int>(EMapTile::PlayerAttack);
 }
 
 bool EnemyAI::CanMove(UnitComponent* enemy) const
@@ -248,7 +248,7 @@ MapPosition EnemyAI::DecideMoveCloser(
 			}
 			if (occupied) continue;
 
-			// Player との距離で評価
+			// PlayerAttack との距離で評価
 			int dist = abs(p.x - tpos.x) + abs(p.z - tpos.z);
 
 			if (dist < bestDist)

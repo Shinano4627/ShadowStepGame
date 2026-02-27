@@ -20,6 +20,7 @@
 #include "UnitSystemComponent.h"
 #include "UISystemComponent.h"
 #include "MeshRendererComponent.h"
+#include "UnitStateComponent.h"
 
 #include <fstream>
 #include <sstream>
@@ -218,7 +219,7 @@ void SceneProto::MakeUnit()
     int u_ID = 2000;
     int p_Speed = 30;
     int e_Speed = 10;
-    
+
     // 行ごとにデータを読み込む
     while (getline(csv_data, line)) {
         sin.clear();
@@ -259,7 +260,7 @@ void SceneProto::MakeUnit()
                 // Player
                 unit_S.type = UnitType::Player;
                 unit_S.speed = p_Speed;
-                newObject->SetName("Player");
+                newObject->SetName("Player" + u_ID);
                 newObject->SetTag("Player");
                 switch (data) {
                 case 1:
@@ -281,6 +282,8 @@ void SceneProto::MakeUnit()
                             templateMesh->GetTexturePath()
                         );
                         mesh->LoadModel();
+                        // アニメーション情報取得
+                        templateMesh->CopyAnimations(mesh);
                     }
                     break;
                 case 2:
@@ -302,6 +305,8 @@ void SceneProto::MakeUnit()
                         templateMesh->GetTexturePath()
                     );
                     mesh->LoadModel();
+                    // アニメーション情報取得
+                    templateMesh->CopyAnimations(mesh);
                 }
                     break;
                 case 3:
@@ -322,7 +327,7 @@ void SceneProto::MakeUnit()
                 // Enemy
                 unit_S.type = UnitType::Enemy;
                 unit_S.speed = e_Speed;
-                newObject->SetName("Enemy");
+                newObject->SetName("Enemy" + u_ID);
                 newObject->SetTag("Enemy");
                 switch (data) {
                 case 4:
@@ -343,7 +348,10 @@ void SceneProto::MakeUnit()
                             templateMesh->GetModelPath(),
                             templateMesh->GetTexturePath()
                         );
+
                         mesh->LoadModel();
+                        // アニメーション情報取得
+                        templateMesh->CopyAnimations(mesh);
                     }
                     break;
                 case 5:
@@ -365,6 +373,9 @@ void SceneProto::MakeUnit()
                             templateMesh->GetTexturePath()
                         );
                         mesh->LoadModel();
+
+                        // アニメーション情報取得
+                        templateMesh->CopyAnimations(mesh);
                     }
                     break;
                 case 6:
@@ -380,8 +391,17 @@ void SceneProto::MakeUnit()
             }
 
             cout << "Create:Unit" << endl;
-            // UnitComponentをAdd
-            auto* Unit = newObject->AddComponent<UnitComponent>();
+
+            // ステートで管理するコンポーネント
+            UnitState::ManagedComponent managedComponent;
+            managedComponent.pUnitMeshRenderer = newObject->GetMeshComponent<MeshRendererComponent>();
+
+            // コンポーネント追加
+            auto UnitState = newObject->AddComponent<UnitStateComponent>();
+            UnitState->SetInitData(managedComponent);
+
+            auto* Unit = newObject->AddComponent<UnitComponent>(UnitState);
+            Unit->Init();
             Unit->SetStatus(unit_S);
 
             m_GameObjectList->AddObject(std::move(obj));

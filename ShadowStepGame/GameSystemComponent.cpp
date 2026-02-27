@@ -245,9 +245,6 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
         // Unitに行動をセット
         m_CurrentUnit->SetAction(action);
 
-        // 行動を実行
-        m_CurrentUnit->ExcuteAction();
-
         ChangeState(BattleState::UnitActing); // 敵AI行動
     }
 }
@@ -295,7 +292,7 @@ void GameSystemComponent::UpdateUnitActionSelect()
         Input_Select();
         
         // 選択確定(F)
-        if (IO_MANAGER.GetKeyDownKeyBord(VK_F))
+        if (IO_MANAGER.GetKeyDownKeyBord(VK_E) || IO_MANAGER.GetKeyDown(TYPE_OK))
         {
             bool ok = false;
             // Actionに合わせてMapの位置をチェック(あとで関数化)
@@ -305,6 +302,11 @@ void GameSystemComponent::UpdateUnitActionSelect()
                 ok = m_mapSystem->IsWalkableAtUnitPos(
                     m_SelectMapPosition.x,
                     m_SelectMapPosition.z);
+                if (ok)
+                {
+                    // 行動
+                    m_CurrentUnit->Move();
+                }
                 break;
 
             case UnitActionType::Attack:
@@ -315,6 +317,8 @@ void GameSystemComponent::UpdateUnitActionSelect()
 
                 if (ok)
                 {
+                    // 行動
+                    m_CurrentUnit->Attack();
                     UnitComponent* target =
                         m_unitSystem->FindUnitAtPosition(m_SelectMapPosition);
 
@@ -330,6 +334,12 @@ void GameSystemComponent::UpdateUnitActionSelect()
                 ok = m_mapSystem->IsPlacebleAtUnitPos(
                     m_SelectMapPosition.x,
                     m_SelectMapPosition.z);
+
+                if (ok)
+                {
+                    // 行動
+                    m_CurrentUnit->Place();
+                }
                 break;
             }
 
@@ -345,9 +355,6 @@ void GameSystemComponent::UpdateUnitActionSelect()
 
                 // SelectMap終了
                 m_mapSystem->EndSelectMap();
-
-                // 行動を実行
-                m_CurrentUnit->ExcuteAction();
 
                 ChangeState(BattleState::UnitActing);
 
@@ -370,8 +377,12 @@ void GameSystemComponent::UpdateUnitActionSelect()
 //=======================================
 void GameSystemComponent::UpdateUnitActing()
 {
-    // Unit行動終了チェック
-    if (m_CurrentUnit->IsTurnDinished())
+    if (!m_CurrentUnit->IsTurnFinished())
+    {
+        // 行動を実行
+        m_CurrentUnit->ExcuteAction();
+    }
+    else
     {
         m_CurrentUnit->EndTurn();
         ChangeState(BattleState::UnitEnd);
@@ -553,22 +564,22 @@ bool GameSystemComponent::IsEnemyAllDead() const
 void GameSystemComponent::Input_Select()
 {
     
-    if (IO_MANAGER.GetKeyDownKeyBord(VK_RIGHT))
+    if (IO_MANAGER.GetKeyDownKeyBord(VK_RIGHT) || IO_MANAGER.GetKeyDownKeyBord(VK_A))
     {
         m_SelectMapPosition.x += 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
     }
-    else if (IO_MANAGER.GetKeyDownKeyBord(VK_LEFT))
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_LEFT) || IO_MANAGER.GetKeyDownKeyBord(VK_D))
     {
         m_SelectMapPosition.x -= 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
     }
-    else if (IO_MANAGER.GetKeyDownKeyBord(VK_UP))
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_UP) || IO_MANAGER.GetKeyDownKeyBord(VK_W))
     {
         m_SelectMapPosition.z += 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
     }
-    else if (IO_MANAGER.GetKeyDownKeyBord(VK_DOWN))
+    else if (IO_MANAGER.GetKeyDownKeyBord(VK_DOWN) || IO_MANAGER.GetKeyDownKeyBord(VK_S))
     {
         m_SelectMapPosition.z -= 1;
         m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
