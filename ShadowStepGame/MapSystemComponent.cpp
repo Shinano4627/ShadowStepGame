@@ -120,7 +120,7 @@ void MapSystemComponent::MakeMap(std::unique_ptr<GameObjectList>& objectList)   
 
                     break;
                 }
-                newObject->AddMeshComponent<SimplePlaneRendererComponent>(color, "asset/texture/Grid/Base.png"); // TODO　Templateから取得するようにしたい
+                newObject->AddMeshComponent<SimplePlaneRendererComponent>(color, "asset/texture/Grid/Grid.png"); // TODO　Templateから取得するようにしたい
                 mapX++;
                 n++;
                 objectList->AddObject(std::move(obj));
@@ -442,7 +442,7 @@ void MapSystemComponent::MakeSelectMap(std::unique_ptr<GameObjectList>& objectLi
     // MeshComponentをAdd
     Color color = Color(1.0f, 1.0f, 1.0f, 0.8f);
     newObject->AddMeshComponent<SimplePlaneRendererComponent>(
-        color);
+        color, "asset/texture/Grid/Grid Selected.png");
     obj->SetActive(false);
     n++;
     objectList->AddObject(std::move(obj));
