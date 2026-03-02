@@ -19,9 +19,11 @@ void ShadowSystemComponent::UpdateShadowMap(
         for (int x = 0; x < m_MapWidth; ++x)
         {
             // オブジェクトがある場合のみ
-            if (mapData[z][x] == 0 ||
-                mapData[z][x] == 5 ||
-                mapData[z][x] == 99) continue;
+            int tile = mapData[z][x];
+            if (tile == static_cast<int>(EMapTile::Empty) ||
+                tile == static_cast<int>(EMapTile::Shadow) ||
+                tile == static_cast<int>(EMapTile::None))
+                continue;
 
             int shadowX = x;
             int shadowZ = z;

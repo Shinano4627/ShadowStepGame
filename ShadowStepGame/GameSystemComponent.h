@@ -30,7 +30,8 @@ public:
 		Init,	// 初期化直後
 		TurnStart,	// ターン開始（タイムライン作成）
 		UnitSelect,	// 次に動くユニットを決定
-		UnitActionSelect,	// ユニットの操作入力
+		UnitActionSelectPlayer,	// ユニットの操作入力
+		UnitActionSelectEnemy,	// ユニットの操作入力
 		UnitActing,	// ユニット行動実行中
 		UnitEnd,	// ユニット行動終了処理
 		SunMove,	// 太陽移動＆影更新
@@ -97,7 +98,7 @@ public:
 	MapPosition GetUnitPosition() { return m_Unitposition; }
 	bool IsSelectingPosition() const
 	{
-		return m_State == BattleState::UnitActionSelect ||
+		return m_State == BattleState::UnitActionSelectPlayer ||
 			m_State == BattleState::UnitActing;
 	}
 
@@ -112,6 +113,7 @@ private:
 	void UpdateTurnStart();
 	void UpdateUnitSelect(GameObjectList* gameObjectList);
 	void UpdateUnitActionSelect();
+	void UpdateUnitActionSelectEnemy();
 	void UpdateUnitActing();
 	void UpdateUnitEnd();
 	void UpdateTurnEnd();

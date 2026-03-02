@@ -119,7 +119,8 @@ void GameSystemComponent::UpdateState(GameObjectList* gameObjectList)
     case BattleState::Init:          UpdateInit(); break;
     case BattleState::TurnStart:     UpdateTurnStart(); break;
     case BattleState::UnitSelect:    UpdateUnitSelect(gameObjectList); break;
-    case BattleState::UnitActionSelect: UpdateUnitActionSelect(); break;
+    case BattleState::UnitActionSelectPlayer: UpdateUnitActionSelect(); break;
+    case BattleState::UnitActionSelectEnemy: UpdateUnitActionSelectEnemy(); break;
     case BattleState::UnitActing:    UpdateUnitActing(); break;
     case BattleState::UnitEnd:       UpdateUnitEnd(); break;
     case BattleState::TurnEnd:       UpdateTurnEnd(); break;
@@ -202,60 +203,30 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
 
     m_CurrentUnit->StartTurn();
 
+    // Select関係変数
+    m_SelectAction = false;
+    m_SelectPosition = false;
+    m_SelectMapPosition = unit->GetPosition();
+    m_Unitposition = unit->GetPosition();
+    m_UnitType = unit->GetType();
+    m_UnitModel = unit->GetModel();
+    m_SelectType = UnitActionType::None;
+    m_SelectPhase = SelectPhase::Init; // カメラ移動完了を待つ
+
     // ============================
     // プレイヤー or 敵で分岐
     // ============================
     if (unit->GetType() == UnitType::Player)
     {
-        // Select関係変数
-        m_SelectAction = false;
-        m_SelectPosition = false;
-        m_SelectMapPosition = unit->GetPosition();
-        m_Unitposition = unit->GetPosition();
-        m_UnitType = unit->GetType();
-        m_UnitModel = unit->GetModel();
-        m_SelectType = UnitActionType::None;
-        m_SelectPhase = SelectPhase::Init; // カメラ移動完了を待つ
-
         // SelectMap起動
         m_mapSystem->StartSelectMap(unit, m_SelectMapPosition);
         
-        ChangeState(BattleState::UnitActionSelect); // プレイヤー入力待ち
+        ChangeState(BattleState::UnitActionSelectPlayer); // プレイヤー入力待ち
     }
 
     else if(unit->GetType() == UnitType::Enemy)
     {
-        // EnemyAI
-        EnemyAI enemyAI;
-
-        // Map 情報取得
-        const int* const* mapData = m_mapSystem->GetRawMapData();
-        int mapW = m_mapSystem->GetMapSizeHeight();
-        int mapH = m_mapSystem->GetMapSizeWidth();
-
-        // 太陽方向（SunManage などから）
-        MapPosition sunDir = m_sunSystem->GetDirection();
-
-        // Player 一覧
-        const auto& players = m_unitSystem->GetPlayerUnits();
-        const auto& enemys = m_unitSystem->GetEnemyUnits();
-        const auto& units = m_unitSystem->GetAllUnits();
-
-        UnitAction action = enemyAI.DecideAction(
-            m_CurrentUnit,
-            players,
-            enemys,
-            units,
-            sunDir,
-            mapData,
-            mapW,
-            mapH
-        );
-
-        // Unitに行動をセット
-        m_CurrentUnit->SetAction(action);
-
-        ChangeState(BattleState::UnitActing); // 敵AI行動
+        ChangeState(BattleState::UnitActionSelectEnemy); // 敵の自動行動選択
     }
 
     // 戦術視点カメラ指定位置を計算して移動開始
@@ -277,7 +248,7 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
 }
 
 //=======================================
-// BattleState:UnitActionSelect
+// BattleState:UnitActionSelectPlayer
 // プレイヤー入力待ち状態
 //=======================================
 void GameSystemComponent::UpdateUnitActionSelect()
@@ -418,6 +389,64 @@ void GameSystemComponent::UpdateUnitActionSelect()
     default:
         break;
     }
+    }
+}
+
+//=======================================
+// BattleState:UnitActionSelectPlayer
+// 敵の行動　自動入力
+//=======================================
+void GameSystemComponent::UpdateUnitActionSelectEnemy()
+{
+    switch (m_SelectPhase)
+    {
+    case SelectPhase::Init:
+    {
+        // カメラ移動が完了しているか
+        if (m_orbitCamera->IsMoveFinished())
+        {
+            m_SelectPhase = SelectPhase::Action;
+        }
+    }
+    break;
+    case SelectPhase::Action:
+    {
+        // EnemyAI
+        EnemyAI enemyAI;
+
+        // Map 情報取得
+        const int* const* mapData = m_mapSystem->GetRawMapData();
+        int mapW = m_mapSystem->GetMapSizeWidth();
+        int mapH = m_mapSystem->GetMapSizeHeight();
+
+        // 太陽方向（SunManage などから）
+        MapPosition sunDir = m_sunSystem->GetDirection();
+
+        // Player 一覧
+        const auto& players = m_unitSystem->GetPlayerUnits();
+        const auto& enemys = m_unitSystem->GetEnemyUnits();
+        const auto& units = m_unitSystem->GetAllUnits();
+
+        UnitAction action = enemyAI.DecideAction(
+            m_CurrentUnit,
+            players,
+            enemys,
+            units,
+            sunDir,
+            mapData,
+            mapW,
+            mapH
+        );
+
+        // Unitに行動をセット
+        m_CurrentUnit->SetAction(action);
+
+        ChangeState(BattleState::UnitActing); // 敵AI行動
+    }
+    break;
+    case SelectPhase::Position:
+    default:
+        break;
     }
 }
 
@@ -648,7 +677,8 @@ const char* GameSystemComponent::BattleStateToString(BattleState state)
     case BattleState::Init:              return "Init";
     case BattleState::TurnStart:         return "TurnStart";
     case BattleState::UnitSelect:        return "UnitSelect";
-    case BattleState::UnitActionSelect:  return "UnitActionSelect";
+    case BattleState::UnitActionSelectPlayer:  return "UnitActionSelectPlayer";
+    case BattleState::UnitActionSelectEnemy:  return "UnitActionSelectEnemy";
     case BattleState::UnitActing:        return "UnitActing";
     case BattleState::UnitEnd:           return "UnitEnd";
     case BattleState::SunMove:           return "SunMove";

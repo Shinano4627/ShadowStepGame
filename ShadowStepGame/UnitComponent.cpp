@@ -120,9 +120,18 @@ void UnitComponent::ExcuteAction()
         break;
     case UnitActionType::Attack:
         // 攻撃モーション開始
+        m_isActing = false;   
+        m_turnFinished = true;  
         break;
     case UnitActionType::Place:
         // 設置開始
+        m_isActing = false;        
+        m_turnFinished = true;   
+        break;
+    case UnitActionType::None:
+    default:
+        m_isActing = false;       
+        m_turnFinished = true;    
         break;
     }
 }
