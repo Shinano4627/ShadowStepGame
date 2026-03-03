@@ -45,9 +45,9 @@ public:
     {
         distMesh->m_Animations = m_Animations;
     }
-    int GetAnimationMaxFrame()
+    int GetAnimationMaxFrame(const char* AnimationName)
     {
-        aiAnimation* anim = m_pScene->mAnimations[0];
+        aiAnimation* anim = m_Animations[AnimationName]->mAnimations[0];
         return static_cast<int>(anim->mDuration);
     }
 	// ===================================================================

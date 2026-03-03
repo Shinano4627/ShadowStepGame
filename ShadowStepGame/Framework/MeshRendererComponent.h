@@ -198,7 +198,7 @@ public:
         // ユニット固有のボーン行列バッファに出力（共有メッシュの状態を汚染しない）
         mesh->UpdateAnimation(m_curAnimation.c_str(), m_Frame, m_BoneMatrices);
 
-        if (!m_doLoop && m_Frame >= mesh->GetAnimationMaxFrame())
+        if (!m_doLoop && m_Frame >= mesh->GetAnimationMaxFrame(m_curAnimation.c_str()))
         {
             m_doAnim = false;
         }

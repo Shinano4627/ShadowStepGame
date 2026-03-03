@@ -223,48 +223,9 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
         
         ChangeState(BattleState::UnitActionSelectPlayer); // プレイヤー入力待ち
     }
-
     else if(unit->GetType() == UnitType::Enemy)
     {
-        // Added by Yamanaka: カメラ位置を調整
-        m_Unitposition = unit->GetPosition();
-
-        // EnemyAI
-        EnemyAI enemyAI;
-
-        // Map 情報取得
-        const int* const* mapData = m_mapSystem->GetRawMapData();
-        int mapW = m_mapSystem->GetMapWidth();   // タイル数
-        int mapH = m_mapSystem->GetMapHeight();  // タイル数
-
-        // 太陽方向（SunManage などから）
-        MapPosition sunDir = m_sunSystem->GetDirection();
-
-        // Player 一覧
-        const auto& players = m_unitSystem->GetPlayerUnits();
-        const auto& enemys = m_unitSystem->GetEnemyUnits();
-        const auto& units = m_unitSystem->GetAllUnits();
-
-        UnitAction action = enemyAI.DecideAction(
-            m_CurrentUnit,
-            players,
-            enemys,
-            units,
-            sunDir,
-            mapData,
-            mapW,
-            mapH
-        );
-
-        // Unitに行動をセット
-        m_CurrentUnit->SetAction(action);
-
-        if (action.type == UnitActionType::Move)   // ★追加
-        {                                           // ★追加
-            m_CurrentUnit->Move();                  // ★追加 論理座標を反映
-        }
-
-        ChangeState(BattleState::UnitActing); // 敵AI行動
+        ChangeState(BattleState::UnitActionSelectEnemy); // 敵の自動行動選択
     }
 
     // 戦術視点カメラ指定位置を計算して移動開始
