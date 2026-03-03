@@ -21,8 +21,9 @@ void ShadowSystemComponent::UpdateShadowMap(
             // オブジェクトがある場合のみ
             int tile = mapData[z][x];
             if (tile == static_cast<int>(EMapTile::Empty) ||
-                tile == static_cast<int>(EMapTile::Shadow) ||
-                tile == static_cast<int>(EMapTile::None))
+                tile == static_cast<int>(EMapTile::Load) ||      
+                tile == static_cast<int>(EMapTile::Shadow) ||   // 40
+                tile == static_cast<int>(EMapTile::None))        // 99
                 continue;
 
             int shadowX = x;
@@ -41,8 +42,9 @@ void ShadowSystemComponent::UpdateShadowMap(
                     shadowZ < 0 || shadowZ >= m_MapHeight)
                     break;
 
-                // 空きマスのみ影
-                if (mapData[shadowZ][shadowX] == 0)
+                // 空きマスまたは旧影マスなら影を配置
+                if (mapData[shadowZ][shadowX] == static_cast<int>(EMapTile::Empty) ||
+                    mapData[shadowZ][shadowX] == static_cast<int>(EMapTile::Shadow))
                 {
                     m_ShadowMapData[shadowZ][shadowX] = 1;
                     m_ShadowSourceMap[shadowZ][shadowX] = mapData[z][x]; // 元オブジェクトtypeを入れる
@@ -148,7 +150,7 @@ void ShadowSystemComponent::CreateShadowObjects(const int* const* mapData, GameO
         for (int x = 0; x < m_MapWidth; ++x)
         {
             // 非生成オブジェクト以外は生成しない
-            if (mapData[z][x] == (int)EMapTile::Empty || mapData[z][x] == (int)EMapTile::Shadow || mapData[z][x] == (int)EMapTile::None)
+            if (mapData[z][x] == (int)EMapTile::Empty || mapData[z][x] == (int)EMapTile::Load || mapData[z][x] == (int)EMapTile::Shadow || mapData[z][x] == (int)EMapTile::None)
                 continue;
 
             // 元オブジェクトの位置計算
@@ -198,7 +200,7 @@ void ShadowSystemComponent::UpdateShadowObjects(const int* const* mapData, const
         for (int x = 0; x < m_MapWidth; ++x)
         {
             // 非生成オブジェクト
-            if (mapData[z][x] == (int)EMapTile::Empty || mapData[z][x] == (int)EMapTile::Shadow || mapData[z][x] == (int)EMapTile::None)
+            if (mapData[z][x] == (int)EMapTile::Empty || mapData[z][x] == (int)EMapTile::Load || mapData[z][x] == (int)EMapTile::Shadow || mapData[z][x] == (int)EMapTile::None)
                 continue;
 
             // 影がオブジェクトが足りない場合は追加

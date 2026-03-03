@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <map>
 #include <cassert>
 
@@ -18,7 +18,7 @@ enum INPUT_MODE
 {
 	MODE_KEYBORD,
 	MODE_CONTROLLER_XBOX,
-	MODE_BOTH,	// ƒRƒ“ƒgƒ[ƒ‰‚ÆƒL[ƒ{[ƒh—¼•ûg—p‚Å‚«‚éó‘Ô
+	MODE_BOTH,	// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ã¨ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ä¸¡æ–¹ä½¿ç”¨ã§ãã‚‹çŠ¶æ…‹
 
 	MODE_COUNT,
 };
@@ -31,7 +31,7 @@ private:
 	
 	Input m_Input;
 
-	// ƒ}ƒEƒXŠÖ˜A
+	// ãƒã‚¦ã‚¹é–¢é€£
 	DirectX::Mouse m_mouse;
 	long m_mouseDeltaX = 0;
 	long m_mouseDeltaY = 0;
@@ -52,9 +52,9 @@ public:
 	void SetInputMode(INPUT_MODE);
 	INPUT_MODE GetInputMode();
 
-	bool GetKeyDown(INPUT_TYPE);		// ƒL[‰Ÿ‰º
-	bool GetKeyPress(INPUT_TYPE);		// ƒL[’·‰Ÿ‚µ
-	bool GetKeyUp(INPUT_TYPE);			// ƒL[‚ª—£‚³‚ê‚½
+	bool GetKeyDown(INPUT_TYPE);		// ã‚­ãƒ¼æŠ¼ä¸‹
+	bool GetKeyPress(INPUT_TYPE);		// ã‚­ãƒ¼é•·æŠ¼ã—
+	bool GetKeyUp(INPUT_TYPE);			// ã‚­ãƒ¼ãŒé›¢ã•ã‚ŒãŸ
 
 	bool GetKeyDownKeyBord(int _key);
 	bool GetKeyPressKeyBord(int _key);
@@ -65,6 +65,8 @@ public:
 
 	void SetMouseMode(DirectX::Mouse::Mode mode) { m_mouse.SetMode(mode); };
 
+	// ãƒã‚¦ã‚¹ã®çŠ¶æ…‹ã‚’å–å¾—ã™ã‚‹
+	DirectX::Mouse::State GetMouseState() const { return m_mouse.GetState(); }
 };
 
 #define IO_MANAGER Singleton<IOManager>::GetInstance()

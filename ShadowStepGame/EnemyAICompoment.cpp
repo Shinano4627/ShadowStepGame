@@ -1,96 +1,170 @@
 ﻿#include "EnemyAICompoment.h"
 #include <cmath>
+#include <iostream>
 
+// ===================================================================
+// メイン判断関数（フローチャート準拠）
+// ===================================================================
 UnitAction EnemyAI::DecideAction(
-	UnitComponent* enemy,	// 操作ユニット
-	const std::vector<UnitComponent*>& playerList,	// PlayerList
+	UnitComponent* enemy,
+	const std::vector<UnitComponent*>& playerList,
 	const std::vector<UnitComponent*>& enemyList,
 	const std::vector<UnitComponent*>& allUnits,
-	MapPosition SunDirection,	// 太陽のMapPosition（ディレクションライト）
+	MapPosition sunDirection,
 	const int* const* mapData,
 	int mapWidth,
 	int mapHeight
 )
 {
-	// １：Playerから最も近いPlayerを検索
-	UnitComponent* target = FindNearestPlayer(enemy, playerList, enemyList);
-
 	UnitAction none;
-	none.targetGrid = MapPosition(0, 0);
 	none.type = UnitActionType::None;
-	if (!target) {
+	none.targetGrid = MapPosition(0, 0);
+
+	if (!enemy) return none;
+
+	// ===================================================================
+	// ① 周囲10マス以内にプレイヤーがいるか？
+	// ===================================================================
+	UnitComponent* target = FindNearestPlayerInRange(enemy, playerList);
+	if (!target)
+	{
+		std::cout << "[EnemyAI] 周囲にプレイヤーなし → 何もしない" << std::endl;
 		return none;
 	}
 
-	// ShadowParamを計算
-	ShadowParam param{};
-	param.lightDirection = SunDirection;
-	if (SunDirection.x == 0 && SunDirection.z == 0)
+	MapPosition epos = enemy->GetPosition();
+	MapPosition tpos = target->GetPosition();
+	int dist = ManhattanDist(epos, tpos);
+
+	std::cout << "[EnemyAI] ターゲット発見 距離=" << dist << std::endl;
+
+	// ===================================================================
+	// ② 最近のプレイヤーとの距離は4マス以上か？
+	// ===================================================================
+	if (dist >= CLOSE_RANGE)
 	{
-		param.length = 0;
+		// 遠い → プレイヤーへ向かって移動
+		std::cout << "[EnemyAI] 距離4以上 → プレイヤーへ接近" << std::endl;
+
+		MapPosition moveTo = CalcMoveOneStep(
+			epos, tpos, true,
+			allUnits, enemy, mapData, mapWidth, mapHeight);
+
+		if (moveTo == epos) return none;
+
+		UnitAction action;
+		action.type = UnitActionType::Move;
+		action.targetGrid = moveTo;
+		return action;
 	}
-	else
+
+	// ===================================================================
+	// ③ 近距離：プレイヤーの影と自分の位置を判断
+	// ===================================================================
+
+	// ShadowParam計算
+	int shadowLength = 0;
+	if (!(sunDirection.x == 0 && sunDirection.z == 0))
 	{
-		int distance = abs(SunDirection.x) + abs(SunDirection.z);
-		param.length = std::clamp(distance / 2, 2, 8);
+		int sunDist = abs(sunDirection.x) + abs(sunDirection.z);
+		shadowLength = std::clamp(sunDist / 2, 2, 8);
 	}
 
-	// 影を踏めるか？
-	if (CanStepOnShadow(enemy, target, param, mapData, mapWidth, mapHeight))
-		return MakeShadowKillAction(enemy, target, param);
+	// 影の位置を計算
+	MapPosition shadowPos = CalcShadowPosition(target, sunDirection, shadowLength);
 
-	// ３：攻撃できるか？
-	if (CanAttack(enemy, target,mapData,mapWidth,mapHeight))
-		return MakeAttackAction(enemy, target);
+	// 影が有効か（真上でない＆マップ内で歩行可能）
+	bool shadowValid = (shadowLength > 0);
+	if (shadowValid)
+	{
+		int tile = GetTile(mapData, shadowPos.x, shadowPos.z, mapWidth, mapHeight);
+		if (!IsWalkableTile(tile))
+			shadowValid = false;
+		// 影の位置が自分の現在地と同じなら対象外
+		if (shadowPos == epos)
+			shadowValid = false;
+	}
 
-	// ４：近づけるか？
-	if (CanMove(enemy))
-		return MakeMoveCloserAction(enemy, target, allUnits,mapData, mapWidth, mapHeight);
+	if (shadowValid)
+	{
+		// 影が自分と同じ側にあるか判断
+		bool sameSide = IsShadowOnSameSide(enemy, target, sunDirection);
 
-	// ５：何もできない
-	return none;
+		if (sameSide)
+		{
+			// ===================================================================
+			// ④ 同じ側 → プレイヤーの影へ移動
+			// ===================================================================
+			std::cout << "[EnemyAI] 影が同じ側 → 影へ移動" << std::endl;
+
+			MapPosition moveTo = CalcMoveOneStep(
+				epos, shadowPos, true,
+				allUnits, enemy, mapData, mapWidth, mapHeight);
+
+			if (!(moveTo == epos))
+			{
+				UnitAction action;
+				action.type = UnitActionType::Move;
+				action.targetGrid = moveTo;
+				return action;
+			}
+			// 移動できなければ攻撃判定へフォールスルー
+		}
+		// 同じ側でない → 攻撃判定へ
+	}
+
+	// ===================================================================
+	// ⑤ プレイヤーを攻撃できるか？（XまたはZが等しく隣接）
+	// ===================================================================
+	if (CanAttack(enemy, target))
+	{
+		std::cout << "[EnemyAI] 攻撃可能 → 攻撃" << std::endl;
+
+		UnitAction action;
+		action.type = UnitActionType::Attack;
+		action.targetGrid = tpos;
+		return action;
+	}
+
+	// ===================================================================
+	// ⑥ 攻撃不可 → プレイヤーから遠ざかる
+	// ===================================================================
+	std::cout << "[EnemyAI] 攻撃不可 → 遠ざかる" << std::endl;
+
+	MapPosition moveTo = CalcMoveOneStep(
+		epos, tpos, false,  // toward=false → 遠ざかる
+		allUnits, enemy, mapData, mapWidth, mapHeight);
+
+	if (moveTo == epos) return none;
+
+	UnitAction action;
+	action.type = UnitActionType::Move;
+	action.targetGrid = moveTo;
+	return action;
 }
 
-UnitComponent* EnemyAI::FindNearestPlayer(
+// ===================================================================
+// ① 周囲10マス以内の最近プレイヤーを探す
+// ===================================================================
+UnitComponent* EnemyAI::FindNearestPlayerInRange(
 	UnitComponent* enemy,
-	const std::vector<UnitComponent*>& playerList,
-	const std::vector<UnitComponent*>& enemyList
+	const std::vector<UnitComponent*>& playerList
 ) const
 {
 	if (!enemy) return nullptr;
 
-	// 操作ユニット情報取得
 	MapPosition epos = enemy->GetPosition();
-
-	// 変数宣言
 	UnitComponent* best = nullptr;
 	int bestDist = INT_MAX;
 
 	for (auto* p : playerList)
 	{
 		if (!p) continue;
+		if (p->IsDown()) continue;
 
-		MapPosition ppos = p->GetPosition();
+		int dist = ManhattanDist(epos, p->GetPosition());
 
-		// 他の敵ユニットと衝突しないかも確認（任意）
-		bool blocked = false;
-		for (auto* otherEnemy : enemyList)
-		{
-			if (!otherEnemy || otherEnemy == enemy) continue;
-			if (ppos == otherEnemy->GetPosition())
-			{
-				blocked = true;
-				break;
-			}
-		}
-
-		if (blocked) continue;
-
-		int dist =
-			abs(epos.x - ppos.x) +
-			abs(epos.z - ppos.z);
-
-		if (dist < bestDist)
+		if (dist <= DETECTION_RANGE && dist < bestDist)
 		{
 			bestDist = dist;
 			best = p;
@@ -99,36 +173,62 @@ UnitComponent* EnemyAI::FindNearestPlayer(
 	return best;
 }
 
-bool EnemyAI::CanStepOnShadow(
+// ===================================================================
+// ② 影が自分と同じ側にあるか
+//    影は上下(Z方向)ならZだけ、左右(X方向)ならXだけで判断
+// ===================================================================
+bool EnemyAI::IsShadowOnSameSide(
 	UnitComponent* enemy,
 	UnitComponent* target,
-	const ShadowParam& param,
-	const int* const* mapData,
-	int mapW,
-	int mapH
+	MapPosition sunDirection
 ) const
 {
 	if (!enemy || !target) return false;
 
-	MapPosition shadow = CalcShadowPosition(target, param);
-
-	int tile = GetTile(mapData, shadow.x, shadow.z, mapW, mapH);
-
-	if (!IsWalkableTile(tile))
-		return false;
-
 	MapPosition epos = enemy->GetPosition();
-	return abs(epos.x - shadow.x) <= 1 &&
-		abs(epos.z - shadow.z) <= 1;
+	MapPosition tpos = target->GetPosition();
+
+	// 太陽がZ方向（上下）に動く → 影はZ方向に伸びる → Zだけで判断
+	if (sunDirection.z != 0 && sunDirection.x == 0)
+	{
+		// 影の方向：光源の逆
+		int shadowDirZ = (sunDirection.z > 0) ? -1 : 1;
+		// 敵がプレイヤーから見て影と同じZ方向にいるか
+		int enemySideZ = epos.z - tpos.z;
+		return (enemySideZ * shadowDirZ) > 0;
+	}
+
+	// 太陽がX方向（左右）に動く → 影はX方向に伸びる → Xだけで判断
+	if (sunDirection.x != 0 && sunDirection.z == 0)
+	{
+		int shadowDirX = (sunDirection.x > 0) ? -1 : 1;
+		int enemySideX = epos.x - tpos.x;
+		return (enemySideX * shadowDirX) > 0;
+	}
+
+	// 斜めの場合：両軸で判定（どちらも同じ側ならtrue）
+	if (sunDirection.x != 0 && sunDirection.z != 0)
+	{
+		int shadowDirX = (sunDirection.x > 0) ? -1 : 1;
+		int shadowDirZ = (sunDirection.z > 0) ? -1 : 1;
+		int enemySideX = epos.x - tpos.x;
+		int enemySideZ = epos.z - tpos.z;
+
+		bool sameX = (enemySideX * shadowDirX) > 0;
+		bool sameZ = (enemySideZ * shadowDirZ) > 0;
+		return sameX || sameZ;
+	}
+
+	// 真上（影なし）
+	return false;
 }
 
-
+// ===================================================================
+// ③ 攻撃判定：XまたはZが等しく隣接（マンハッタン距離1）
+// ===================================================================
 bool EnemyAI::CanAttack(
 	UnitComponent* enemy,
-	UnitComponent* target,
-	const int* const* mapData,
-	int mapW,
-	int mapH
+	UnitComponent* target
 ) const
 {
 	if (!enemy || !target) return false;
@@ -139,130 +239,112 @@ bool EnemyAI::CanAttack(
 	int dx = abs(e.x - t.x);
 	int dz = abs(e.z - t.z);
 
-	if (dx + dz != 1)
-		return false;
-
-	int tile = GetTile(mapData, t.x, t.z, mapW, mapH);
-	return tile == static_cast<int>(EMapTile::PlayerAttack);
+	// XまたはZが等しく、距離1（十字方向に隣接）
+	return (dx + dz == 1);
 }
 
-bool EnemyAI::CanMove(UnitComponent* enemy) const
-{
-	// 今回は「移動可能か？」だけなので常にtrue
-	// 実際の移動可否（壁など）はGameSystem側で弾く想定
-	return enemy != nullptr;
-}
-
-UnitAction EnemyAI::MakeShadowKillAction(
-	UnitComponent* enemy,
-	UnitComponent* target,
-	const ShadowParam& param
-) const
-{
-	UnitAction action;
-	action.type = UnitActionType::Move;
-	action.targetGrid = CalcShadowPosition(target, param);
-	return action;
-}
-
-
-MapPosition EnemyAI::CalcShadowPosition(
-	UnitComponent* target,
-	const ShadowParam& param
-) const
-{
-	MapPosition tpos = target->GetPosition();
-
-	MapPosition shadow;
-	// 太陽方向の逆に param.length 分伸ばす
-	shadow.x = tpos.x - param.lightDirection.x * param.length;
-	shadow.z = tpos.z - param.lightDirection.z * param.length;
-
-	return shadow;
-}
-
-UnitAction EnemyAI::MakeAttackAction(
-	UnitComponent* enemy,
-	UnitComponent* target
-) const
-{
-	UnitAction action;
-	action.type = UnitActionType::Attack;
-	action.targetGrid = target->GetPosition();
-	return action;
-}
-
-UnitAction EnemyAI::MakeMoveCloserAction(
-	UnitComponent* enemy,
-	UnitComponent* target,
+// ===================================================================
+// 移動先計算：差が大きい軸方向に1マス
+// toward=true: 対象に近づく  toward=false: 対象から遠ざかる
+// ===================================================================
+MapPosition EnemyAI::CalcMoveOneStep(
+	MapPosition from,
+	MapPosition to,
+	bool toward,
 	const std::vector<UnitComponent*>& allUnits,
+	UnitComponent* self,
 	const int* const* mapData,
-	int mapW,
-	int mapH
+	int mapW, int mapH
 ) const
 {
-	UnitAction action;
-	action.type = UnitActionType::Move;
-	action.targetGrid = DecideMoveCloser(enemy, target, allUnits, mapData, mapW, mapH);
-	return action;
-}
+	int dx = to.x - from.x;
+	int dz = to.z - from.z;
 
-MapPosition EnemyAI::DecideMoveCloser(
-    UnitComponent* enemy,
-    UnitComponent* target,
-	const std::vector<UnitComponent*>& allUnits,
-	const int* const* mapData,
-	int mapW,
-	int mapH
-) const
-{
-	if (!enemy || !target) return enemy->GetPosition();
-
-	MapPosition epos = enemy->GetPosition();
-	MapPosition tpos = target->GetPosition();
-
-	MapPosition best = epos;
-	int bestDist = INT_MAX;
-
-	// 探索範囲を 5x5 に拡張（dx/dz = -2..2）
-	for (int dz = -3; dz <= 3; dz++)
+	if (!toward)
 	{
-		for (int dx = -3; dx <= 3; dx++)
-		{
-			MapPosition p{ epos.x + dx, epos.z + dz };
-
-			// マップ外チェック
-			int tile = GetTile(mapData, p.x, p.z, mapW, mapH);
-			if (!IsWalkableTile(tile)) continue;
-
-			// 他ユニットがいるマスは除外
-			bool occupied = false;
-			for (auto* u : allUnits)
-			{
-				if (!u) continue;
-				if (u->GetPosition() == p)
-				{
-					occupied = true;
-					break;
-				}
-			}
-			if (occupied) continue;
-
-			// PlayerAttack との距離で評価
-			int dist = abs(p.x - tpos.x) + abs(p.z - tpos.z);
-
-			if (dist < bestDist)
-			{
-				// 移動可能範囲（3x3）の中なら候補として採用
-				if (abs(dx) <= 1 && abs(dz) <= 1)
-				{
-					bestDist = dist;
-					best = p;
-				}
-			}
-		}
+		dx = -dx;
+		dz = -dz;
 	}
 
-	// 移動できない場合は epos のまま
-	return best;
+	// 方向を正規化（-1, 0, 1）
+	int signX = (dx > 0) ? 1 : (dx < 0) ? -1 : 0;
+	int signZ = (dz > 0) ? 1 : (dz < 0) ? -1 : 0;
+
+	// ★移動候補を優先順に（2マスから1マスへフォールバック）
+	MapPosition candidates[4];
+	int candidateCount = 0;
+
+	if (abs(dx) >= abs(dz))
+	{
+		// X軸優先
+		if (signX != 0) candidates[candidateCount++] = MapPosition(from.x + signX * 2, from.z);           // X方向2マス
+		if (signX != 0 && signZ != 0) candidates[candidateCount++] = MapPosition(from.x + signX, from.z + signZ); // 斜め1+1
+		if (signX != 0) candidates[candidateCount++] = MapPosition(from.x + signX, from.z);               // X方向1マス
+		if (signZ != 0) candidates[candidateCount++] = MapPosition(from.x, from.z + signZ);               // Z方向1マス
+	}
+	else
+	{
+		// Z軸優先
+		if (signZ != 0) candidates[candidateCount++] = MapPosition(from.x, from.z + signZ * 2);           // Z方向2マス
+		if (signX != 0 && signZ != 0) candidates[candidateCount++] = MapPosition(from.x + signX, from.z + signZ); // 斜め1+1
+		if (signZ != 0) candidates[candidateCount++] = MapPosition(from.x, from.z + signZ);               // Z方向1マス
+		if (signX != 0) candidates[candidateCount++] = MapPosition(from.x + signX, from.z);               // X方向1マス
+	}
+
+	// 候補を順に試す
+	for (int i = 0; i < candidateCount; i++)
+	{
+		MapPosition p = candidates[i];
+
+		// マンハッタン距離2以内か
+		if (abs(p.x - from.x) + abs(p.z - from.z) > 2) continue;
+
+		// マップタイル確認
+		int tile = GetTile(mapData, p.x, p.z, mapW, mapH);
+		if (!IsWalkableTile(tile)) continue;
+
+		// ユニット衝突確認
+		bool occupied = false;
+		for (auto* u : allUnits)
+		{
+			if (!u || u == self) continue;
+			if (u->GetPosition() == p)
+			{
+				occupied = true;
+				break;
+			}
+		}
+		if (occupied) continue;
+
+		return p;
+	}
+
+	return from;
+}
+
+// ===================================================================
+// 影の位置を計算（プレイヤーから光源の逆方向に伸びる）
+// ===================================================================
+MapPosition EnemyAI::CalcShadowPosition(
+	UnitComponent* target,
+	MapPosition sunDirection,
+	int shadowLength
+) const
+{
+	if (!target) return MapPosition(0, 0);
+
+	MapPosition tpos = target->GetPosition();
+
+	// 影は光源の逆方向に伸びる
+	// 方向を正規化（-1, 0, 1）
+	int dirX = 0;
+	int dirZ = 0;
+	if (sunDirection.x != 0) dirX = (sunDirection.x > 0) ? -1 : 1;
+	if (sunDirection.z != 0) dirZ = (sunDirection.z > 0) ? -1 : 1;
+
+	MapPosition shadow;
+	shadow.x = tpos.x + dirX * shadowLength;
+	shadow.z = tpos.z + dirZ * shadowLength;
+
+	return shadow;
 }

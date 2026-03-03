@@ -48,7 +48,7 @@ void SceneProto::Init()
     // 追加コンポーネント
     {
         // マップシステム
-        auto* mapSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<MapSystemComponent>("TestMap.csv");
+        auto* mapSystem = m_GameObjectList->FindGameObjectWithTag("System")->AddComponent<MapSystemComponent>("Stage1Map.csv");
         mapSystem->MakeMap(m_GameObjectList);    // マップの読み込み
         mapSystem->MakeSelectMap(m_GameObjectList); // セレクトマップの作製
         int heightMap = mapSystem->GetMapSizeHeight();

@@ -148,6 +148,15 @@ void MapSystemComponent::MakeMap(std::unique_ptr<GameObjectList>& objectList)   
                     m_UnitMapData[i][j] = (int)EMapTile::Empty;
                     m_ObjectMapData[i][j] = (int)EMapTile::Tree;
                     break;
+				case EMapTile::Torii:       // Added by Yamanaka: 鳥居
+                    m_UnitMapData[i][j] = (int)EMapTile::Empty;
+                    m_ObjectMapData[i][j] = (int)EMapTile::Torii;
+                    break;
+				case EMapTile::WallBlocken: // Added by Yamanaka: 壁ブロック
+                    m_UnitMapData[i][j] = (int)EMapTile::Empty;
+                    m_ObjectMapData[i][j] = (int)EMapTile::WallBlocken;
+                    break;
+
                     // ユニット
                 case EMapTile::PlayerAttack:
                     m_UnitMapData[i][j] = (int)EMapTile::PlayerAttack;
@@ -157,7 +166,25 @@ void MapSystemComponent::MakeMap(std::unique_ptr<GameObjectList>& objectList)   
                     m_UnitMapData[i][j] = (int)EMapTile::EnemyAttack;
                     m_ObjectMapData[i][j] = (int)EMapTile::Empty;
                     break;
+				case EMapTile::PlayerPlace: // Added by Yamanaka: プレイヤー配置用タイル
+                    m_UnitMapData[i][j] = (int)EMapTile::PlayerPlace;
+                    m_ObjectMapData[i][j] = (int)EMapTile::Empty;
+                    break;
+				case EMapTile::PlayerBig:   // Added by Yamanaka: プレイヤー大型タイル
+                    m_UnitMapData[i][j] = (int)EMapTile::PlayerBig;
+                    m_ObjectMapData[i][j] = (int)EMapTile::Empty;
+                    break;
+				case EMapTile::EnemyPlace:  // Added by Yamanaka: 敵配置用タイル
+                    m_UnitMapData[i][j] = (int)EMapTile::EnemyPlace;
+                    m_ObjectMapData[i][j] = (int)EMapTile::Empty;
+                    break;
+				case EMapTile::EnemyBig:    // Added by Yamanaka: 敵大型タイル
+                    m_UnitMapData[i][j] = (int)EMapTile::EnemyBig;
+                    m_ObjectMapData[i][j] = (int)EMapTile::Empty;
+                    break;
+
                     // その他
+                case EMapTile::Load: // Added by Yamanaka
                 case EMapTile::Shadow:
                 case EMapTile::Empty:
                 case EMapTile::None:
@@ -498,12 +525,14 @@ void MapSystemComponent::StartSelectMap(UnitComponent* unit,MapPosition selectpo
         }
     }
     // ==============================
-    // 移動範囲（3x3 = 青）
+    // 移動範囲（◇型 マンハッタン距離2 = 青）
     // ==============================
-    for (int dz = -1; dz <= 1; dz++)
+    for (int dz = -2; dz <= 2; dz++)
     {
-        for (int dx = -1; dx <= 1; dx++)
+        for (int dx = -2; dx <= 2; dx++)
         {
+            if (abs(dx) + abs(dz) > 2) continue;  // ◇型に制限
+
             int x = map_unitpos.x + dx;
             int z = map_unitpos.z + dz;
 

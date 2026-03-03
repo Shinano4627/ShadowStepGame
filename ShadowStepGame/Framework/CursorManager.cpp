@@ -52,16 +52,20 @@ void CursorManager::Update()
 {
 	m_Camera.Update();
 
+	// マウスの絶対座標をUI座標に変換してカーソル位置を更新
+	// MODE_ABSOLUTE: スクリーン座標(左上原点, Y下向き)を
+	// UI座標(中央原点, Y上向き)に変換
+	auto mouseState = IO_MANAGER.GetMouseState();
+
+	float uiX = static_cast<float>(mouseState.x) - Application::GetWidth() / 2.0f;
+	float uiY = Application::GetHeight() / 2.0f - static_cast<float>(mouseState.y);
+
 	Transform& transform = m_Cursol->GetTransform();
-	Vector3 currentPos = transform.GetPosition();
-	Vector3 newPos = currentPos;
+	transform.SetPosition(Vector3(uiX, uiY, 0.0f));
 
-	newPos.y -= IO_MANAGER.GetMouseDeltaY();
-	newPos.x += IO_MANAGER.GetMouseDeltaX();
-
-	// なめらかに移動
-	newPos = DirectX::SimpleMath::Vector3::Lerp(currentPos, newPos, m_mouseSensitivity);
-	transform.SetPosition(newPos);
+	// Added by Yamanaka: ウィンドウ内外でゲームカーソルの表示を切り替え
+	bool inWindow = (mouseState.x >= 0 && mouseState.x < (int)Application::GetWidth() && mouseState.y >= 0 && mouseState.y < (int)Application::GetHeight());
+	m_Cursol->SetActive(inWindow);
 
 	//std::cout << "Cursol Position : " << newPos.x << ", " << newPos.y << std::endl;
 }
@@ -73,17 +77,17 @@ void CursorManager::Draw()
 {
 	Vector3 pos = m_Cursol->GetTransform().GetPosition();
 
-	// 範囲内のときのみ描画
-	if((-1) * Application::GetHeight() / 2 < pos.y || Application::GetHeight()/2 < pos.y
-		|| (-1) * Application::GetWidth() / 2 < pos.x || Application::GetWidth() / 2 < pos.x)
+	// カーソルがウィンドウ外にある場合は描画しない
+	float halfW = static_cast<float>(Application::GetWidth()) / 2.0f;
+	float halfH = static_cast<float>(Application::GetHeight()) / 2.0f;
+
+	if (pos.x < -halfW || pos.x > halfW ||
+		pos.y < -halfH || pos.y > halfH)
 	{
 		return;
 	}
 
-	if (m_Cursol && m_Cursol->IsActive())
-	{
-		m_Cursol->Draw(&m_Camera);
-	}
+	m_Cursol->Draw(&m_Camera);
 }
 // ===================================================================
 // SceneCommon.xmlからカーソルデータを検索して読み込む

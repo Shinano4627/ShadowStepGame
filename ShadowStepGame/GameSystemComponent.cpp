@@ -226,7 +226,45 @@ void GameSystemComponent::UpdateUnitSelect(GameObjectList* gameObjectList)
 
     else if(unit->GetType() == UnitType::Enemy)
     {
-        ChangeState(BattleState::UnitActionSelectEnemy); // 敵の自動行動選択
+        // Added by Yamanaka: カメラ位置を調整
+        m_Unitposition = unit->GetPosition();
+
+        // EnemyAI
+        EnemyAI enemyAI;
+
+        // Map 情報取得
+        const int* const* mapData = m_mapSystem->GetRawMapData();
+        int mapW = m_mapSystem->GetMapWidth();   // タイル数
+        int mapH = m_mapSystem->GetMapHeight();  // タイル数
+
+        // 太陽方向（SunManage などから）
+        MapPosition sunDir = m_sunSystem->GetDirection();
+
+        // Player 一覧
+        const auto& players = m_unitSystem->GetPlayerUnits();
+        const auto& enemys = m_unitSystem->GetEnemyUnits();
+        const auto& units = m_unitSystem->GetAllUnits();
+
+        UnitAction action = enemyAI.DecideAction(
+            m_CurrentUnit,
+            players,
+            enemys,
+            units,
+            sunDir,
+            mapData,
+            mapW,
+            mapH
+        );
+
+        // Unitに行動をセット
+        m_CurrentUnit->SetAction(action);
+
+        if (action.type == UnitActionType::Move)   // ★追加
+        {                                           // ★追加
+            m_CurrentUnit->Move();                  // ★追加 論理座標を反映
+        }
+
+        ChangeState(BattleState::UnitActing); // 敵AI行動
     }
 
     // 戦術視点カメラ指定位置を計算して移動開始
@@ -283,12 +321,17 @@ void GameSystemComponent::UpdateUnitActionSelect()
     break;
     case SelectPhase::Action:
     {
-        // UIシステムから取得
-        if (IO_MANAGER.GetKeyDownKeyBord(VK_LBUTTON))   // 左クリックで更新
+        if (IO_MANAGER.GetKeyDownKeyBord(VK_LBUTTON))
         {
-            m_SelectType = m_uISystem->GetSelectedButton();
-            m_SelectPhase = SelectPhase::Position;
-            SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_ACTION_SELECTED);
+            UnitActionType selected = m_uISystem->GetSelectedButton();
+
+            // UIボタンが選択されているときのみ遷移
+            if (selected != UnitActionType::None)
+            {
+                m_SelectType = selected;
+                m_SelectPhase = SelectPhase::Position;
+                SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_ACTION_SELECTED);
+            }
         }
     }
     break;
@@ -298,7 +341,7 @@ void GameSystemComponent::UpdateUnitActionSelect()
         // セレクト移動（仮実装：カメラがマップを右上を正、左下を負と見ていると仮定）
         Input_Select();
 
-        // 選択確定(F)
+  
         if (IO_MANAGER.GetKeyDownKeyBord(VK_E) || IO_MANAGER.GetKeyDown(TYPE_OK))
         {
             bool ok = false;
@@ -310,11 +353,22 @@ void GameSystemComponent::UpdateUnitActionSelect()
 
             // Unitに行動をセット
             m_CurrentUnit->SetAction(action);
-
+            // 選択確定(F)
+            int dx = 0;
+            int dz = 0;
             // Actionに合わせてMapの位置をチェック(あとで関数化)
             switch (m_SelectType)
             {
             case UnitActionType::Move:
+                // Edited by Yamanaka: マンハッタン距離ベースへ変更
+                dx = abs(m_SelectMapPosition.x - m_Unitposition.x);
+                dz = abs(m_SelectMapPosition.z - m_Unitposition.z);
+                if (dx + dz > 2)
+                {
+                    ok = false;
+                    break;
+                }
+
                 ok = m_mapSystem->IsWalkableAtUnitPos(
                     m_SelectMapPosition.x,
                     m_SelectMapPosition.z);
@@ -410,15 +464,15 @@ void GameSystemComponent::UpdateUnitActionSelectEnemy()
     }
     break;
     case SelectPhase::Action:
-    {
+    {        
         // EnemyAI
         EnemyAI enemyAI;
 
         // Map 情報取得
         const int* const* mapData = m_mapSystem->GetRawMapData();
-        int mapW = m_mapSystem->GetMapSizeWidth();
-        int mapH = m_mapSystem->GetMapSizeHeight();
-
+        int mapW = m_mapSystem->GetMapWidth();   // タイル数
+        int mapH = m_mapSystem->GetMapHeight();  // タイル数
+        
         // 太陽方向（SunManage などから）
         MapPosition sunDir = m_sunSystem->GetDirection();
 
@@ -442,6 +496,11 @@ void GameSystemComponent::UpdateUnitActionSelectEnemy()
         m_CurrentUnit->SetAction(action);
 
         ChangeState(BattleState::UnitActing); // 敵AI行動
+        
+        if (action.type == UnitActionType::Move)   // ★追加
+        {                                           // ★追加
+            m_CurrentUnit->Move();                  // ★追加 論理座標を反映
+        }
     }
     break;
     case SelectPhase::Position:
@@ -640,34 +699,48 @@ bool GameSystemComponent::IsEnemyAllDead() const
     return m_unitSystem->IsEnemyAllDead();
 }
 
+// Edited by Yamanaka:範囲外へのカーソル移動をブロックする処理を追加
 void GameSystemComponent::Input_Select()
 {
-    
+    MapPosition next = m_SelectMapPosition;
+
     if (IO_MANAGER.GetKeyDownKeyBord(VK_RIGHT))
-    {
-        m_SelectMapPosition.x += 1;
-        m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
-        SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_CURSOL_MOVE);
-    }
+        next.x += 1;
     else if (IO_MANAGER.GetKeyDownKeyBord(VK_LEFT))
-    {
-        m_SelectMapPosition.x -= 1;
-        m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
-        SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_CURSOL_MOVE);
-    }
+        next.x -= 1;
     else if (IO_MANAGER.GetKeyDownKeyBord(VK_UP))
-    {
-        m_SelectMapPosition.z += 1;
-        m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
-        SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_CURSOL_MOVE);
-    }
+        next.z += 1;
     else if (IO_MANAGER.GetKeyDownKeyBord(VK_DOWN))
+        next.z -= 1;
+    else
+        return;
+
+    // マップ内かチェック
+    int mapX, mapZ;
+    if (!m_mapSystem->ConvertUnitPosToMapIndex(next.x, next.z, mapX, mapZ))
     {
-        m_SelectMapPosition.z -= 1;
-        m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
-        SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_CURSOL_MOVE);
+        SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_POSITION_BEEP);
+        return;
     }
-    
+
+    // 壁など移動不可タイルならブロック
+    EMapTile tile = m_mapSystem->GetTileAtUnitPos(next.x, next.z);
+    if (tile == EMapTile::Wall || tile == EMapTile::None)
+    {
+        SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_POSITION_BEEP);
+        return;
+    }
+
+    // ★追加：SelectMap の表示範囲内かチェック
+    if (!m_mapSystem->IsInSelectRange(mapX, mapZ))
+    {
+        SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_POSITION_BEEP);
+        return;
+    }
+
+    m_SelectMapPosition = next;
+    m_mapSystem->UpdateSelectCursor(m_SelectMapPosition);
+    SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_CURSOL_MOVE);
 }
 
 const char* GameSystemComponent::BattleStateToString(BattleState state)

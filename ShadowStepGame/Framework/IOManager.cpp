@@ -1,4 +1,4 @@
-#include "IOManager.h"
+ï»¿#include "IOManager.h"
 #include "Application.h"
 
 //#include "controllerSW.h"
@@ -16,10 +16,10 @@ void IOManager::Init()
 		{TYPE_CANCEL, VK_CANCEL},
 	};
 
-	// ƒ}ƒEƒX‚ğƒEƒCƒ“ƒhƒE‚ÉƒoƒCƒ“ƒh
+	// ãƒã‚¦ã‚¹ã‚’ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã«ãƒã‚¤ãƒ³ãƒ‰
 	m_mouse.SetWindow(Application::GetWindow());
-	// ƒˆ‚ÈˆÊ’uî•ñ‚ğæ“¾‚·‚é
-	SetMouseMode(DirectX::Mouse::Mode::MODE_RELATIVE);
+	// çµ¶å¯¾åº§æ¨™ã‚’å–å¾—ã™ã‚‹
+	SetMouseMode(DirectX::Mouse::Mode::MODE_ABSOLUTE);
 
 	//InitController();
 }
@@ -33,9 +33,9 @@ void IOManager::Update()
 {
 	m_Input.Update();
 
-	// ƒ}ƒEƒX‚Ìó‘Ô‚ğæ“¾
+	// ãƒã‚¦ã‚¹ã®çŠ¶æ…‹ã‚’å–å¾—
 	auto mouseState = m_mouse.GetState();
-	// ƒ}ƒEƒX‚ÌˆÚ“®—Ê‚ğæ“¾
+	// ãƒã‚¦ã‚¹ã®ç§»å‹•é‡ã‚’å–å¾—
 	m_mouseDeltaX = mouseState.x;
 	m_mouseDeltaY = mouseState.y;
 	//UpdateController();
@@ -55,7 +55,7 @@ bool IOManager::GetKeyDown(INPUT_TYPE _key)
 {
 	bool ret = false;
 
-	assert(_key < TYPE_COUNT);		// ƒGƒ‰[ƒ`ƒFƒbƒN
+	assert(_key < TYPE_COUNT);		// ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 
 	switch (m_mode)
 	{
@@ -76,7 +76,7 @@ bool IOManager::GetKeyPress(INPUT_TYPE _key)
 {
 	bool ret = false;
 
-	assert(_key < TYPE_COUNT);		// ƒGƒ‰[ƒ`ƒFƒbƒN
+	assert(_key < TYPE_COUNT);		// ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 
 	switch (m_mode)
 	{
@@ -97,7 +97,7 @@ bool IOManager::GetKeyUp(INPUT_TYPE _key)
 {
 	bool ret = false;
 
-	assert(_key < TYPE_COUNT);		// ƒGƒ‰[ƒ`ƒFƒbƒN
+	assert(_key < TYPE_COUNT);		// ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 
 	switch (m_mode)
 	{
@@ -116,7 +116,7 @@ bool IOManager::GetKeyUp(INPUT_TYPE _key)
 }
 
 
-// ƒL[‰Ÿ‰º
+// ã‚­ãƒ¼æŠ¼ä¸‹
 bool IOManager::GetKeyDownController(INPUT_TYPE _key)
 {
 	bool ret = false;
@@ -127,7 +127,7 @@ bool IOManager::GetKeyDownController(INPUT_TYPE _key)
 	return ret;
 }
 
-// ƒL[’·‰Ÿ‚µŒŸ’m
+// ã‚­ãƒ¼é•·æŠ¼ã—æ¤œçŸ¥
 bool IOManager::GetKeyPressController(INPUT_TYPE _key)
 {
 	bool ret = false;
@@ -138,7 +138,7 @@ bool IOManager::GetKeyPressController(INPUT_TYPE _key)
 	return ret;
 }
 
-// ƒL[‚ª—£‚³‚ê‚½
+// ã‚­ãƒ¼ãŒé›¢ã•ã‚ŒãŸ
 bool IOManager::GetKeyUpController(INPUT_TYPE _key)
 {
 	bool ret = false;
@@ -210,7 +210,7 @@ int IOManager::ChangeKeycode_SW(INPUT_TYPE _inpput)
 		break;
 	case INPUT_TYPE_NUM:
 		break;
-		// ƒXƒeƒBƒbƒN‚Ì”»’è‚Í—vŒŸ“¢
+		// ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®åˆ¤å®šã¯è¦æ¤œè¨
 	case INPUT_TYPE_RS_UP:
 		break;
 	case INPUT_TYPE_RS_DOWN:

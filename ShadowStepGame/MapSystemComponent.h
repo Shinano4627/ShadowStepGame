@@ -129,8 +129,23 @@ public:
     {
         return Vector3(m_DrawStartPosX + map.x * m_SizePiece, m_DrawStartPosY, m_DrawStartPosZ + map.z * m_SizePiece);
     }    
+    // SelectMap の表示範囲内かどうか（マップ配列インデックスで受け取る）
+    bool IsInSelectRange(int mapX, int mapZ) const
+    {
+        if (!m_IsSelectMapActive) return true;
+        if (!m_SelectMapData) return true;
+
+        if (mapX < 0 || mapX >= m_MapWidth ||
+            mapZ < 0 || mapZ >= m_MapHeight)
+            return false;
+
+        // SMapTile::Empty(0) = 範囲外、それ以外 = 範囲内
+        return m_SelectMapData[mapZ][mapX] != static_cast<int>(SMapTile::Empty);
+    }
 
 private:
     void MakeMapObjectData(GameObjectList* objectList, const Vector3& pos, EMapTile type);
+
+
 
 };

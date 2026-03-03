@@ -6,125 +6,109 @@
 #include "Game.h"
 #include "ShadowSystemComponent.h"
 
+// Edited by Yamanaka: 
+///<summary>
+///敵AIクラス。フローチャート通りに動く実装に変更している。
+///</summary>
+
 class EnemyAI
 {
 private:
-	// マップタイル定義（EnemyAI視点）
-	static constexpr int TILE_EMPTY = static_cast<int>(EMapTile::Empty);
-	static constexpr int TILE_SHADOW = static_cast<int>(EMapTile::Shadow);
+	// ===================================================================
+	// 定数
+	// ===================================================================
+	static constexpr int DETECTION_RANGE = 10;  // 索敵範囲（マンハッタン距離）
+	static constexpr int CLOSE_RANGE = 4;       // 近距離判定の閾値
 
-	static constexpr int WalkableTiles[] =
-	{
-		TILE_EMPTY,
-		TILE_SHADOW
-	};
-
+	// 歩行可能タイル判定
 	bool IsWalkableTile(int tile) const
 	{
-		for (int t : WalkableTiles)
-		{
-			if (tile == t) return true;
-		}
-		return false;
+		return tile == static_cast<int>(EMapTile::Empty)
+			|| tile == static_cast<int>(EMapTile::Shadow)
+			|| tile == static_cast<int>(EMapTile::Load);
 	}
 
-	int GetTile(
-		const int* const* mapData,
-		int x, int z,
-		int width, int height
-	) const
+	// マップタイル取得（範囲外はNone）
+	int GetTile(const int* const* mapData, int unitX, int unitZ, int width, int height) const
 	{
-		if (x < 0 || z < 0 || x >= width || z >= height)
-			return static_cast<int>(EMapTile::None);
+		int mapX = unitX + width / 2;
+		int mapZ = unitZ + height / 2;
 
-		return mapData[z][x];
+		if (mapX < 0 || mapZ < 0 || mapX >= width || mapZ >= height)
+			return static_cast<int>(EMapTile::None);
+		return mapData[mapZ][mapX];
 	}
 
 public:
+	// ===================================================================
+	// メイン判断関数
+	// ===================================================================
 	UnitAction DecideAction(
-		UnitComponent* enemy,	// 操作ユニット
-		const std::vector<UnitComponent*>& playerList,	// PlayerList
+		UnitComponent* enemy,
+		const std::vector<UnitComponent*>& playerList,
 		const std::vector<UnitComponent*>& enemyList,
 		const std::vector<UnitComponent*>& allUnits,
-		MapPosition SunDirection,	// 太陽のMapPosition（ディレクションライト）
+		MapPosition sunDirection,
 		const int* const* mapData,
 		int mapWidth,
 		int mapHeight
 	);
 
 private:
-	// ターゲット選択
-	UnitComponent* FindNearestPlayer(UnitComponent* enemy,
-		const std::vector<UnitComponent*>& playerList,
-		const std::vector<UnitComponent*>& enemyList) const;
-
-	//=======================================
-	// 判定関数
-	//=======================================
-	// ２：影踏み
-	bool CanStepOnShadow(
+	// ===================================================================
+	// ① 索敵：周囲10マス以内の最近プレイヤーを探す
+	// ===================================================================
+	UnitComponent* FindNearestPlayerInRange(
 		UnitComponent* enemy,
-		UnitComponent* target,
-		const ShadowParam& param,
-		const int* const* mapData,
-		int mapW,
-		int mapH
+		const std::vector<UnitComponent*>& playerList
 	) const;
 
+	// ===================================================================
+	// ② 影判定：影が自分と同じ側にあるか
+	// ===================================================================
+	bool IsShadowOnSameSide(
+		UnitComponent* enemy,
+		UnitComponent* target,
+		MapPosition sunDirection
+	) const;
 
-	// ３：攻撃
+	// ===================================================================
+	// ③ 攻撃判定：XまたはZが等しく隣接しているか
+	// ===================================================================
 	bool CanAttack(
-		UnitComponent* enemy,
-		UnitComponent* target,
-		const int* const* mapData,
-		int mapW,
-		int mapH
-	) const;
-
-	// ４：接近
-	bool CanMove(
-		UnitComponent* enemy
-	) const;
-
-	//=======================================
-	// 処理関数
-	//=======================================
-	// ２：影踏み
-	UnitAction MakeShadowKillAction(
-		UnitComponent* enemy,
-		UnitComponent* target,
-		const ShadowParam& param
-	) const;
-
-
-	MapPosition CalcShadowPosition(
-		UnitComponent* target,
-		const ShadowParam& param
-	) const;
-
-	// ３：攻撃
-	UnitAction MakeAttackAction(
 		UnitComponent* enemy,
 		UnitComponent* target
 	) const;
 
-	// ４：接近
-	UnitAction MakeMoveCloserAction(
-		UnitComponent* enemy,
-		UnitComponent* target,
+	// ===================================================================
+	// 移動先計算：差が大きい軸方向に1マス移動
+	//   toward=true: 対象に近づく
+	//   toward=false: 対象から遠ざかる
+	// ===================================================================
+	MapPosition CalcMoveOneStep(
+		MapPosition from,
+		MapPosition to,
+		bool toward,
 		const std::vector<UnitComponent*>& allUnits,
+		UnitComponent* self,
 		const int* const* mapData,
-		int mapW,
-		int mapH
+		int mapW, int mapH
 	) const;
 
-	MapPosition DecideMoveCloser(
-		UnitComponent* enemy,
+	// ===================================================================
+	// 影の位置を計算
+	// ===================================================================
+	MapPosition CalcShadowPosition(
 		UnitComponent* target,
-		const std::vector<UnitComponent*>& allUnits,
-		const int* const* mapData,
-		int mapW,
-		int mapH
+		MapPosition sunDirection,
+		int shadowLength
 	) const;
 
+	// ===================================================================
+	// マンハッタン距離
+	// ===================================================================
+	int ManhattanDist(MapPosition a, MapPosition b) const
+	{
+		return abs(a.x - b.x) + abs(a.z - b.z);
+	}
 };

@@ -295,6 +295,17 @@ LRESULT CALLBACK Application::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
         }
         break;
 
+    case WM_SETCURSOR:
+        // クライアント領域内ならOSカーソルを非表示
+        if (LOWORD(lParam) == HTCLIENT)
+        {
+            SetCursor(NULL);
+            return TRUE;  // OSにカーソル描画させない
+        }
+        // タイトルバー等はデフォルト処理（OSカーソル表示）
+        return DefWindowProc(hWnd, uMsg, wParam, lParam);
+        break;
+
     default:
         // 受け取ったメッセージに対してデフォルトの処理を実行
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
