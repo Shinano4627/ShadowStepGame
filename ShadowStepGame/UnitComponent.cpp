@@ -79,30 +79,6 @@ void UnitComponent::ExcuteAction()
         Vector3 newPos = DirectX::SimpleMath::Vector3::Lerp(currentPos, targetPos, m_WalkSpeed);
         transform.SetPosition(newPos);
 
-        // 移動方向へのYaw回転
-        Vector3 diff = currentPos - targetPos;
-        if (diff.LengthSquared() > 1e-4f)
-        {
-            // 移動方向から目標Yawを算出（+Z前方基準）
-            float targetYaw = atan2f(diff.x, diff.z);
-            float currentYaw = transform.GetRotation().y;
-
-            // 角度差を-PI～PIに匆正
-            float delta = targetYaw - currentYaw;
-            while (delta > DirectX::XM_PI)  delta -= DirectX::XM_2PI;
-            while (delta < -DirectX::XM_PI) delta += DirectX::XM_2PI;
-
-            // 回転速度分だけYawを近づける
-            if (fabsf(delta) <= m_RotateSpeed)
-                currentYaw = targetYaw;
-            else
-                currentYaw += (delta > 0.0f ? m_RotateSpeed : -m_RotateSpeed);
-
-            Vector3 rot = transform.GetRotation();
-            rot.y = currentYaw;
-            transform.SetRotation(rot);
-        }
-
         // 移動完了
         if ((targetPos - newPos).Length() <= 1e-1f)
         {
@@ -119,9 +95,13 @@ void UnitComponent::ExcuteAction()
     }
         break;
     case UnitActionType::Attack:
-        // 攻撃モーション開始
-        m_isActing = false;   
-        m_turnFinished = true;  
+        // 攻撃アニメーション完了まで待機
+        if (!m_pOwner->GetMeshComponent<MeshRendererComponent>()->GetDoAnimation())
+        {
+            m_isActing = false;
+            m_turnFinished = true;
+            m_unitStateComponent->ChangeState(UnitState::UnitState::Idle);
+        }
         break;
     case UnitActionType::Place:
         // 設置開始
@@ -134,6 +114,11 @@ void UnitComponent::ExcuteAction()
         m_turnFinished = true;    
         break;
     }
+}
+
+void UnitComponent::Killed()
+{
+    m_unitStateComponent->ChangeState(UnitState::UnitState::Down);
 }
 
 //=======================================
@@ -155,8 +140,12 @@ void UnitComponent::Attack()
     // MapSystem / ShadowSystem 更新後に処理される想定
     if (true)
     {
-        m_isActing = false;
-        m_turnFinished = true; // ← GameSystem が確定するなら不要
+        // ターゲット方向に回転する
+        Transform& transform = m_pOwner->GetTransform();
+        Vector3 targetPos = transform.GetPosition();
+        targetPos.x = m_action.targetGrid.x * 5.0f;
+        targetPos.z = m_action.targetGrid.z * 5.0f;
+        RotateForTarget(targetPos);
     }
 }
 
@@ -168,5 +157,35 @@ void UnitComponent::Place()
     {
         m_isActing = false;
         m_turnFinished = true; // ← GameSystem が確定するなら不要
+    }
+}
+
+void UnitComponent::RotateForTarget(const DirectX::SimpleMath::Vector3& target)
+{
+    Transform& transform = m_pOwner->GetTransform();
+    Vector3 currentPos = transform.GetPosition();
+
+    // 移動方向へのYaw回転
+    Vector3 diff = currentPos - target;
+    if (diff.LengthSquared() > 1e-4f)
+    {
+        // 移動方向から目標Yawを算出（+Z前方基準）
+        float targetYaw = atan2f(diff.x, diff.z);
+        float currentYaw = transform.GetRotation().y;
+
+        // 角度差を-PI～PIに匆正
+        float delta = targetYaw - currentYaw;
+        while (delta > DirectX::XM_PI)  delta -= DirectX::XM_2PI;
+        while (delta < -DirectX::XM_PI) delta += DirectX::XM_2PI;
+
+        // 回転速度分だけYawを近づける
+        if (fabsf(delta) <= m_RotateSpeed)
+            currentYaw = targetYaw;
+        else
+            currentYaw += (delta > 0.0f ? m_RotateSpeed : -m_RotateSpeed);
+
+        Vector3 rot = transform.GetRotation();
+        rot.y = currentYaw;
+        transform.SetRotation(rot);
     }
 }

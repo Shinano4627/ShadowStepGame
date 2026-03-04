@@ -47,6 +47,8 @@ public:
     }
     int GetAnimationMaxFrame(const char* AnimationName)
     {
+        if (!m_Animations[AnimationName]->HasAnimations()) return 0;  // アニメーションなし
+
         aiAnimation* anim = m_Animations[AnimationName]->mAnimations[0];
         return static_cast<int>(anim->mDuration);
     }

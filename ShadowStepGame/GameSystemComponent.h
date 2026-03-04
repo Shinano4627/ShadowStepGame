@@ -10,6 +10,7 @@
 #pragma once
 #include "Component.h"
 #include "UnitCommon.h"
+#include <unordered_set>
 
 // 各システムの前方宣言
 class GameObjectList;
@@ -151,8 +152,9 @@ private:
 	//=======================================
 	void Input_Select();
 
-	// 現在のユニット位置が影に被っているかチェックしてKill
-	void CheckShadowKill();
+	void CheckShadowKill();		// 現在のユニット位置が影に被っているかチェック
+	bool IsKillAnimationFinished();	// チェックでkillとなったユニットをkill
+	void KillUnit();	// チェックでkillとなったユニットをkill
 
 private:
 	//=======================================
@@ -187,7 +189,7 @@ private:
 	int m_TimelineIndex;
 
 	UnitComponent* m_CurrentUnit = nullptr;
-
+	std::unordered_set<UnitComponent*> m_KillSet;	// killするユニット
 	//=======================================
 	// Select関係変数
 	//=======================================

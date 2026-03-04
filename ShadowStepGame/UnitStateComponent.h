@@ -117,6 +117,9 @@ namespace UnitState
     public:
         void OnStart(ManagedComponent* managedComponent) override
         {
+            managedComponent->pUnitMeshRenderer->ChangeAnimation("Stan");
+            managedComponent->pUnitMeshRenderer->SetDoAnimation(true);
+            managedComponent->pUnitMeshRenderer->SetIsAnimationLoop(true);
         };
         void OnUpdate(ManagedComponent* managedComponent) override
         {};
@@ -129,6 +132,9 @@ namespace UnitState
     public:
         void OnStart(ManagedComponent* managedComponent) override
         {
+            managedComponent->pUnitMeshRenderer->ChangeAnimation("Down");
+            managedComponent->pUnitMeshRenderer->SetDoAnimation(true);
+            managedComponent->pUnitMeshRenderer->SetIsAnimationLoop(false);
         };
         void OnUpdate(ManagedComponent* managedComponent) override
         {};

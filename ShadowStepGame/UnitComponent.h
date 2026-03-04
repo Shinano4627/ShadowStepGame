@@ -3,10 +3,14 @@
 #include "UnitCommon.h"
 #include "UnitStateComponent.h"
 #include <vector>
+
 // ===================================================================
 // ユニットコンポネント
 // ユニット一体分の状態・ターン管理
 // ===================================================================
+
+// 前方宣言
+class MeshRendererComponent;
 
 class UnitComponent :public Component
 {
@@ -71,6 +75,9 @@ public:
     // -------- 実行 --------
     void ExcuteAction();
 
+    // -------- KILLされた --------
+    void Killed();
+
     // -------- 状態取得 --------
     bool IsTurnFinished() const
     {
@@ -100,6 +107,11 @@ public:
     {
         return m_status.model;
     }
+    bool IsAnimationFinished()
+    {
+        return m_unitStateComponent->GetState()== UnitState::UnitState::Down
+            && !m_pOwner->GetMeshComponent<MeshRendererComponent>()->GetDoAnimation();
+    }
 
     void SetStatus(UnitStatus status) { m_status = status; }
 
@@ -107,6 +119,9 @@ public:
     {
         m_status.isDown = true;
         downTurn = turn;
+
+        // ステータス変更
+        m_unitStateComponent->ChangeState(UnitState::UnitState::Damaged);
 
         std::cout << "Down!\n";
     }
@@ -116,6 +131,9 @@ public:
         downTurn--;
         if (downTurn <= 0)
         {
+            // ステータス変更
+            m_unitStateComponent->ChangeState(UnitState::UnitState::Idle);
+
             m_status.isDown = false;
             downTurn = 0;
         }
@@ -124,5 +142,5 @@ public:
     bool IsActing() { return m_isActing; }
 
 private:
-
+    void RotateForTarget(const DirectX::SimpleMath::Vector3& target);  // ターゲットの方をむく。最終的にはGameObjectに移動させたい
 };

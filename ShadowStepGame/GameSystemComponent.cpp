@@ -16,7 +16,6 @@
 #include "UISystemComponent.h"
 #include "UnitComponent.h"
 #include "EnemyAICompoment.h"
-#include <unordered_set>
 #include <SceneManager.h>
 
 void GameSystemComponent::InitGame(std::unique_ptr<GameObjectList>& gameObjectList)
@@ -484,6 +483,8 @@ void GameSystemComponent::UpdateUnitActing()
     else
     {
         m_CurrentUnit->EndTurn();
+        // 影チェック
+        CheckShadowKill();
         ChangeState(BattleState::UnitEnd);
     }
 }
@@ -494,10 +495,17 @@ void GameSystemComponent::UpdateUnitActing()
 //=======================================
 void GameSystemComponent::UpdateUnitEnd()
 {
-    // 影チェック
-    CheckShadowKill();
-    m_CurrentUnit = nullptr;
-    ChangeState(BattleState::Judge);
+    if (m_KillSet.size() == 0)
+    {
+        m_CurrentUnit = nullptr;
+        ChangeState(BattleState::Judge);
+    }
+    // すべてのkillアニメーションが完了しているか
+    else if (IsKillAnimationFinished())
+    {
+        // kill処理
+        KillUnit();
+    }
 }
 
 //=======================================
@@ -743,12 +751,13 @@ void GameSystemComponent::CheckShadowKill()
     auto allPlayers = m_unitSystem->GetPlayerUnits();
     auto allEnemies = m_unitSystem->GetEnemyUnits();
 
+    // コンテナを空にする
+    m_KillSet.clear();
+
     // 判定用ラムダ
     auto checkShadow = [&](const std::vector<UnitComponent*>& owners,
         const std::vector<UnitComponent*>& targets)
         {
-            std::unordered_set<UnitComponent*> killSet;
-
             for (auto* owner : owners)
             {
                 if (!owner) continue;
@@ -782,41 +791,12 @@ void GameSystemComponent::CheckShadowKill()
                         if (sp == targetPos)
                         {
                             // 敵が影の上にいたらこのユニットをKILL
-                            killSet.insert(target);
+                            m_KillSet.insert(target);
                             break;
                         }
                     }
                 }
             }
-
-            // KILL処理
-            for (auto* dead : killSet)
-            {
-                if (!dead) continue;
-
-                std::cout << "[GameSystem] ShadowKill! UnitID:" << dead->GetId() << std::endl;
-
-                // タイムラインから削除
-                int idx = 0;
-                while (idx < static_cast<int>(m_Timeline.size()))
-                {
-                    if (m_Timeline[idx].unit == dead)
-                    {
-                        m_Timeline.erase(m_Timeline.begin() + idx);
-                        if (idx <= m_TimelineIndex && m_TimelineIndex > 0)
-                            m_TimelineIndex--; // 現在インデックス補正
-                    }
-                    else
-                    {
-                        idx++;
-                    }
-                }
-
-                // ユニットシステムから削除
-                m_unitSystem->UnRegisterUnit(dead);
-                dead->GetOwner()->SetActive(false);
-            }
-
         };
 
     // Playerの影をEnemyが踏んでいるか → Playerが死ぬ
@@ -824,4 +804,59 @@ void GameSystemComponent::CheckShadowKill()
 
     // Enemyの影をPlayerが踏んでいるか → Enemyが死ぬ
     checkShadow(allEnemies, allPlayers);
+
+    // KILLアニメーション開始
+    for (auto* dead : m_KillSet)
+    {
+        dead->Killed();
+    }
+}
+
+bool GameSystemComponent::IsKillAnimationFinished()
+{
+    bool ret = false;
+
+    for (auto* dead : m_KillSet)
+    {
+        ret = dead->IsAnimationFinished();
+        if (!ret)
+        {
+            break;
+        }
+    }
+
+    return ret;
+}
+
+void GameSystemComponent::KillUnit()
+{
+    // KILL処理
+    for (auto* dead : m_KillSet)
+    {
+        if (!dead) continue;
+
+        std::cout << "[GameSystem] ShadowKill! UnitID:" << dead->GetId() << std::endl;
+
+        // タイムラインから削除
+        int idx = 0;
+        while (idx < static_cast<int>(m_Timeline.size()))
+        {
+            if (m_Timeline[idx].unit == dead)
+            {
+                m_Timeline.erase(m_Timeline.begin() + idx);
+                if (idx <= m_TimelineIndex && m_TimelineIndex > 0)
+                    m_TimelineIndex--; // 現在インデックス補正
+            }
+            else
+            {
+                idx++;
+            }
+        }
+
+        // ユニットシステムから削除
+        m_unitSystem->UnRegisterUnit(dead);
+        dead->GetOwner()->SetActive(false);
+    }
+
+    m_KillSet.clear();
 }
