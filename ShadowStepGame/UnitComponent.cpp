@@ -94,7 +94,7 @@ void UnitComponent::ExcuteAction()
             m_isActing = false;
         }
     }
-        break;
+    break;
     case UnitActionType::Attack:
         // 攻撃アニメーション完了まで待機
         if (!m_pOwner->GetMeshComponent<MeshRendererComponent>()->GetDoAnimation())
@@ -106,13 +106,13 @@ void UnitComponent::ExcuteAction()
         break;
     case UnitActionType::Place:
         // 設置開始
-        m_isActing = false;        
-        m_turnFinished = true;   
+        m_isActing = false;
+        m_turnFinished = true;
         break;
     case UnitActionType::None:
     default:
-        m_isActing = false;       
-        m_turnFinished = true;    
+        m_isActing = false;
+        m_turnFinished = true;
         break;
     }
 }
@@ -129,7 +129,7 @@ void UnitComponent::Move()
 {
     if (true)
     {
-        m_status.pos = m_action.targetGrid;        
+        m_status.pos = m_action.targetGrid;
         SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_POSITION_MOVE);
         std::cout << m_pOwner->GetName() << " : Move to Map Position x : " << m_action.targetGrid.x << " z : " << m_action.targetGrid.z << std::endl;
     }

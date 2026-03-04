@@ -15,7 +15,7 @@ class MeshRendererComponent;
 class UnitComponent :public Component
 {
 public:
-    
+
 private:
     // ユニット情報
     UnitStatus m_status;
@@ -38,13 +38,14 @@ private:
     float m_RotateSpeed = 0.1f;  // 回転速度（ラジアン/フレーム）
 
 public:
- 
+
     //=======================================
     // コンストラクタ・デストラクタ
     //=======================================
-    UnitComponent(UnitStateComponent* unitStateComponent) 
-    :m_unitStateComponent(unitStateComponent){}
-    ~UnitComponent(){}
+    UnitComponent(UnitStateComponent* unitStateComponent)
+        :m_unitStateComponent(unitStateComponent) {
+    }
+    ~UnitComponent() {}
 
     //=======================================
     // ライフサイクル
@@ -109,7 +110,7 @@ public:
     }
     bool IsAnimationFinished()
     {
-        return m_unitStateComponent->GetState()== UnitState::UnitState::Down
+        return m_unitStateComponent->GetState() == UnitState::UnitState::Down
             && !m_pOwner->GetMeshComponent<MeshRendererComponent>()->GetDoAnimation();
     }
 
@@ -141,6 +142,6 @@ public:
 
     bool IsActing() { return m_isActing; }
 
-private:
+public:
     void RotateForTarget(const DirectX::SimpleMath::Vector3& target);  // ターゲットの方をむく。最終的にはGameObjectに移動させたい
 };
