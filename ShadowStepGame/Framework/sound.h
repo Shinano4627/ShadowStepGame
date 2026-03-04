@@ -14,6 +14,9 @@ typedef enum
 	SOUND_LABEL_SE_POSITION_SELECTED,	// ゲーム中
 	SOUND_LABEL_SE_POSITION_BEEP,	// ゲーム中
 	SOUND_LABEL_SE_POSITION_BACK,	// ゲーム中
+	SOUND_LABEL_SE_POSITION_MOVE,	// ゲーム中
+	SOUND_LABEL_SE_POSITION_ATTACK,	// ゲーム中
+	SOUND_LABEL_SE_POSITION_DEATH,	// ゲーム中
 	//SOUND_LABEL_SE001,		// サンプルSE
 
 	SOUND_LABEL_MAX,
@@ -38,6 +41,9 @@ private:
 		{"asset/sound/se/小鼓（こつづみ）.wav", false},  		// サンプルSE（ループしないのでfalse設定）
 		{"asset/sound/se/ビープ音2.wav", false},  		// サンプルSE（ループしないのでfalse設定）
 		{"asset/sound/se/シーン切り替え2.wav", false},  		// サンプルSE（ループしないのでfalse設定）
+		{"asset/sound/se/下駄で歩く.wav", false},  		// サンプルSE（ループしないのでfalse設定）
+		{"asset/sound/se/重いパンチ1.wav", false},  		// サンプルSE（ループしないのでfalse設定）
+		{"asset/sound/se/倒れる.wav", false},  		// サンプルSE（ループしないのでfalse設定）
 //		{"asset/SE/○○○.wav", false},		// サンプルSE
 	};
 

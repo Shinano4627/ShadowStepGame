@@ -1,6 +1,7 @@
 ﻿#include "UnitComponent.h"
 #include "GameObject.h"
 #include "MeshRendererComponent.h"
+#include "SoundManager.h"
 
 void UnitComponent::Init()
 {
@@ -129,6 +130,7 @@ void UnitComponent::Move()
     if (true)
     {
         m_status.pos = m_action.targetGrid;        
+        SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_POSITION_MOVE);
         std::cout << m_pOwner->GetName() << " : Move to Map Position x : " << m_action.targetGrid.x << " z : " << m_action.targetGrid.z << std::endl;
     }
 }
@@ -146,6 +148,8 @@ void UnitComponent::Attack()
         targetPos.x = m_action.targetGrid.x * 5.0f;
         targetPos.z = m_action.targetGrid.z * 5.0f;
         RotateForTarget(targetPos);
+
+        SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_POSITION_ATTACK);
     }
 }
 

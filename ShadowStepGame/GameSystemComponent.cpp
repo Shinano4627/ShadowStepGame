@@ -503,6 +503,7 @@ void GameSystemComponent::UpdateUnitEnd()
     // すべてのkillアニメーションが完了しているか
     else if (IsKillAnimationFinished())
     {
+        SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_POSITION_DEATH);
         // kill処理
         KillUnit();
     }
