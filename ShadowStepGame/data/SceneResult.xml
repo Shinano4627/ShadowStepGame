@@ -1,25 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Objects>
-    <Object ID="1">
-        <ObjectName Value="WIN"/>
+	<Object ID="1">
+        <ObjectName Value="Ushiro"/>
         <ObjectType Value="2D"/>
-        <Tag Value="WIN"/>
+        <Tag Value="Ushiro"/>
         <FileName Value=""/>
-        <Texture Value="asset/texture/BackGround/Select_BG.png"/>
+        <Texture Value="asset/texture/BackGround/Ushiro.png"/>
         <Posision X="0" Y="0" Z="0"/>
         <Rotation X="0" Y="0" Z="0"/>
         <Scale X="1280" Y="720" Z="0"/>
         <Color R="1" G="1" B="1" A="1"/>
     </Object>
     <Object ID="2">
-        <ObjectName Value="LOSS"/>
+        <ObjectName Value="Mae"/>
         <ObjectType Value="2D"/>
-        <Tag Value="LOSS"/>
+        <Tag Value="Mae"/>
         <FileName Value=""/>
-        <Texture Value="asset/texture/BackGround/Loding_BG.png"/>
+        <Texture Value="asset/texture/BackGround/Mae.png"/>
         <Posision X="0" Y="0" Z="0"/>
         <Rotation X="0" Y="0" Z="0"/>
         <Scale X="1280" Y="720" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="3">
+        <ObjectName Value="WIN"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="WIN"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/BackGround/win.png"/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="700" Y="700" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
+    <Object ID="4">
+        <ObjectName Value="LOSE"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="LOSE"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/BackGround/Lose.png"/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="700" Y="700" Z="0"/>
         <Color R="1" G="1" B="1" A="1"/>
     </Object>
 </Objects>

@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Objects>
+	<Object ID="0">
+        <ObjectName Value="Back"/>
+        <ObjectType Value="2D"/>
+        <Tag Value="Back"/>
+        <FileName Value=""/>
+        <Texture Value="asset/texture/BackGround/Game_BG.png"/>
+        <Posision X="0" Y="0" Z="0"/>
+        <Rotation X="0" Y="0" Z="0"/>
+        <Scale X="1280" Y="720" Z="0"/>
+        <Color R="1" G="1" B="1" A="1"/>
+    </Object>
     <Object ID="1">
         <ObjectName Value="System"/>
         <ObjectType Value="SimpleCube"/>
