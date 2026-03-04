@@ -52,7 +52,6 @@ void GameObjectList::MakeObjectList(const char* _stage)
 			else if (tag == &tag_model)
 			{
 				MeshRendererComponent* mesh = newObject->AddMeshComponent<MeshRendererComponent>(object.fileName, object.texture);
-				newObject->AddMeshComponent<MeshRendererComponent>(object.fileName, object.texture);
 				std::cout << "[" << _stage << "] " << "Attempting to load model : " << object.fileName << std::endl;
 				mesh->LoadModel(object.animations);
 				std::cout << "[" << _stage << "] " << "OBJ Model loaded successfully!" << std::endl;
