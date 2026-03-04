@@ -121,6 +121,15 @@ UnitAction EnemyAI::DecideAction(
 		std::cout << "[EnemyAI] 攻撃可能 → 攻撃" << std::endl;
 
 		UnitAction action;
+		target->SetDown(2);
+
+		// ターゲット方向に回転する
+		Transform& transform = enemy->GetOwner()->GetTransform();
+		Vector3 targetPos = transform.GetPosition();
+		targetPos.x = tpos.x * 5.0f;
+		targetPos.z = tpos.z * 5.0f;
+		enemy->RotateForTarget(targetPos);
+
 		action.type = UnitActionType::Attack;
 		action.targetGrid = tpos;
 		return action;
