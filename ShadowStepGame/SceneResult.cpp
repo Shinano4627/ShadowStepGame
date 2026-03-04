@@ -39,7 +39,7 @@ void SceneResult::Init()
     {
         auto* m_win = m_GameObjectList->FindGameObjectWithTag("WIN");
         m_win->SetActive(false);
-        auto* m_loss = m_GameObjectList->FindGameObjectWithTag("LOSS");
+        auto* m_loss = m_GameObjectList->FindGameObjectWithTag("LOSE");
         m_loss->SetActive(false);
 
         // Player勝利か
