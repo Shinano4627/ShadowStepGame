@@ -80,6 +80,9 @@ void SceneProto::Init()
         // システムにカメラコンポーネントを登録
         gameSystem->SetOrbitCamera(orbitCamera);
 
+        auto* back = m_GameObjectList->FindGameObjectWithTag("Back")->GetMeshComponent<Texture2D>();
+        back->SetRenderLayer(RenderLayer::UI_BackGround);
+
 
     // ここで SunManageComponent をセット
     // ※m_sunSystem は現状 private なので、public setter または friend でアクセス推奨
@@ -148,6 +151,11 @@ void SceneProto::Update()
 
 void SceneProto::Draw()
 {
+    Renderer::SetDepthEnable(false);
+    //UI
+    m_GameObjectList->DrawLayer(&m_Camera, RenderLayer::UI_BackGround);
+    Renderer::SetDepthEnable(true);
+
     // World
     Draw(&m_Camera);
 
