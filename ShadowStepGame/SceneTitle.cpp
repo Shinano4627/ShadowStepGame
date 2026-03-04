@@ -37,6 +37,7 @@ void SceneTitle::Init()
         std::cout << "[SceneTitle] TitleCube created" << std::endl;
     }
 
+    // TODO: 将来的にはxmlから取得、animationコンポーネントを使ってアニメーションさせたい
     // シェーダー作成
     m_Shader = std::make_shared<Shader>();
     m_Shader->Create("shader/unlitTextureVS.hlsl", "shader/unlitTexturePS.hlsl");
@@ -101,6 +102,7 @@ void SceneTitle::Update()
     // Enterキーでゲーム開始
     if (IO_MANAGER.GetKeyDown(TYPE_OK) || IO_MANAGER.GetKeyDownKeyBord(VK_RETURN))
     {
+        SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_GAMESTART);
         std::cout << "[SceneTitle] ENTER pressed - Starting Game" << std::endl;
         m_nextScene = SCENE_PROTO;
         return;
