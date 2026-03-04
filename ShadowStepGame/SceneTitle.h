@@ -1,20 +1,64 @@
-// ===================================================================
+ï»¿// ===================================================================
 // SceneTitle.h
-// ƒ^ƒCƒgƒ‹ƒV[ƒ“ - GameObject‚ÆƒRƒ“ƒ|[ƒlƒ“ƒgƒVƒXƒeƒ€‚ğg—p
+// ã‚¿ã‚¤ãƒˆãƒ«ã‚·ãƒ¼ãƒ³ - GameObjectã¨ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚·ã‚¹ãƒ†ãƒ ã‚’ä½¿ç”¨
 // ===================================================================
 #pragma once
 #include "SceneBase.h"
 
+#include "SystemCommon.h"
+#include "Renderer.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
+#include "Shader.h"
+#include "Material.h"
+#include "Texture.h"
+#include "Application.h"
+#include "ResourceManager.h"
+#include <memory>
+
+
 class SceneTitle : public SceneBase
 {
 private:
-    // ƒIƒuƒWƒFƒNƒgŠÇ——pID
+    // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç®¡ç†ç”¨ID
     enum OBJECT_ID
     {
         ID_TITLE_CUBE,
 
         ID_COUNT,
     };
+
+    //ã‚¿ã‚¤ãƒˆãƒ«æ–‡å­—ã‚¢ãƒ‹ãƒ¡ç”¨
+    std::shared_ptr<Shader> m_Shader;
+    std::unique_ptr<Material> m_Material;
+    ResourceHandle<Texture> m_TitleTexture;
+
+    std::vector<VERTEX_3D> m_Vertices;
+    std::vector<unsigned int> m_Indices;
+
+    VertexBuffer<VERTEX_3D> m_VertexBuffer;
+    IndexBuffer m_IndexBuffer;
+
+
+    float m_FrameTime = 0.0f;
+    float m_FrameDuration = 0.08f; // ã‚¢ãƒ‹ãƒ¡é€Ÿåº¦
+    int   m_CurrentFrame = 0;
+    int m_SpriteCols = 10;
+    int m_SpriteRows = 3;
+    int m_TotalFrames = 8; // ã¨ã‚Šã‚ãˆãšå›ºå®š
+
+
+    float m_PosX = 0.0f;
+    float m_PosY = -100.0f;
+    float m_Width = 600.0f;
+    float m_Height = 120.0f;
+
+private:
+
+    void SetupTitleVertices();
+    void UpdateTitleUV();
+    void DrawTitleText();
+
 
 public:
     void Init() override;
