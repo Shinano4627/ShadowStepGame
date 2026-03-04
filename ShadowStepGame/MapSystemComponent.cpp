@@ -280,7 +280,7 @@ void MapSystemComponent::UpdateMap(const std::vector<UnitComponent*>& units,
     //=======================================
     for(auto* unit : units)
     {
-        if (unit->IsDown()) continue;
+        //if (unit->IsDown()) continue;
         
         MapPosition u_map = unit->GetPosition();
 
