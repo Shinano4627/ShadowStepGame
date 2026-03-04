@@ -111,6 +111,7 @@ public:
     void MakeSelectMap(std::unique_ptr<GameObjectList>& objectList);
 
     void StartSelectMap(UnitComponent* unit,MapPosition selectpos);
+    void ColoredRangeMap(UnitComponent* unit, UnitActionType action);
     void UpdateSelectCursor(MapPosition selectpos);
     void EndSelectMap();
 

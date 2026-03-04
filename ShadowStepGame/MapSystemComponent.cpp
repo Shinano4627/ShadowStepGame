@@ -569,6 +569,7 @@ void MapSystemComponent::StartSelectMap(UnitComponent* unit,MapPosition selectpo
             m_SelectMapData[z][x] = static_cast<int>(SMapTile::Attack);
         }
     }
+
     // ==============================
     // SelectMap 表示 & 色反映
     // ==============================
@@ -623,6 +624,137 @@ void MapSystemComponent::StartSelectMap(UnitComponent* unit,MapPosition selectpo
         }
     }
 
+}
+
+void MapSystemComponent::ColoredRangeMap(UnitComponent* unit, UnitActionType action)
+{
+    // UnitPosをMapPositionからMap内Positionに変換
+    MapPosition unit_pos = unit->GetPosition();
+    MapPosition map_unitpos;
+    ConvertUnitPosToMapIndex(unit_pos.x, unit_pos.z, map_unitpos.x, map_unitpos.z);
+
+    // ==============================
+    // SelectMapData 初期化（全マス None）
+    // ==============================
+    for (int z = 0; z < m_MapHeight; z++)
+    {
+        for (int x = 0; x < m_MapWidth; x++)
+        {
+            m_SelectMapData[z][x] = static_cast<int>(SMapTile::Empty);
+            std::cout << m_SelectMapData[z][x];
+        }
+    }
+
+    switch (action)
+    {
+    case UnitActionType::Move:
+    {
+        // 移動範囲（◇型 マンハッタン距離2 = 青）
+        for (int dz = -2; dz <= 2; dz++)
+        {
+            for (int dx = -2; dx <= 2; dx++)
+            {
+                if (abs(dx) + abs(dz) > 2) continue;  // ◇型に制限
+
+                int x = map_unitpos.x + dx;
+                int z = map_unitpos.z + dz;
+
+                if (x < 0 || x >= m_MapWidth ||
+                    z < 0 || z >= m_MapHeight)
+                    continue;
+
+                m_SelectMapData[z][x] = static_cast<int>(SMapTile::Move);
+            }
+        }
+    }
+        break;
+    case UnitActionType::Attack:
+    {
+        // 攻撃範囲（十字5マス = 赤）
+        const int attackOffset[5][2] =
+        {
+            { 0,  0},
+            { 1,  0},
+            {-1,  0},
+            { 0,  1},
+            { 0, -1}
+        };
+
+        for (int i = 0; i < 5; i++)
+        {
+            int x = map_unitpos.x + attackOffset[i][0];
+            int z = map_unitpos.z + attackOffset[i][1];
+
+            if (x < 0 || x >= m_MapWidth ||
+                z < 0 || z >= m_MapHeight)
+                continue;
+
+            m_SelectMapData[z][x] = static_cast<int>(SMapTile::Attack);
+        }
+    }
+        break;
+    case UnitActionType::Place:
+    {
+        // 配置範囲（5x5 = 緑）
+        for (int dz = -2; dz <= 2; dz++)
+        {
+            for (int dx = -2; dx <= 2; dx++)
+            {
+                int x = map_unitpos.x + dx;
+                int z = map_unitpos.z + dz;
+
+                if (x < 0 || x >= m_MapWidth ||
+                    z < 0 || z >= m_MapHeight)
+                    continue;
+
+                m_SelectMapData[z][x] = static_cast<int>(SMapTile::Place);
+            }
+        }
+    }
+        break;
+    case UnitActionType::None:
+    case UnitActionType::ShadowMove:
+    default:
+        break;
+    }
+
+    // ==============================
+    // SelectMap 表示 & 色反映
+    // ==============================
+    for (int z = 0; z < m_MapHeight; z++)
+    {
+        for (int x = 0; x < m_MapWidth; x++)
+        {
+            int index = z * m_MapWidth + x;
+            auto* obj = m_SelectMapObjects[z][x];
+            if (!obj) continue;
+
+            switch (m_SelectMapData[z][x])
+            {
+            case static_cast<int>(SMapTile::Attack):
+                obj->SetActive(true);
+                obj->GetMeshComponent<SimplePlaneRendererComponent>()
+                    ->SetColor(Color(1.0f, 0.0f, 0.0f, 0.4f));
+                break;
+
+            case static_cast<int>(SMapTile::Move):
+                obj->SetActive(true);
+                obj->GetMeshComponent<SimplePlaneRendererComponent>()
+                    ->SetColor(Color(0.0f, 0.0f, 1.0f, 0.4f));
+                break;
+
+            case static_cast<int>(SMapTile::Place):
+                obj->SetActive(true);
+                obj->GetMeshComponent<SimplePlaneRendererComponent>()
+                    ->SetColor(Color(0.0f, 1.0f, 0.0f, 0.4f));
+                break;
+
+            default:
+                obj->SetActive(false);
+                break;
+            }
+        }
+    }
 }
 
 void MapSystemComponent::UpdateSelectCursor(MapPosition selectpos)

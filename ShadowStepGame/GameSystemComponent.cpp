@@ -290,6 +290,10 @@ void GameSystemComponent::UpdateUnitActionSelect()
             {
                 m_SelectType = selected;
                 m_SelectPhase = SelectPhase::Position;
+
+                // 選択によってマップに表示する色を変更
+                m_mapSystem->ColoredRangeMap(m_CurrentUnit, m_SelectType);
+
                 SOUND_MANAGER.PlaySE(SOUND_LABEL_SE_ACTION_SELECTED);
             }
         }
